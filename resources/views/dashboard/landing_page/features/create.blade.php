@@ -1,0 +1,78 @@
+@extends('dashboard.layout.master')
+
+@section('dashboard-main')
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="py-3 mb-4">
+        <span class="text-muted fw-light">{{ __('admin.home') }} /</span> {{ __('admin.landing_page') }} / {{ __('admin.add') }}
+    </h4>
+
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">{{ __('admin.add') }} {{ __('admin.features') }}</h5>
+            <a href="{{ route('admin.landing-page.index') }}" class="btn btn-label-secondary">
+                <i class="ti tabler-arrow-left me-1"></i> {{ __('admin.back') }}
+            </a>
+        </div>
+        <div class="card-body">
+            <form action="{{ route('admin.landing-page.features.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="row">
+                    <!-- Title AR -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">{{ __('admin.title_ar') }} <span class="text-danger">*</span></label>
+                        <input type="text" name="title[ar]" class="form-control" required placeholder="{{ __('admin.title_ar') }}">
+                    </div>
+
+                    <!-- Title EN -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">{{ __('admin.title_en') }} <span class="text-danger">*</span></label>
+                        <input type="text" name="title[en]" class="form-control" required placeholder="{{ __('admin.title_en') }}">
+                    </div>
+
+                    <!-- Description AR -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">{{ __('admin.description_ar') }} <span class="text-danger">*</span></label>
+                        <textarea name="description[ar]" class="form-control" rows="3" required placeholder="{{ __('admin.description_ar') }}"></textarea>
+                    </div>
+
+                    <!-- Description EN -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">{{ __('admin.description_en') }} <span class="text-danger">*</span></label>
+                        <textarea name="description[en]" class="form-control" rows="3" required placeholder="{{ __('admin.description_en') }}"></textarea>
+                    </div>
+
+                    <!-- Image -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">{{ __('admin.image') }} <span class="text-danger">*</span></label>
+                        <input type="file" name="image" class="form-control" required accept="image/*">
+                        <small class="text-muted">نوصي باستخدام أيقونة شفافة (PNG) بحجم 100x100 بكسل.</small>
+                    </div>
+
+                    <!-- Order -->
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">{{ __('admin.order') }}</label>
+                        <input type="number" name="order" class="form-control" value="0">
+                    </div>
+
+                    <!-- Status -->
+                    <div class="col-md-3 mb-3 d-flex align-items-end">
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" name="is_active" id="is_active" checked>
+                            <label class="form-check-label" for="is_active">{{ __('admin.active') }}</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="ti tabler-check me-1"></i> {{ __('admin.save') }}
+                    </button>
+                    <a href="{{ route('admin.landing-page.index') }}" class="btn btn-label-secondary ms-2">
+                        {{ __('admin.cancel') }}
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endsection

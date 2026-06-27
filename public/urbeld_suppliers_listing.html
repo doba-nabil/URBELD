@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Tajawal',sans-serif; background:#f4f6f8; direction:rtl; }
+
+/* NAV */
+.navbar { background:#fff; border-bottom:1px solid #e5e7eb; padding:0 2rem; display:flex; align-items:center; justify-content:space-between; height:64px; }
+.logo-text { font-size:22px; font-weight:700; color:#1a3a2a; letter-spacing:1px; }
+.logo-sub { font-size:10px; color:#1a3a2a; letter-spacing:3px; }
+.nav-links { display:flex; gap:1.5rem; }
+.nav-links a { font-size:14px; color:#374151; text-decoration:none; font-weight:500; }
+.nav-actions { display:flex; gap:.75rem; align-items:center; }
+.btn-lang { background:#1a5c3a; color:#fff; border:none; border-radius:20px; padding:6px 16px; font-size:13px; font-family:'Tajawal',sans-serif; cursor:pointer; font-weight:500; }
+.btn-account { background:transparent; color:#1a5c3a; border:1.5px solid #1a5c3a; border-radius:20px; padding:6px 16px; font-size:13px; font-family:'Tajawal',sans-serif; cursor:pointer; }
+.btn-logout { background:transparent; color:#374151; border:1.5px solid #d1d5db; border-radius:20px; padding:6px 16px; font-size:13px; font-family:'Tajawal',sans-serif; cursor:pointer; }
+.bell-wrap { position:relative; font-size:20px; cursor:pointer; }
+.bell-dot { width:8px; height:8px; background:#ef4444; border-radius:50%; position:absolute; top:-2px; right:-2px; }
+
+/* HERO */
+.hero { background:linear-gradient(135deg,#1a5c3a 0%,#0f3d26 60%,#0a2918 100%); padding:2.5rem 2rem 5.5rem; color:#fff; text-align:center; }
+.hero h1 { font-size:30px; font-weight:800; margin-bottom:.5rem; }
+.hero p { font-size:15px; color:rgba(255,255,255,.75); max-width:520px; margin:0 auto; }
+
+/* BROADCAST BANNER */
+.broadcast-wrap { max-width:960px; margin:-1.5rem auto 0; padding:0 1.5rem; position:relative; z-index:20; }
+.broadcast-banner {
+  background:linear-gradient(135deg,#1e40af,#3b82f6);
+  border-radius:16px; padding:1.25rem 1.75rem;
+  display:flex; align-items:center; justify-content:space-between; gap:1rem;
+  box-shadow:0 8px 32px rgba(30,64,175,.25);
+  flex-wrap:wrap;
+}
+.bc-left { display:flex; align-items:center; gap:12px; }
+.bc-icon { font-size:36px; }
+.bc-title { font-size:16px; font-weight:800; color:#fff; margin-bottom:3px; }
+.bc-sub { font-size:13px; color:rgba(255,255,255,.8); }
+.btn-broadcast {
+  background:#fff; color:#1e40af; border:none; border-radius:10px;
+  padding:10px 22px; font-size:14px; font-weight:800;
+  font-family:'Tajawal',sans-serif; cursor:pointer; white-space:nowrap;
+  box-shadow:0 2px 8px rgba(0,0,0,.15); transition:all .2s;
+}
+.btn-broadcast:hover { background:#eff6ff; transform:translateY(-1px); }
+
+/* FILTER */
+.filter-wrap { max-width:960px; margin:1.25rem auto 0; padding:0 1.5rem; }
+.filter-card { background:#fff; border-radius:16px; padding:1.5rem; box-shadow:0 4px 20px rgba(0,0,0,.07); }
+.filter-title { font-size:15px; font-weight:700; color:#1a3a2a; margin-bottom:1rem; }
+.filter-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+.fg label { font-size:12px; color:#6b7280; font-weight:500; display:block; margin-bottom:5px; }
+.fg select, .fg input { width:100%; padding:9px 12px; border:1.5px solid #e5e7eb; border-radius:8px; font-family:'Tajawal',sans-serif; font-size:13px; color:#374151; background:#f9fafb; outline:none; }
+.fg select:focus,.fg input:focus { border-color:#1a5c3a; background:#fff; }
+.btn-search { width:100%; padding:10px; background:#1a5c3a; color:#fff; border:none; border-radius:8px; font-size:14px; font-weight:700; font-family:'Tajawal',sans-serif; cursor:pointer; margin-top:14px; }
+.btn-search:hover { background:#0f3d26; }
+
+/* CATEGORY BOXES */
+.cat-section { max-width:960px; margin:1.5rem auto 0; padding:0 1.5rem; }
+.cat-section-title { font-size:17px; font-weight:700; color:#1a3a2a; margin-bottom:1rem; }
+.cat-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:10px; }
+.cat-box {
+  background:#fff; border-radius:12px; border:1.5px solid #e5e7eb;
+  padding:14px 8px; text-align:center; cursor:pointer; transition:all .2s;
+}
+.cat-box:hover,.cat-box.active { border-color:#1a5c3a; background:#e8f5ee; }
+.cat-box .ci { font-size:26px; margin-bottom:6px; }
+.cat-box .cl { font-size:12px; font-weight:700; color:#1a3a2a; }
+.cat-box .cc { font-size:11px; color:#9ca3af; margin-top:2px; }
+.cat-box.active .cl { color:#1a5c3a; }
+
+/* SUPPLIERS GRID */
+.suppliers-section { max-width:960px; margin:1.75rem auto 0; padding:0 1.5rem 3rem; }
+.sup-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.25rem; }
+.sup-header h2 { font-size:17px; font-weight:700; color:#1a3a2a; }
+.sort-sel { font-family:'Tajawal',sans-serif; font-size:13px; color:#374151; border:1.5px solid #e5e7eb; border-radius:8px; padding:7px 12px; background:#fff; outline:none; }
+
+.sup-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; }
+
+/* SUPPLIER CARD */
+.sup-card {
+  background:#fff; border-radius:14px; border:1.5px solid #e5e7eb;
+  overflow:hidden; transition:all .2s; cursor:pointer;
+}
+.sup-card:hover { box-shadow:0 6px 24px rgba(26,92,58,.12); border-color:#b6ddc8; transform:translateY(-2px); }
+.sup-card.featured { border-color:#f59e0b; }
+
+.sup-card-top { padding:1.25rem 1.25rem .75rem; position:relative; }
+.sup-avatar { width:52px; height:52px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:800; color:#fff; margin-bottom:10px; }
+.sup-name { font-size:15px; font-weight:700; color:#1a3a2a; margin-bottom:4px; }
+.sup-city { font-size:12px; color:#6b7280; display:flex; align-items:center; gap:4px; margin-bottom:8px; }
+.sup-field { display:inline-flex; align-items:center; gap:4px; background:#e8f5ee; color:#1a5c3a; border-radius:6px; padding:3px 10px; font-size:12px; font-weight:600; }
+
+/* BADGES */
+.badges-row { display:flex; gap:5px; flex-wrap:wrap; margin-top:8px; }
+.badge { border-radius:20px; padding:3px 10px; font-size:11px; font-weight:600; }
+.badge-verified { background:#dbeafe; color:#1d4ed8; }
+.badge-featured { background:#fef9c3; color:#92400e; }
+.badge-large { background:#f0fdf4; color:#15803d; border:1px solid #bbf7d0; }
+.badge-small { background:#faf5ff; color:#7c3aed; border:1px solid #ddd6fe; }
+.badge-delivery { background:#ecfdf5; color:#059669; }
+.badge-nodelivery { background:#f3f4f6; color:#6b7280; }
+
+.sup-divider { border:none; border-top:1px solid #f0f0f0; margin:0; }
+.sup-card-bottom { padding:.75rem 1.25rem 1rem; display:flex; align-items:center; justify-content:space-between; }
+.btn-request { background:#1a5c3a; color:#fff; border:none; border-radius:8px; padding:8px 16px; font-size:13px; font-weight:700; font-family:'Tajawal',sans-serif; cursor:pointer; transition:background .2s; }
+.btn-request:hover { background:#0f3d26; }
+.featured-crown { position:absolute; top:10px; left:10px; font-size:18px; }
+
+/* PAGINATION */
+.pagination { display:flex; justify-content:center; gap:8px; margin-top:2rem; }
+.page-btn { width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:8px; border:1.5px solid #e5e7eb; background:#fff; font-size:14px; font-family:'Tajawal',sans-serif; cursor:pointer; color:#374151; }
+.page-btn.active { background:#1a5c3a; color:#fff; border-color:#1a5c3a; }
+.page-btn:hover:not(.active) { border-color:#1a5c3a; color:#1a5c3a; }
+
+/* FOOTER */
+.footer { background:#0f3d26; color:#fff; padding:2rem 2rem 1rem; }
+.footer-inner { max-width:960px; margin:0 auto; display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:2rem; margin-bottom:1.5rem; }
+.footer-logo { font-size:20px; font-weight:700; letter-spacing:1px; }
+.footer-sub { font-size:9px; letter-spacing:3px; opacity:.8; }
+.footer-desc { font-size:13px; color:rgba(255,255,255,.7); margin-top:8px; line-height:1.7; }
+.footer-col h4 { font-size:14px; font-weight:700; margin-bottom:10px; }
+.footer-col a { display:block; font-size:13px; color:rgba(255,255,255,.65); text-decoration:none; margin-bottom:6px; }
+.footer-bottom { border-top:1px solid rgba(255,255,255,.15); padding-top:1rem; text-align:center; font-size:12px; color:rgba(255,255,255,.5); max-width:960px; margin:0 auto; }
+
+@media(max-width:700px){
+  .cat-grid { grid-template-columns:repeat(3,1fr); }
+  .sup-grid { grid-template-columns:1fr; }
+  .filter-grid { grid-template-columns:1fr 1fr; }
+  .nav-links { display:none; }
+  .footer-inner { grid-template-columns:1fr 1fr; }
+  .broadcast-banner { flex-direction:column; text-align:center; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="navbar">
+  <div><div class="logo-text">UrBeld</div><div class="logo-sub">SAUDI</div></div>
+  <div class="nav-links">
+    <a href="#">الرئيسية</a><a href="#">من نحن</a><a href="#">الخدمات</a>
+    <a href="#">باقات الاشتراك</a><a href="#">تواصل معنا</a>
+  </div>
+  <div class="nav-actions">
+    <div class="bell-wrap">🔔<div class="bell-dot"></div></div>
+    <button class="btn-account">حسابي</button>
+    <button class="btn-lang">English</button>
+    <button class="btn-logout">خروج</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>موردو مواد البناء والتشييد</h1>
+  <p>تصفّح أفضل الموردين المعتمدين في المملكة وأرسل طلبك مباشرةً</p>
+</div>
+
+<!-- BROADCAST BANNER -->
+<div class="broadcast-wrap">
+  <div class="broadcast-banner">
+    <div class="bc-left">
+      <div class="bc-icon">📢</div>
+      <div>
+        <div class="bc-title">أرسل طلبك لجميع الموردين دفعةً واحدة!</div>
+        <div class="bc-sub">اختر القسم الذي تحتاجه وسيصلك عرض سعر من كل مورد مسجّل في ذلك القسم</div>
+      </div>
+    </div>
+    <button class="btn-broadcast" onclick="showBroadcast()">📤 إرسال طلب جماعي</button>
+  </div>
+</div>
+
+<!-- FILTER -->
+<div class="filter-wrap">
+  <div class="filter-card">
+    <div class="filter-title">🔍 ابحث عن مورد</div>
+    <div class="filter-grid">
+      <div class="fg">
+        <label>المنطقة</label>
+        <select>
+          <option>كل المناطق</option>
+          <option>منطقة مكة المكرمة</option>
+          <option>منطقة الرياض</option>
+          <option>المنطقة الشرقية</option>
+          <option>منطقة المدينة المنورة</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>المدينة</label>
+        <select>
+          <option>كل المدن</option>
+          <option>جدة</option>
+          <option>الرياض</option>
+          <option>مكة المكرمة</option>
+          <option>الدمام</option>
+          <option>تبوك</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>قسم التوريد</label>
+        <select>
+          <option>كل الأقسام</option>
+          <option>أسمنت وطوب</option>
+          <option>حديد التسليح</option>
+          <option>كهرباء وإضاءة</option>
+          <option>سباكة وصرف</option>
+          <option>تكييف وميكانيكا</option>
+          <option>رخام وبلاط</option>
+          <option>دهانات وعزل</option>
+          <option>خشب وأبواب</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>حجم التوريد</label>
+        <select>
+          <option>الكل</option>
+          <option>كميات كبيرة</option>
+          <option>كميات متوسطة</option>
+          <option>كميات صغيرة</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn-search">🔍 بحث عن موردين</button>
+  </div>
+</div>
+
+<!-- CATEGORIES -->
+<div class="cat-section">
+  <div class="cat-section-title">تصفّح حسب القسم</div>
+  <div class="cat-grid">
+    <div class="cat-box active" onclick="setCat(this)">
+      <div class="ci">🧱</div><div class="cl">أسمنت وطوب</div><div class="cc">24 مورد</div>
+    </div>
+    <div class="cat-box" onclick="setCat(this)">
+      <div class="ci">⚙️</div><div class="cl">حديد التسليح</div><div class="cc">18 مورد</div>
+    </div>
+    <div class="cat-box" onclick="setCat(this)">
+      <div class="ci">⚡</div><div class="cl">كهرباء وإضاءة</div><div class="cc">31 مورد</div>
+    </div>
+    <div class="cat-box" onclick="setCat(this)">
+      <div class="ci">🚿</div><div class="cl">سباكة وصرف</div><div class="cc">15 مورد</div>
+    </div>
+    <div class="cat-box" onclick="setCat(this)">
+      <div class="ci">❄️</div><div class="cl">تكييف وميكانيكا</div><div class="cc">22 مورد</div>
+    </div>
+    <div class="cat-box" onclick="setCat(this)">
+      <div class="ci">🪵</div><div class="cl">خشب وأبواب</div><div class="cc">19 مورد</div>
+    </div>
+  </div>
+</div>
+
+<!-- SUPPLIERS -->
+<div class="suppliers-section">
+  <div class="sup-header">
+    <h2>الموردون المتاحون <span style="color:#6b7280;font-weight:500;font-size:14px;">(24 مورد)</span></h2>
+    <select class="sort-sel">
+      <option>ترتيب: المميّزون أولاً</option>
+      <option>ترتيب: الأعلى تقييماً</option>
+      <option>ترتيب: الأقرب</option>
+    </select>
+  </div>
+
+  <div class="sup-grid">
+
+    <!-- CARD 1 - FEATURED -->
+    <div class="sup-card featured" onclick="openSupplier()">
+      <div class="sup-card-top">
+        <div class="featured-crown">👑</div>
+        <div class="sup-avatar" style="background:linear-gradient(135deg,#1a5c3a,#2d8f5e);">ر</div>
+        <div class="sup-name">شركة رشيد للمواد الإنشائية</div>
+        <div class="sup-city">📍 جدة — حي الصناعية</div>
+        <div class="sup-field">🧱 أسمنت وطوب</div>
+        <div class="badges-row">
+          <span class="badge badge-featured">👑 مميّز</span>
+          <span class="badge badge-verified">✔ موثوق</span>
+          <span class="badge badge-large">📦 كميات كبيرة</span>
+          <span class="badge badge-delivery">🚚 توصيل متاح</span>
+        </div>
+      </div>
+      <hr class="sup-divider">
+      <div class="sup-card-bottom">
+        <div style="font-size:12px;color:#6b7280;">⭐ 4.9 &nbsp;·&nbsp; 87 صفقة</div>
+        <button class="btn-request">طلب توريد</button>
+      </div>
+    </div>
+
+    <!-- CARD 2 -->
+    <div class="sup-card" onclick="openSupplier()">
+      <div class="sup-card-top">
+        <div class="sup-avatar" style="background:linear-gradient(135deg,#1e40af,#3b82f6);">م</div>
+        <div class="sup-name">مؤسسة المتحدة للحديد</div>
+        <div class="sup-city">📍 الرياض — حي الملز</div>
+        <div class="sup-field">⚙️ حديد التسليح</div>
+        <div class="badges-row">
+          <span class="badge badge-verified">✔ موثوق</span>
+          <span class="badge badge-large">📦 كميات كبيرة</span>
+          <span class="badge badge-delivery">🚚 توصيل متاح</span>
+        </div>
+      </div>
+      <hr class="sup-divider">
+      <div class="sup-card-bottom">
+        <div style="font-size:12px;color:#6b7280;">⭐ 4.7 &nbsp;·&nbsp; 54 صفقة</div>
+        <button class="btn-request">طلب توريد</button>
+      </div>
+    </div>
+
+    <!-- CARD 3 -->
+    <div class="sup-card" onclick="openSupplier()">
+      <div class="sup-card-top">
+        <div class="sup-avatar" style="background:linear-gradient(135deg,#7c3aed,#a855f7);">ن</div>
+        <div class="sup-name">نور الكهرباء والإضاءة</div>
+        <div class="sup-city">📍 جدة — النزهة</div>
+        <div class="sup-field">⚡ كهرباء وإضاءة</div>
+        <div class="badges-row">
+          <span class="badge badge-verified">✔ موثوق</span>
+          <span class="badge badge-small">📦 كميات صغيرة</span>
+          <span class="badge badge-nodelivery">🚫 بدون توصيل</span>
+        </div>
+      </div>
+      <hr class="sup-divider">
+      <div class="sup-card-bottom">
+        <div style="font-size:12px;color:#6b7280;">⭐ 4.5 &nbsp;·&nbsp; 32 صفقة</div>
+        <button class="btn-request">طلب توريد</button>
+      </div>
+    </div>
+
+    <!-- CARD 4 - FEATURED -->
+    <div class="sup-card featured" onclick="openSupplier()">
+      <div class="sup-card-top">
+        <div class="featured-crown">👑</div>
+        <div class="sup-avatar" style="background:linear-gradient(135deg,#b45309,#f59e0b);">س</div>
+        <div class="sup-name">السلامة للسباكة والصرف</div>
+        <div class="sup-city">📍 الدمام — الكورنيش</div>
+        <div class="sup-field">🚿 سباكة وصرف</div>
+        <div class="badges-row">
+          <span class="badge badge-featured">👑 مميّز</span>
+          <span class="badge badge-verified">✔ موثوق</span>
+          <span class="badge badge-large">📦 كميات كبيرة</span>
+          <span class="badge badge-delivery">🚚 توصيل متاح</span>
+        </div>
+      </div>
+      <hr class="sup-divider">
+      <div class="sup-card-bottom">
+        <div style="font-size:12px;color:#6b7280;">⭐ 5.0 &nbsp;·&nbsp; 120 صفقة</div>
+        <button class="btn-request">طلب توريد</button>
+      </div>
+    </div>
+
+    <!-- CARD 5 -->
+    <div class="sup-card" onclick="openSupplier()">
+      <div class="sup-card-top">
+        <div class="sup-avatar" style="background:linear-gradient(135deg,#0f766e,#14b8a6);">ب</div>
+        <div class="sup-name">البناء الحديث للخشب والأبواب</div>
+        <div class="sup-city">📍 مكة المكرمة</div>
+        <div class="sup-field">🪵 خشب وأبواب</div>
+        <div class="badges-row">
+          <span class="badge badge-verified">✔ موثوق</span>
+          <span class="badge badge-small">📦 كميات صغيرة</span>
+          <span class="badge badge-delivery">🚚 توصيل متاح</span>
+        </div>
+      </div>
+      <hr class="sup-divider">
+      <div class="sup-card-bottom">
+        <div style="font-size:12px;color:#6b7280;">⭐ 4.3 &nbsp;·&nbsp; 29 صفقة</div>
+        <button class="btn-request">طلب توريد</button>
+      </div>
+    </div>
+
+    <!-- CARD 6 -->
+    <div class="sup-card" onclick="openSupplier()">
+      <div class="sup-card-top">
+        <div class="sup-avatar" style="background:linear-gradient(135deg,#dc2626,#f87171);">ع</div>
+        <div class="sup-name">عروس التكييف والميكانيكا</div>
+        <div class="sup-city">📍 جدة — الروضة</div>
+        <div class="sup-field">❄️ تكييف وميكانيكا</div>
+        <div class="badges-row">
+          <span class="badge badge-large">📦 كميات كبيرة</span>
+          <span class="badge badge-nodelivery">🚫 بدون توصيل</span>
+        </div>
+      </div>
+      <hr class="sup-divider">
+      <div class="sup-card-bottom">
+        <div style="font-size:12px;color:#6b7280;">⭐ 4.1 &nbsp;·&nbsp; 18 صفقة</div>
+        <button class="btn-request">طلب توريد</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="pagination">
+    <button class="page-btn">›</button>
+    <button class="page-btn active">1</button>
+    <button class="page-btn">2</button>
+    <button class="page-btn">3</button>
+    <button class="page-btn">4</button>
+    <button class="page-btn">‹</button>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-logo">UrBeld</div>
+      <div class="footer-sub">SAUDI</div>
+      <p class="footer-desc">المنصة الرقمية الأولى لربط أصحاب المشاريع بموردي مواد البناء في المملكة</p>
+    </div>
+    <div class="footer-col">
+      <h4>روابط سريعة</h4>
+      <a href="#">من نحن</a><a href="#">الأسئلة الشائعة</a><a href="#">المدونة</a>
+    </div>
+    <div class="footer-col">
+      <h4>خدماتنا</h4>
+      <a href="#">المناقصات</a><a href="#">الموردون</a><a href="#">الاستشارات</a>
+    </div>
+    <div class="footer-col">
+      <h4>للموردين</h4>
+      <a href="#">سجّل كمورد</a><a href="#">لوحة التحكم</a><a href="#">الدعم الفني</a>
+    </div>
+  </div>
+  <div class="footer-bottom">© جميع الحقوق محفوظة لمنصة أوربلد السعودية</div>
+</div>
+
+<!-- BROADCAST MODAL -->
+<div id="bcModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:20px;padding:2rem;max-width:460px;width:90%;text-align:center;">
+    <div style="font-size:40px;margin-bottom:.75rem;">📢</div>
+    <h3 style="font-size:19px;font-weight:800;color:#1a3a2a;margin-bottom:.5rem;">إرسال طلب جماعي للموردين</h3>
+    <p style="font-size:13px;color:#6b7280;margin-bottom:1.25rem;line-height:1.7;">سيصلك عرض سعر من كل مورد مسجّل في القسم الذي تختاره</p>
+    <select style="width:100%;padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font-family:'Tajawal',sans-serif;font-size:14px;margin-bottom:12px;outline:none;">
+      <option>اختر قسم التوريد</option>
+      <option>🧱 أسمنت وطوب (24 مورد)</option>
+      <option>⚙️ حديد التسليح (18 مورد)</option>
+      <option>⚡ كهرباء وإضاءة (31 مورد)</option>
+      <option>🚿 سباكة وصرف (15 مورد)</option>
+    </select>
+    <textarea placeholder="اكتب تفاصيل طلبك هنا (الكميات، المواصفات، الموعد المطلوب)..." style="width:100%;height:100px;padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font-family:'Tajawal',sans-serif;font-size:13px;resize:none;outline:none;margin-bottom:12px;"></textarea>
+    <button onclick="sendBroadcast()" style="width:100%;padding:12px;background:linear-gradient(135deg,#1a5c3a,#2d8f5e);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:800;font-family:'Tajawal',sans-serif;cursor:pointer;margin-bottom:10px;">📤 إرسال الطلب لجميع الموردين</button>
+    <button onclick="closeBroadcast()" style="width:100%;padding:10px;background:transparent;border:1.5px solid #e5e7eb;border-radius:10px;font-size:14px;font-family:'Tajawal',sans-serif;cursor:pointer;color:#6b7280;">إلغاء</button>
+  </div>
+</div>
+
+<script>
+function setCat(el){ document.querySelectorAll('.cat-box').forEach(b=>b.classList.remove('active')); el.classList.add('active'); }
+function showBroadcast(){ document.getElementById('bcModal').style.display='flex'; }
+function closeBroadcast(){ document.getElementById('bcModal').style.display='none'; }
+function sendBroadcast(){ alert('✅ تم إرسال طلبك لجميع الموردين في القسم المحدد!'); closeBroadcast(); }
+function openSupplier(){ /* navigate to single page */ }
+</script>
+</body>
+</html>

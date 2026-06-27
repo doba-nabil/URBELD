@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Tajawal',sans-serif;background:#f4f6f8;direction:rtl;color:#1a3a2a;}
+
+/* NAV */
+.navbar{background:#fff;border-bottom:1px solid #e5e7eb;padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:100;}
+.logo-text{font-size:22px;font-weight:700;color:#1a3a2a;letter-spacing:1px;}
+.logo-sub{font-size:10px;color:#1a3a2a;letter-spacing:3px;}
+.nav-links{display:flex;gap:1.5rem;}
+.nav-links a{font-size:14px;color:#374151;text-decoration:none;font-weight:500;}
+.nav-links a.active{color:#1a5c3a;font-weight:700;border-bottom:2px solid #1a5c3a;padding-bottom:2px;}
+.nav-actions{display:flex;gap:.75rem;align-items:center;}
+.btn-lang{background:#1a5c3a;color:#fff;border:none;border-radius:20px;padding:6px 16px;font-size:13px;font-family:'Tajawal',sans-serif;cursor:pointer;font-weight:500;}
+.btn-account{background:transparent;color:#1a5c3a;border:1.5px solid #1a5c3a;border-radius:20px;padding:6px 16px;font-size:13px;font-family:'Tajawal',sans-serif;cursor:pointer;}
+.btn-logout{background:transparent;color:#374151;border:1.5px solid #d1d5db;border-radius:20px;padding:6px 16px;font-size:13px;font-family:'Tajawal',sans-serif;cursor:pointer;}
+.bell-wrap{position:relative;font-size:20px;cursor:pointer;}
+.bell-dot{width:8px;height:8px;background:#ef4444;border-radius:50%;position:absolute;top:-2px;right:-2px;}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#1a5c3a 0%,#0f3d26 55%,#0a2918 100%);padding:2.5rem 2rem 6rem;color:#fff;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");}
+.breadcrumb{font-size:13px;color:rgba(255,255,255,.6);margin-bottom:1rem;position:relative;}
+.breadcrumb a{color:rgba(255,255,255,.6);text-decoration:none;}
+.breadcrumb a:hover{color:#fff;}
+.hero-body{display:flex;align-items:center;gap:1.5rem;position:relative;}
+.hero-icon-wrap{width:72px;height:72px;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.25);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:36px;flex-shrink:0;}
+.hero-title{font-size:28px;font-weight:800;margin-bottom:6px;}
+.hero-sub{font-size:14px;color:rgba(255,255,255,.75);max-width:540px;line-height:1.6;}
+.hero-stats{display:flex;gap:2rem;margin-top:1.25rem;flex-wrap:wrap;}
+.hstat{text-align:center;}
+.hstat-num{font-size:22px;font-weight:800;}
+.hstat-label{font-size:12px;color:rgba(255,255,255,.65);}
+
+/* BROADCAST */
+.bc-wrap{max-width:980px;margin:-2.5rem auto 0;padding:0 1.5rem;position:relative;z-index:20;}
+.bc-banner{background:linear-gradient(135deg,#0f172a,#1e293b);border-radius:18px;padding:1.5rem 2rem;display:flex;align-items:center;justify-content:space-between;gap:1.25rem;box-shadow:0 10px 40px rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.08);flex-wrap:wrap;}
+.bc-left{display:flex;align-items:center;gap:14px;}
+.bc-icon-wrap{width:52px;height:52px;background:linear-gradient(135deg,#3b82f6,#1d4ed8);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;}
+.bc-title{font-size:17px;font-weight:800;color:#fff;margin-bottom:3px;}
+.bc-sub{font-size:13px;color:rgba(255,255,255,.65);}
+.btn-bc{background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;border:none;border-radius:12px;padding:12px 24px;font-size:14px;font-weight:800;font-family:'Tajawal',sans-serif;cursor:pointer;white-space:nowrap;box-shadow:0 4px 14px rgba(59,130,246,.4);transition:all .2s;}
+.btn-bc:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(59,130,246,.5);}
+
+/* FILTER */
+.filter-wrap{max-width:980px;margin:1.25rem auto 0;padding:0 1.5rem;}
+.filter-card{background:#fff;border-radius:16px;padding:1.5rem;box-shadow:0 4px 20px rgba(0,0,0,.07);}
+.filter-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;}
+.filter-title{font-size:15px;font-weight:700;color:#1a3a2a;}
+.filter-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.fg label{font-size:12px;color:#6b7280;font-weight:600;display:block;margin-bottom:5px;}
+.fg select,.fg input{width:100%;padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:9px;font-family:'Tajawal',sans-serif;font-size:13px;color:#374151;background:#f9fafb;outline:none;transition:border .2s;}
+.fg select:focus,.fg input:focus{border-color:#1a5c3a;background:#fff;}
+.filter-actions{display:grid;grid-template-columns:1fr auto;gap:10px;margin-top:14px;}
+.btn-search{padding:10px;background:#1a5c3a;color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:700;font-family:'Tajawal',sans-serif;cursor:pointer;transition:background .2s;}
+.btn-search:hover{background:#0f3d26;}
+.btn-reset{padding:10px 16px;background:#f9fafb;color:#6b7280;border:1.5px solid #e5e7eb;border-radius:9px;font-size:13px;font-weight:600;font-family:'Tajawal',sans-serif;cursor:pointer;}
+
+/* SUB-CATEGORIES */
+.sub-wrap{max-width:980px;margin:1.5rem auto 0;padding:0 1.5rem;}
+.sub-title{font-size:17px;font-weight:700;color:#1a3a2a;margin-bottom:1rem;}
+.sub-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
+.sub-box{background:#fff;border-radius:13px;border:1.5px solid #e5e7eb;padding:16px 10px;text-align:center;cursor:pointer;transition:all .2s;position:relative;}
+.sub-box:hover,.sub-box.active{border-color:#1a5c3a;background:#e8f5ee;box-shadow:0 4px 14px rgba(26,92,58,.1);}
+.sub-box.active::after{content:'';position:absolute;bottom:-2px;left:50%;transform:translateX(-50%);width:24px;height:3px;background:#1a5c3a;border-radius:2px;}
+.sub-icon{font-size:28px;margin-bottom:7px;}
+.sub-label{font-size:12px;font-weight:700;color:#1a3a2a;}
+.sub-count{font-size:11px;color:#9ca3af;margin-top:2px;}
+.sub-box.active .sub-label{color:#1a5c3a;}
+
+/* COMPANIES SECTION */
+.companies-wrap{max-width:980px;margin:2rem auto 0;padding:0 1.5rem 3rem;}
+.sec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;}
+.sec-header-left h2{font-size:18px;font-weight:700;color:#1a3a2a;}
+.sec-header-left p{font-size:13px;color:#6b7280;margin-top:2px;}
+.sort-sel{font-family:'Tajawal',sans-serif;font-size:13px;color:#374151;border:1.5px solid #e5e7eb;border-radius:9px;padding:8px 12px;background:#fff;outline:none;}
+
+/* TABS */
+.tabs{display:flex;gap:8px;margin-bottom:1.5rem;border-bottom:2px solid #f0f0f0;padding-bottom:0;}
+.tab{padding:9px 20px;font-size:13px;font-weight:700;font-family:'Tajawal',sans-serif;cursor:pointer;border:none;background:transparent;color:#9ca3af;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s;}
+.tab.active{color:#1a5c3a;border-bottom-color:#1a5c3a;}
+.tab:hover:not(.active){color:#374151;}
+
+/* COMPANY CARD */
+.companies-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;}
+
+.co-card{background:#fff;border-radius:15px;border:1.5px solid #e5e7eb;overflow:hidden;transition:all .25s;cursor:pointer;position:relative;}
+.co-card:hover{box-shadow:0 8px 28px rgba(26,92,58,.13);border-color:#b6ddc8;transform:translateY(-2px);}
+.co-card.featured{border-color:#f59e0b;border-width:2px;}
+.co-card.featured::before{content:'';position:absolute;top:0;right:0;left:0;height:3px;background:linear-gradient(90deg,#f59e0b,#fbbf24);}
+
+.co-header{padding:1.25rem 1.25rem .75rem;position:relative;}
+.featured-ribbon{position:absolute;top:12px;left:12px;background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#fff;border-radius:6px;padding:3px 10px;font-size:11px;font-weight:800;display:flex;align-items:center;gap:4px;}
+.co-avatar{width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;color:#fff;margin-bottom:10px;}
+.co-name{font-size:15px;font-weight:700;color:#1a3a2a;margin-bottom:5px;padding-left:0;}
+.co-card.featured .co-name{padding-left:70px;}
+.co-city{font-size:12px;color:#6b7280;display:flex;align-items:center;gap:4px;margin-bottom:8px;}
+.co-sub{display:inline-flex;align-items:center;gap:4px;background:#e8f5ee;color:#1a5c3a;border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700;}
+
+/* BADGES */
+.badges-row{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px;}
+.badge{border-radius:20px;padding:3px 9px;font-size:11px;font-weight:600;border:1px solid transparent;}
+.b-verified{background:#dbeafe;color:#1d4ed8;border-color:#bfdbfe;}
+.b-featured{background:#fef9c3;color:#92400e;border-color:#fde68a;}
+.b-exp{background:#f3e8ff;color:#7c3aed;border-color:#e9d5ff;}
+.b-avail{background:#dcfce7;color:#15803d;border-color:#bbf7d0;}
+.b-busy{background:#fee2e2;color:#dc2626;border-color:#fca5a5;}
+
+/* STATS LINE */
+.co-stats{display:flex;gap:1rem;margin-top:10px;}
+.co-stat{font-size:12px;color:#6b7280;display:flex;align-items:center;gap:3px;}
+.co-stat strong{color:#1a3a2a;font-weight:700;}
+
+.co-divider{border:none;border-top:1px solid #f0f0f0;}
+.co-footer{padding:.85rem 1.25rem;display:flex;align-items:center;justify-content:space-between;}
+.rating-chip{font-size:13px;color:#92400e;font-weight:700;display:flex;align-items:center;gap:3px;}
+.btn-quote{background:#1a5c3a;color:#fff;border:none;border-radius:9px;padding:8px 18px;font-size:13px;font-weight:800;font-family:'Tajawal',sans-serif;cursor:pointer;transition:all .2s;}
+.btn-quote:hover{background:#0f3d26;}
+.btn-quote.featured-btn{background:linear-gradient(135deg,#f59e0b,#d97706);}
+.btn-quote.featured-btn:hover{background:linear-gradient(135deg,#d97706,#b45309);}
+
+/* PAGINATION */
+.pagination{display:flex;justify-content:center;gap:8px;margin-top:2rem;}
+.page-btn{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:9px;border:1.5px solid #e5e7eb;background:#fff;font-size:14px;font-family:'Tajawal',sans-serif;cursor:pointer;color:#374151;transition:all .2s;}
+.page-btn.active{background:#1a5c3a;color:#fff;border-color:#1a5c3a;}
+.page-btn:hover:not(.active){border-color:#1a5c3a;color:#1a5c3a;}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:999;align-items:center;justify-content:center;backdrop-filter:blur(3px);}
+.modal-box{background:#fff;border-radius:22px;padding:2rem;max-width:480px;width:92%;position:relative;}
+.modal-close{position:absolute;top:14px;left:16px;background:none;border:none;font-size:22px;cursor:pointer;color:#9ca3af;}
+.modal-icon{font-size:44px;text-align:center;margin-bottom:.75rem;}
+.modal-title{font-size:20px;font-weight:800;color:#1a3a2a;text-align:center;margin-bottom:.35rem;}
+.modal-sub{font-size:13px;color:#6b7280;text-align:center;margin-bottom:1.5rem;line-height:1.6;}
+.modal-sel{width:100%;padding:11px 13px;border:1.5px solid #e5e7eb;border-radius:10px;font-family:'Tajawal',sans-serif;font-size:14px;margin-bottom:10px;outline:none;background:#f9fafb;}
+.modal-sel:focus{border-color:#1a5c3a;background:#fff;}
+.modal-ta{width:100%;height:100px;padding:11px 13px;border:1.5px solid #e5e7eb;border-radius:10px;font-family:'Tajawal',sans-serif;font-size:13px;resize:none;outline:none;margin-bottom:10px;background:#f9fafb;}
+.modal-ta:focus{border-color:#1a5c3a;background:#fff;}
+.btn-modal-send{width:100%;padding:13px;background:linear-gradient(135deg,#1a5c3a,#2d8f5e);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:800;font-family:'Tajawal',sans-serif;cursor:pointer;margin-bottom:9px;box-shadow:0 4px 14px rgba(26,92,58,.25);}
+.btn-modal-cancel{width:100%;padding:11px;background:transparent;border:1.5px solid #e5e7eb;border-radius:12px;font-size:14px;font-family:'Tajawal',sans-serif;cursor:pointer;color:#6b7280;}
+
+/* FOOTER */
+.footer{background:#0f3d26;color:#fff;padding:2rem 2rem 1rem;margin-top:1rem;}
+.footer-inner{max-width:980px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2rem;margin-bottom:1.5rem;}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.15);padding-top:1rem;text-align:center;font-size:12px;color:rgba(255,255,255,.5);max-width:980px;margin:0 auto;}
+
+@media(max-width:720px){
+  .sub-grid{grid-template-columns:repeat(3,1fr);}
+  .companies-grid{grid-template-columns:1fr;}
+  .filter-grid{grid-template-columns:1fr 1fr;}
+  .nav-links{display:none;}
+  .footer-inner{grid-template-columns:1fr 1fr;}
+  .bc-banner{flex-direction:column;text-align:center;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="navbar">
+  <div><div class="logo-text">UrBeld</div><div class="logo-sub">SAUDI</div></div>
+  <div class="nav-links">
+    <a href="#">الرئيسية</a>
+    <a href="#" class="active">الخدمات</a>
+    <a href="#">الموردون</a>
+    <a href="#">المناقصات</a>
+    <a href="#">باقات الاشتراك</a>
+    <a href="#">تواصل معنا</a>
+  </div>
+  <div class="nav-actions">
+    <div class="bell-wrap">🔔<div class="bell-dot"></div></div>
+    <button class="btn-account">حسابي</button>
+    <button class="btn-lang">English</button>
+    <button class="btn-logout">خروج</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div style="max-width:980px;margin:0 auto;padding:0 1.5rem;">
+    <div class="breadcrumb">
+      <a href="#">الرئيسية</a> ← <a href="#">الأقسام</a> ← المقاولات العامة
+    </div>
+    <div class="hero-body">
+      <div class="hero-icon-wrap">🏗️</div>
+      <div>
+        <h1 class="hero-title">المقاولات العامة والإنشاء</h1>
+        <p class="hero-sub">تصفّح أفضل شركات المقاولات المعتمدة في المملكة، وأرسل طلب عرض سعر مباشرةً لأي شركة أو لجميع الشركات في تخصص واحد</p>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="hstat"><div class="hstat-num">148</div><div class="hstat-label">شركة مسجّلة</div></div>
+      <div class="hstat"><div class="hstat-num">32</div><div class="hstat-label">شركة مميّزة</div></div>
+      <div class="hstat"><div class="hstat-num">6</div><div class="hstat-label">أقسام فرعية</div></div>
+      <div class="hstat"><div class="hstat-num">94%</div><div class="hstat-label">نسبة رضا العملاء</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- BROADCAST BANNER -->
+<div class="bc-wrap">
+  <div class="bc-banner">
+    <div class="bc-left">
+      <div class="bc-icon-wrap">📢</div>
+      <div>
+        <div class="bc-title">وفّر وقتك — أرسل طلبك لجميع الشركات دفعةً واحدة!</div>
+        <div class="bc-sub">اختر التخصص، اكتب متطلبات مشروعك، وستصلك عروض الأسعار من جميع الشركات المسجّلة في ذلك القسم</div>
+      </div>
+    </div>
+    <button class="btn-bc" onclick="openModal()">📤 إرسال طلب جماعي</button>
+  </div>
+</div>
+
+<!-- FILTER -->
+<div class="filter-wrap">
+  <div class="filter-card">
+    <div class="filter-top">
+      <div class="filter-title">🔍 بحث في شركات المقاولات</div>
+    </div>
+    <div class="filter-grid">
+      <div class="fg">
+        <label>المنطقة</label>
+        <select>
+          <option>كل المناطق</option>
+          <option>منطقة مكة المكرمة</option>
+          <option>منطقة الرياض</option>
+          <option>المنطقة الشرقية</option>
+          <option>منطقة المدينة المنورة</option>
+          <option>منطقة عسير</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>المدينة</label>
+        <select>
+          <option>كل المدن</option>
+          <option>جدة</option>
+          <option>الرياض</option>
+          <option>مكة المكرمة</option>
+          <option>الدمام</option>
+          <option>المدينة المنورة</option>
+          <option>أبها</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>القسم الفرعي</label>
+        <select id="subFilter">
+          <option>كل الأقسام</option>
+          <option>مقاولات عامة</option>
+          <option>تشطيبات ودهانات</option>
+          <option>أعمال كهربائية</option>
+          <option>أعمال ميكانيكية</option>
+          <option>حفر وتسوية</option>
+          <option>مقاولات صرف صحي</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>حجم الشركة</label>
+        <select>
+          <option>الكل</option>
+          <option>كبيرة (A)</option>
+          <option>متوسطة (B/C)</option>
+          <option>صغيرة</option>
+        </select>
+      </div>
+    </div>
+    <div class="filter-actions">
+      <button class="btn-search">🔍 بحث</button>
+      <button class="btn-reset">إعادة تعيين</button>
+    </div>
+  </div>
+</div>
+
+<!-- SUB-CATEGORIES -->
+<div class="sub-wrap">
+  <div class="sub-title">الأقسام الفرعية</div>
+  <div class="sub-grid">
+    <div class="sub-box active" onclick="setSub(this,'مقاولات عامة')">
+      <div class="sub-icon">🏗️</div>
+      <div class="sub-label">مقاولات عامة</div>
+      <div class="sub-count">48 شركة</div>
+    </div>
+    <div class="sub-box" onclick="setSub(this,'تشطيبات')">
+      <div class="sub-icon">🎨</div>
+      <div class="sub-label">تشطيبات ودهانات</div>
+      <div class="sub-count">36 شركة</div>
+    </div>
+    <div class="sub-box" onclick="setSub(this,'كهرباء')">
+      <div class="sub-icon">⚡</div>
+      <div class="sub-label">أعمال كهربائية</div>
+      <div class="sub-count">29 شركة</div>
+    </div>
+    <div class="sub-box" onclick="setSub(this,'ميكانيكا')">
+      <div class="sub-icon">⚙️</div>
+      <div class="sub-label">أعمال ميكانيكية</div>
+      <div class="sub-count">24 شركة</div>
+    </div>
+    <div class="sub-box" onclick="setSub(this,'حفر وتسوية')">
+      <div class="sub-icon">🚜</div>
+      <div class="sub-label">حفر وتسوية</div>
+      <div class="sub-count">11 شركة</div>
+    </div>
+  </div>
+</div>
+
+<!-- COMPANIES -->
+<div class="companies-wrap">
+  <div class="sec-header">
+    <div class="sec-header-left">
+      <h2>شركات <span id="activeSubLabel">المقاولات العامة</span></h2>
+      <p id="countLabel">48 شركة مسجّلة في هذا القسم</p>
+    </div>
+    <select class="sort-sel">
+      <option>المميّزون أولاً</option>
+      <option>الأعلى تقييماً</option>
+      <option>الأحدث تسجيلاً</option>
+      <option>الأكثر مشاريع</option>
+    </select>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="setTab(this)">الكل (48)</button>
+    <button class="tab" onclick="setTab(this)">المميّزون (12)</button>
+    <button class="tab" onclick="setTab(this)">موثوق (28)</button>
+    <button class="tab" onclick="setTab(this)">متاح الآن (35)</button>
+  </div>
+
+  <div class="companies-grid">
+
+    <!-- CARD 1 FEATURED -->
+    <div class="co-card featured">
+      <div class="co-header">
+        <div class="featured-ribbon">👑 مميّز</div>
+        <div class="co-avatar" style="background:linear-gradient(135deg,#1a5c3a,#2d8f5e);">ن</div>
+        <div class="co-name">شركة النجمة للمقاولات</div>
+        <div class="co-city">📍 جدة — حي الصناعية</div>
+        <div class="co-sub">🏗️ مقاولات عامة</div>
+        <div class="badges-row">
+          <span class="badge b-featured">👑 مميّز</span>
+          <span class="badge b-verified">✔ موثوق</span>
+          <span class="badge b-exp">🎓 +15 سنة خبرة</span>
+          <span class="badge b-avail">● متاح</span>
+        </div>
+        <div class="co-stats">
+          <div class="co-stat">🏆 <strong>143</strong> مشروع</div>
+          <div class="co-stat">📋 تصنيف <strong>A</strong></div>
+        </div>
+      </div>
+      <hr class="co-divider">
+      <div class="co-footer">
+        <div class="rating-chip">⭐ 5.0 <span style="color:#9ca3af;font-weight:400;font-size:11px;">(87 تقييم)</span></div>
+        <button class="btn-quote featured-btn">طلب عرض سعر</button>
+      </div>
+    </div>
+
+    <!-- CARD 2 FEATURED -->
+    <div class="co-card featured">
+      <div class="co-header">
+        <div class="featured-ribbon">👑 مميّز</div>
+        <div class="co-avatar" style="background:linear-gradient(135deg,#1e40af,#3b82f6);">م</div>
+        <div class="co-name">مجموعة المشاريع الكبرى</div>
+        <div class="co-city">📍 الرياض — العليا</div>
+        <div class="co-sub">🎨 تشطيبات ودهانات</div>
+        <div class="badges-row">
+          <span class="badge b-featured">👑 مميّز</span>
+          <span class="badge b-verified">✔ موثوق</span>
+          <span class="badge b-exp">🎓 +10 سنة خبرة</span>
+          <span class="badge b-avail">● متاح</span>
+        </div>
+        <div class="co-stats">
+          <div class="co-stat">🏆 <strong>98</strong> مشروع</div>
+          <div class="co-stat">📋 تصنيف <strong>A</strong></div>
+        </div>
+      </div>
+      <hr class="co-divider">
+      <div class="co-footer">
+        <div class="rating-chip">⭐ 4.9 <span style="color:#9ca3af;font-weight:400;font-size:11px;">(64 تقييم)</span></div>
+        <button class="btn-quote featured-btn">طلب عرض سعر</button>
+      </div>
+    </div>
+
+    <!-- CARD 3 -->
+    <div class="co-card">
+      <div class="co-header">
+        <div class="co-avatar" style="background:linear-gradient(135deg,#7c3aed,#a855f7);">ع</div>
+        <div class="co-name">العمران للإنشاء والتطوير</div>
+        <div class="co-city">📍 جدة — النزهة</div>
+        <div class="co-sub">🏗️ مقاولات عامة</div>
+        <div class="badges-row">
+          <span class="badge b-verified">✔ موثوق</span>
+          <span class="badge b-exp">🎓 +8 سنة خبرة</span>
+          <span class="badge b-avail">● متاح</span>
+        </div>
+        <div class="co-stats">
+          <div class="co-stat">🏆 <strong>67</strong> مشروع</div>
+          <div class="co-stat">📋 تصنيف <strong>B</strong></div>
+        </div>
+      </div>
+      <hr class="co-divider">
+      <div class="co-footer">
+        <div class="rating-chip">⭐ 4.7 <span style="color:#9ca3af;font-weight:400;font-size:11px;">(41 تقييم)</span></div>
+        <button class="btn-quote">طلب عرض سعر</button>
+      </div>
+    </div>
+
+    <!-- CARD 4 -->
+    <div class="co-card">
+      <div class="co-header">
+        <div class="co-avatar" style="background:linear-gradient(135deg,#0f766e,#14b8a6);">ب</div>
+        <div class="co-name">البنيان للأعمال الكهربائية</div>
+        <div class="co-city">📍 الدمام — العزيزية</div>
+        <div class="co-sub">⚡ أعمال كهربائية</div>
+        <div class="badges-row">
+          <span class="badge b-verified">✔ موثوق</span>
+          <span class="badge b-exp">🎓 +6 سنة خبرة</span>
+          <span class="badge b-busy">● مشغول</span>
+        </div>
+        <div class="co-stats">
+          <div class="co-stat">🏆 <strong>52</strong> مشروع</div>
+          <div class="co-stat">📋 تصنيف <strong>B</strong></div>
+        </div>
+      </div>
+      <hr class="co-divider">
+      <div class="co-footer">
+        <div class="rating-chip">⭐ 4.6 <span style="color:#9ca3af;font-weight:400;font-size:11px;">(38 تقييم)</span></div>
+        <button class="btn-quote">طلب عرض سعر</button>
+      </div>
+    </div>
+
+    <!-- CARD 5 FEATURED -->
+    <div class="co-card featured">
+      <div class="co-header">
+        <div class="featured-ribbon">👑 مميّز</div>
+        <div class="co-avatar" style="background:linear-gradient(135deg,#b45309,#f59e0b);">س</div>
+        <div class="co-name">شركة السلام للحفر والتسوية</div>
+        <div class="co-city">📍 مكة المكرمة</div>
+        <div class="co-sub">🚜 حفر وتسوية</div>
+        <div class="badges-row">
+          <span class="badge b-featured">👑 مميّز</span>
+          <span class="badge b-verified">✔ موثوق</span>
+          <span class="badge b-exp">🎓 +12 سنة خبرة</span>
+          <span class="badge b-avail">● متاح</span>
+        </div>
+        <div class="co-stats">
+          <div class="co-stat">🏆 <strong>210</strong> مشروع</div>
+          <div class="co-stat">📋 تصنيف <strong>A</strong></div>
+        </div>
+      </div>
+      <hr class="co-divider">
+      <div class="co-footer">
+        <div class="rating-chip">⭐ 4.8 <span style="color:#9ca3af;font-weight:400;font-size:11px;">(112 تقييم)</span></div>
+        <button class="btn-quote featured-btn">طلب عرض سعر</button>
+      </div>
+    </div>
+
+    <!-- CARD 6 -->
+    <div class="co-card">
+      <div class="co-header">
+        <div class="co-avatar" style="background:linear-gradient(135deg,#dc2626,#f87171);">ر</div>
+        <div class="co-name">الريادة للأعمال الميكانيكية</div>
+        <div class="co-city">📍 جدة — الروضة</div>
+        <div class="co-sub">⚙️ أعمال ميكانيكية</div>
+        <div class="badges-row">
+          <span class="badge b-exp">🎓 +5 سنة خبرة</span>
+          <span class="badge b-avail">● متاح</span>
+        </div>
+        <div class="co-stats">
+          <div class="co-stat">🏆 <strong>29</strong> مشروع</div>
+          <div class="co-stat">📋 تصنيف <strong>C</strong></div>
+        </div>
+      </div>
+      <hr class="co-divider">
+      <div class="co-footer">
+        <div class="rating-chip">⭐ 4.3 <span style="color:#9ca3af;font-weight:400;font-size:11px;">(19 تقييم)</span></div>
+        <button class="btn-quote">طلب عرض سعر</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="pagination">
+    <button class="page-btn">›</button>
+    <button class="page-btn active">1</button>
+    <button class="page-btn">2</button>
+    <button class="page-btn">3</button>
+    <button class="page-btn">4</button>
+    <button class="page-btn">‹</button>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="footer-inner">
+    <div>
+      <div style="font-size:20px;font-weight:700;letter-spacing:1px;">UrBeld</div>
+      <div style="font-size:9px;letter-spacing:3px;opacity:.8;">SAUDI</div>
+      <p style="font-size:13px;color:rgba(255,255,255,.7);margin-top:8px;line-height:1.7;">المنصة الرقمية الأولى لربط أصحاب المشاريع بشركات المقاولات والخدمات الهندسية في المملكة</p>
+    </div>
+    <div>
+      <h4 style="font-size:14px;font-weight:700;margin-bottom:10px;">روابط سريعة</h4>
+      <a href="#" style="display:block;font-size:13px;color:rgba(255,255,255,.65);text-decoration:none;margin-bottom:6px;">من نحن</a>
+      <a href="#" style="display:block;font-size:13px;color:rgba(255,255,255,.65);text-decoration:none;margin-bottom:6px;">الأسئلة الشائعة</a>
+      <a href="#" style="display:block;font-size:13px;color:rgba(255,255,255,.65);text-decoration:none;">المدونة</a>
+    </div>
+    <div>
+      <h4 style="font-size:14px;font-weight:700;margin-bottom:10px;">خدماتنا</h4>
+      <a href="#" style="display:block;font-size:13px;color:rgba(255,255,255,.65);text-decoration:none;margin-bottom:6px;">المناقصات</a>
+      <a href="#" style="display:block;font-size:13px;color:rgba(255,255,255,.65);text-decoration:none;margin-bottom:6px;">الموردون</a>
+      <a href="#" style="display:block;font-size:13px;color:rgba(255,255,255,.65);text-decoration:none;">الاستشارات</a>
+    </div>
+    <div>
+      <h4 style="font-size:14px;font-weight:700;margin-bottom:10px;">للشركات</h4>
+      <a href="#" style="display:block;font-size:13px;color:rgba(255,255,255,.65);text-decoration:none;margin-bottom:6px;">سجّل شركتك</a>
+      <a href="#" style="display:block;font-size:13px;color:rgba(255,255,255,.65);text-decoration:none;margin-bottom:6px;">لوحة التحكم</a>
+      <a href="#" style="display:block;font-size:13px;color:rgba(255,255,255,.65);text-decoration:none;">الدعم الفني</a>
+    </div>
+  </div>
+  <div class="footer-bottom">© جميع الحقوق محفوظة لمنصة أوربلد السعودية</div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="bcModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-icon">📢</div>
+    <div class="modal-title">إرسال طلب لجميع الشركات</div>
+    <div class="modal-sub">اختر القسم الفرعي وسيصلك عرض سعر من كل شركة مسجّلة — وفّر وقتك وقارن بين العروض بسهولة</div>
+    <select class="modal-sel">
+      <option>اختر القسم الفرعي</option>
+      <option>🏗️ مقاولات عامة (48 شركة)</option>
+      <option>🎨 تشطيبات ودهانات (36 شركة)</option>
+      <option>⚡ أعمال كهربائية (29 شركة)</option>
+      <option>⚙️ أعمال ميكانيكية (24 شركة)</option>
+      <option>🚜 حفر وتسوية (11 شركة)</option>
+    </select>
+    <select class="modal-sel">
+      <option>اختر المدينة المطلوبة</option>
+      <option>جدة</option>
+      <option>الرياض</option>
+      <option>مكة المكرمة</option>
+      <option>الدمام</option>
+    </select>
+    <textarea class="modal-ta" placeholder="اكتب تفاصيل مشروعك: نوع المشروع، المساحة، المتطلبات، الموعد المطلوب..."></textarea>
+    <button class="btn-modal-send" onclick="sendReq()">📤 إرسال للجميع</button>
+    <button class="btn-modal-cancel" onclick="closeModal()">إلغاء</button>
+  </div>
+</div>
+
+<script>
+function setSub(el, label) {
+  document.querySelectorAll('.sub-box').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('activeSubLabel').textContent = label;
+  document.getElementById('countLabel').textContent = el.querySelector('.sub-count').textContent + ' مسجّلة في هذا القسم';
+}
+function setTab(el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+function openModal() {
+  document.getElementById('bcModal').style.display = 'flex';
+}
+function closeModal() {
+  document.getElementById('bcModal').style.display = 'none';
+}
+function sendReq() {
+  alert('✅ تم إرسال طلبك لجميع الشركات في القسم المحدد!');
+  closeModal();
+}
+document.getElementById('bcModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+</script>
+</body>
+</html>

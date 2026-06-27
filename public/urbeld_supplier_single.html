@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Tajawal',sans-serif; background:#f4f6f8; direction:rtl; }
+
+.navbar { background:#fff; border-bottom:1px solid #e5e7eb; padding:0 2rem; display:flex; align-items:center; justify-content:space-between; height:64px; }
+.logo-text { font-size:22px; font-weight:700; color:#1a3a2a; letter-spacing:1px; }
+.logo-sub { font-size:10px; color:#1a3a2a; letter-spacing:3px; }
+.nav-links { display:flex; gap:1.5rem; }
+.nav-links a { font-size:14px; color:#374151; text-decoration:none; font-weight:500; }
+.nav-actions { display:flex; gap:.75rem; align-items:center; }
+.btn-lang { background:#1a5c3a; color:#fff; border:none; border-radius:20px; padding:6px 16px; font-size:13px; font-family:'Tajawal',sans-serif; cursor:pointer; }
+.btn-account { background:transparent; color:#1a5c3a; border:1.5px solid #1a5c3a; border-radius:20px; padding:6px 16px; font-size:13px; font-family:'Tajawal',sans-serif; cursor:pointer; }
+.btn-logout { background:transparent; color:#374151; border:1.5px solid #d1d5db; border-radius:20px; padding:6px 16px; font-size:13px; font-family:'Tajawal',sans-serif; cursor:pointer; }
+.bell-wrap { position:relative; font-size:20px; cursor:pointer; }
+.bell-dot { width:8px; height:8px; background:#ef4444; border-radius:50%; position:absolute; top:-2px; right:-2px; }
+
+/* HERO PROFILE STRIP */
+.profile-hero {
+  background:linear-gradient(135deg,#1a5c3a 0%,#0f3d26 60%,#0a2918 100%);
+  padding:2rem 2rem 4.5rem; color:#fff;
+}
+.breadcrumb { font-size:13px; color:rgba(255,255,255,.6); margin-bottom:1rem; }
+.breadcrumb a { color:rgba(255,255,255,.6); text-decoration:none; }
+.profile-header { display:flex; align-items:center; gap:1.5rem; flex-wrap:wrap; }
+.profile-avatar-lg {
+  width:80px; height:80px; border-radius:18px;
+  background:linear-gradient(135deg,#fff3,#fff1);
+  border:3px solid rgba(255,255,255,.3);
+  display:flex; align-items:center; justify-content:center;
+  font-size:36px; font-weight:800; color:#fff; flex-shrink:0;
+}
+.profile-info h1 { font-size:24px; font-weight:800; margin-bottom:6px; }
+.profile-meta { display:flex; gap:12px; flex-wrap:wrap; }
+.pmeta { font-size:13px; color:rgba(255,255,255,.8); display:flex; align-items:center; gap:4px; }
+.hero-badges { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+.hb { display:inline-flex; align-items:center; gap:4px; border-radius:20px; padding:4px 12px; font-size:12px; font-weight:700; border:1.5px solid transparent; }
+.hb-feat { background:rgba(245,158,11,.2); border-color:rgba(245,158,11,.4); color:#fde68a; }
+.hb-verif { background:rgba(59,130,246,.2); border-color:rgba(59,130,246,.4); color:#bfdbfe; }
+.hb-large { background:rgba(34,197,94,.15); border-color:rgba(34,197,94,.3); color:#bbf7d0; }
+.hb-delivery { background:rgba(16,185,129,.15); border-color:rgba(16,185,129,.3); color:#a7f3d0; }
+
+/* PAGE LAYOUT */
+.page-wrap { max-width:960px; margin:-2.5rem auto 0; padding:0 1.5rem 3rem; display:grid; grid-template-columns:1fr 290px; gap:1.25rem; align-items:start; }
+
+/* CARD BASE */
+.card { background:#fff; border-radius:16px; border:1.5px solid #e5e7eb; overflow:hidden; margin-bottom:1.25rem; }
+.card:last-child { margin-bottom:0; }
+.sec { padding:1.5rem; border-bottom:1px solid #f0f0f0; }
+.sec:last-child { border-bottom:none; }
+.sec-title { font-size:15px; font-weight:700; color:#1a3a2a; margin-bottom:1rem; display:flex; align-items:center; gap:6px; }
+
+/* STATS ROW */
+.stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+.stat-box { background:#f9fafb; border-radius:10px; border:1.5px solid #e5e7eb; padding:12px; text-align:center; }
+.stat-box.green { background:#e8f5ee; border-color:#b6ddc8; }
+.stat-num { font-size:22px; font-weight:800; color:#1a3a2a; }
+.stat-box.green .stat-num { color:#1a5c3a; }
+.stat-label { font-size:11px; color:#9ca3af; margin-top:3px; }
+
+/* ABOUT */
+.about-text { font-size:14px; color:#374151; line-height:1.85; }
+
+/* PRODUCTS GRID */
+.products-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.product-card { border-radius:10px; overflow:hidden; border:1.5px solid #e5e7eb; cursor:pointer; transition:all .2s; }
+.product-card:hover { border-color:#b6ddc8; box-shadow:0 3px 12px rgba(26,92,58,.1); }
+.product-img {
+  height:100px; display:flex; align-items:center; justify-content:center;
+  font-size:40px;
+}
+.product-info { padding:8px 10px; }
+.product-name { font-size:13px; font-weight:700; color:#1a3a2a; }
+.product-detail { font-size:11px; color:#9ca3af; margin-top:2px; }
+.product-price { font-size:13px; font-weight:700; color:#1a5c3a; margin-top:4px; }
+
+/* DISCOUNTS */
+.discount-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+.discount-card { border-radius:10px; border:1.5px dashed #fde68a; background:#fffbeb; padding:14px; position:relative; overflow:hidden; }
+.discount-card::before { content:''; position:absolute; top:-15px; left:-15px; width:50px; height:50px; background:#fef9c3; border-radius:50%; }
+.disc-pct { font-size:28px; font-weight:800; color:#b45309; }
+.disc-title { font-size:14px; font-weight:700; color:#1a3a2a; margin-top:4px; }
+.disc-desc { font-size:12px; color:#92400e; margin-top:3px; }
+.disc-badge { display:inline-block; background:#f59e0b; color:#fff; border-radius:6px; padding:2px 8px; font-size:11px; font-weight:700; margin-top:6px; }
+
+/* DELIVERY */
+.delivery-status-box { display:flex; align-items:center; gap:12px; background:#ecfdf5; border:1.5px solid #6ee7b7; border-radius:12px; padding:1rem 1.25rem; margin-bottom:1rem; }
+.del-icon { font-size:30px; }
+.del-title { font-size:15px; font-weight:700; color:#065f46; }
+.del-sub { font-size:13px; color:#047857; margin-top:2px; }
+.cities-title { font-size:13px; font-weight:700; color:#1a3a2a; margin-bottom:8px; }
+.cities-grid { display:flex; flex-wrap:wrap; gap:7px; }
+.city-chip { background:#f0fdf4; color:#1a5c3a; border:1px solid #b6ddc8; border-radius:20px; padding:4px 12px; font-size:12px; font-weight:600; }
+
+/* REVIEWS */
+.reviews-list { display:flex; flex-direction:column; gap:12px; }
+.review-item { background:#f9fafb; border-radius:10px; padding:12px 14px; border:1px solid #f0f0f0; }
+.review-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:5px; }
+.reviewer-name { font-size:14px; font-weight:700; color:#1a3a2a; }
+.review-stars { font-size:13px; color:#f59e0b; }
+.review-text { font-size:13px; color:#6b7280; line-height:1.6; }
+.review-date { font-size:11px; color:#d1d5db; margin-top:4px; }
+
+/* SIDEBAR */
+.sidebar { display:flex; flex-direction:column; gap:1.25rem; }
+.cta-card { background:#fff; border-radius:16px; border:1.5px solid #e5e7eb; padding:1.5rem; }
+.cta-title { font-size:13px; font-weight:700; color:#1a3a2a; text-align:center; margin-bottom:1rem; }
+.btn-main { width:100%; padding:13px; background:linear-gradient(135deg,#1a5c3a,#2d8f5e); color:#fff; border:none; border-radius:12px; font-size:15px; font-weight:800; font-family:'Tajawal',sans-serif; cursor:pointer; box-shadow:0 4px 14px rgba(26,92,58,.25); margin-bottom:10px; display:flex; align-items:center; justify-content:center; gap:7px; transition:all .2s; }
+.btn-main:hover { background:linear-gradient(135deg,#0f3d26,#1a5c3a); transform:translateY(-1px); }
+.btn-sec { width:100%; padding:11px; background:transparent; color:#1a5c3a; border:1.5px solid #1a5c3a; border-radius:10px; font-size:14px; font-weight:700; font-family:'Tajawal',sans-serif; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:7px; transition:all .2s; }
+.btn-sec:hover { background:#e8f5ee; }
+
+.info-card { background:#fff; border-radius:16px; border:1.5px solid #e5e7eb; padding:1.25rem; }
+.info-card h4 { font-size:14px; font-weight:700; color:#1a3a2a; margin-bottom:12px; }
+.info-row { display:flex; align-items:center; justify-content:space-between; padding:8px 0; border-bottom:1px solid #f0f0f0; font-size:13px; }
+.info-row:last-child { border-bottom:none; }
+.ir-label { color:#9ca3af; }
+.ir-val { font-weight:700; color:#1a3a2a; }
+.ir-val.green { color:#1a5c3a; }
+
+.rating-big { text-align:center; padding:1rem 0; }
+.rating-num { font-size:48px; font-weight:800; color:#1a3a2a; line-height:1; }
+.rating-stars { font-size:22px; color:#f59e0b; margin:4px 0; }
+.rating-count { font-size:13px; color:#9ca3af; }
+.rating-bars { margin-top:.75rem; }
+.rbar-row { display:flex; align-items:center; gap:8px; margin-bottom:5px; font-size:12px; }
+.rbar-label { width:30px; color:#6b7280; text-align:center; }
+.rbar-track { flex:1; height:6px; background:#f0f0f0; border-radius:3px; overflow:hidden; }
+.rbar-fill { height:100%; background:#f59e0b; border-radius:3px; }
+.rbar-count { width:20px; color:#9ca3af; font-size:11px; }
+
+@media(max-width:700px){
+  .page-wrap { grid-template-columns:1fr; }
+  .stats-row { grid-template-columns:repeat(2,1fr); }
+  .products-grid { grid-template-columns:repeat(2,1fr); }
+  .discount-grid { grid-template-columns:1fr; }
+  .nav-links { display:none; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="navbar">
+  <div><div class="logo-text">UrBeld</div><div class="logo-sub">SAUDI</div></div>
+  <div class="nav-links">
+    <a href="#">الرئيسية</a><a href="#">الموردون</a><a href="#">المناقصات</a>
+    <a href="#">باقات الاشتراك</a><a href="#">تواصل معنا</a>
+  </div>
+  <div class="nav-actions">
+    <div class="bell-wrap">🔔<div class="bell-dot"></div></div>
+    <button class="btn-account">حسابي</button>
+    <button class="btn-lang">English</button>
+    <button class="btn-logout">خروج</button>
+  </div>
+</nav>
+
+<!-- HERO PROFILE -->
+<div class="profile-hero">
+  <div class="breadcrumb">
+    <a href="#">الرئيسية</a> ← <a href="#">الموردون</a> ← شركة رشيد للمواد الإنشائية
+  </div>
+  <div class="profile-header">
+    <div class="profile-avatar-lg">ر</div>
+    <div class="profile-info">
+      <h1>شركة رشيد للمواد الإنشائية</h1>
+      <div class="profile-meta">
+        <span class="pmeta">📍 جدة — حي الصناعية</span>
+        <span class="pmeta">🧱 أسمنت وطوب</span>
+        <span class="pmeta">📅 عضو منذ 2021</span>
+      </div>
+      <div class="hero-badges">
+        <span class="hb hb-feat">👑 مورد مميّز</span>
+        <span class="hb hb-verif">✔ موثوق</span>
+        <span class="hb hb-large">📦 كميات كبيرة</span>
+        <span class="hb hb-delivery">🚚 توصيل متاح</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE BODY -->
+<div class="page-wrap">
+
+  <!-- MAIN -->
+  <div>
+
+    <!-- STATS -->
+    <div class="card">
+      <div class="sec">
+        <div class="sec-title">📊 إحصائيات المورد</div>
+        <div class="stats-row">
+          <div class="stat-box green">
+            <div class="stat-num">87</div>
+            <div class="stat-label">صفقة مكتملة</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num">4.9</div>
+            <div class="stat-label">متوسط التقييم</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num">98%</div>
+            <div class="stat-label">نسبة الرضا</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num">3 سنوات</div>
+            <div class="stat-label">مدة العضوية</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABOUT -->
+    <div class="card">
+      <div class="sec">
+        <div class="sec-title">🏢 عن الشركة</div>
+        <p class="about-text">شركة رشيد للمواد الإنشائية من الشركات الرائدة في توريد مواد البناء بمنطقة مكة المكرمة منذ عام 2009. نتخصص في توريد الأسمنت بجميع أنواعه، الطوب الأحمر والرملي، والبلوك الخرساني بمختلف المقاسات.<br><br>
+        نتعامل مع كبرى المقاولات والمطورين العقاريين في جدة ومكة والمدينة، ونوفر خدمة توصيل احترافية لجميع مناطق المملكة للكميات الكبيرة. التزامنا بالجودة والمواعيد جعلنا الخيار الأول لأكثر من 200 عميل.</p>
+      </div>
+    </div>
+
+    <!-- PRODUCTS -->
+    <div class="card">
+      <div class="sec">
+        <div class="sec-title">📦 المنتجات المتاحة</div>
+        <div class="products-grid">
+          <div class="product-card">
+            <div class="product-img" style="background:#fef9c3;">🧱</div>
+            <div class="product-info">
+              <div class="product-name">أسمنت بورتلاندي عادي</div>
+              <div class="product-detail">كيس 50 كجم · مخزون وفير</div>
+              <div class="product-price">22 ريال / كيس</div>
+            </div>
+          </div>
+          <div class="product-card">
+            <div class="product-img" style="background:#fce7f3;">🟥</div>
+            <div class="product-info">
+              <div class="product-name">طوب أحمر طيني</div>
+              <div class="product-detail">مقاس 25×12×6 · بالألف</div>
+              <div class="product-price">380 ريال / ألف</div>
+            </div>
+          </div>
+          <div class="product-card">
+            <div class="product-img" style="background:#e0f2fe;">⬜</div>
+            <div class="product-info">
+              <div class="product-name">بلوك خرساني</div>
+              <div class="product-detail">20×20×40 سم · بالطن</div>
+              <div class="product-price">95 ريال / م²</div>
+            </div>
+          </div>
+          <div class="product-card">
+            <div class="product-img" style="background:#f0fdf4;">🪨</div>
+            <div class="product-info">
+              <div class="product-name">رمل بناء مغسول</div>
+              <div class="product-detail">بالمتر مكعب · توصيل فوري</div>
+              <div class="product-price">120 ريال / م³</div>
+            </div>
+          </div>
+          <div class="product-card">
+            <div class="product-img" style="background:#fef3c7;">🟫</div>
+            <div class="product-info">
+              <div class="product-name">حصمة بناء</div>
+              <div class="product-detail">مختلف الأحجام · بالطن</div>
+              <div class="product-price">85 ريال / طن</div>
+            </div>
+          </div>
+          <div class="product-card">
+            <div class="product-img" style="background:#ede9fe;">🔵</div>
+            <div class="product-info">
+              <div class="product-name">أسمنت مقاوم للكبريتات</div>
+              <div class="product-detail">كيس 50 كجم · للأساسات</div>
+              <div class="product-price">28 ريال / كيس</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DISCOUNTS -->
+    <div class="card">
+      <div class="sec">
+        <div class="sec-title">🎁 العروض والخصومات</div>
+        <div class="discount-grid">
+          <div class="discount-card">
+            <div class="disc-pct">15%</div>
+            <div class="disc-title">خصم الكميات الكبيرة</div>
+            <div class="disc-desc">عند طلب أكثر من 500 كيس أسمنت دفعة واحدة</div>
+            <div class="disc-badge">فعّال الآن</div>
+          </div>
+          <div class="discount-card">
+            <div class="disc-pct">10%</div>
+            <div class="disc-title">خصم العميل الجديد</div>
+            <div class="disc-desc">على أول طلب توريد لأي عميل مسجّل في المنصة</div>
+            <div class="disc-badge">للعملاء الجدد</div>
+          </div>
+          <div class="discount-card">
+            <div class="disc-pct">مجاني</div>
+            <div class="disc-title">توصيل مجاني</div>
+            <div class="disc-desc">للطلبات التي تتجاوز 5,000 ريال داخل نطاق جدة</div>
+            <div class="disc-badge">محدود المدة</div>
+          </div>
+          <div class="discount-card">
+            <div class="disc-pct">8%</div>
+            <div class="disc-title">خصم الدفع المقدم</div>
+            <div class="disc-desc">عند سداد قيمة الطلب كاملاً مسبقاً</div>
+            <div class="disc-badge">دائم</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DELIVERY -->
+    <div class="card">
+      <div class="sec">
+        <div class="sec-title">🚚 خدمة التوصيل</div>
+        <div class="delivery-status-box">
+          <div class="del-icon">🚛</div>
+          <div>
+            <div class="del-title">التوصيل متاح ✔</div>
+            <div class="del-sub">توصيل للمواقع داخل المناطق المدرجة أدناه — يشمل التفريغ للطوابق الأرضية</div>
+          </div>
+        </div>
+        <div class="cities-title">المدن والمناطق المشمولة بالتوصيل:</div>
+        <div class="cities-grid">
+          <span class="city-chip">جدة 🚀 (توصيل خلال 24 ساعة)</span>
+          <span class="city-chip">مكة المكرمة</span>
+          <span class="city-chip">الطائف</span>
+          <span class="city-chip">رابغ</span>
+          <span class="city-chip">ينبع</span>
+          <span class="city-chip">المدينة المنورة</span>
+        </div>
+        <div style="background:#fef9c3;border:1px solid #fde68a;border-radius:8px;padding:10px 14px;margin-top:12px;font-size:13px;color:#92400e;">
+          ⚠️ التوصيل خارج هذه المدن يتطلب التواصل المسبق لتحديد التكلفة والجدول الزمني
+        </div>
+      </div>
+    </div>
+
+    <!-- REVIEWS -->
+    <div class="card">
+      <div class="sec">
+        <div class="sec-title">💬 آراء العملاء</div>
+        <div class="reviews-list">
+          <div class="review-item">
+            <div class="review-header">
+              <div class="reviewer-name">مقاولات الإنشاء الحديث</div>
+              <div class="review-stars">⭐⭐⭐⭐⭐</div>
+            </div>
+            <p class="review-text">تعاملت مع الشركة في مشروع سكني كبير، التزام تام بالمواعيد وجودة ممتازة للأسمنت. سنكمل التعامل معهم بإذن الله.</p>
+            <div class="review-date">منذ أسبوعين</div>
+          </div>
+          <div class="review-item">
+            <div class="review-header">
+              <div class="reviewer-name">أ. محمد الغامدي</div>
+              <div class="review-stars">⭐⭐⭐⭐⭐</div>
+            </div>
+            <p class="review-text">أفضل مورد أسمنت تعاملت معه في جدة. السعر منافس والكميات دقيقة ومطابقة للفاتورة تماماً.</p>
+            <div class="review-date">منذ شهر</div>
+          </div>
+          <div class="review-item">
+            <div class="review-header">
+              <div class="reviewer-name">شركة البنيان للمقاولات</div>
+              <div class="review-stars">⭐⭐⭐⭐</div>
+            </div>
+            <p class="review-text">خدمة ممتازة والتوصيل في الوقت المحدد. نتمنى توسيع نطاق التوصيل للمنطقة الشرقية مستقبلاً.</p>
+            <div class="review-date">منذ شهرين</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+
+    <!-- CTA -->
+    <div class="cta-card">
+      <div class="cta-title">تواصل مع المورد</div>
+      <button class="btn-main" onclick="alert('سيتم فتح نموذج طلب التوريد ✅')">
+        📦 طلب توريد الآن
+      </button>
+      <button class="btn-sec" onclick="alert('سيتم فتح نافذة المراسلة 💬')">
+        💬 مراسلة المورد
+      </button>
+      <p style="font-size:11px;color:#9ca3af;text-align:center;margin-top:10px;line-height:1.6;">بيانات التواصل المباشر متاحة بعد الاشتراك في الباقة</p>
+    </div>
+
+    <!-- QUICK INFO -->
+    <div class="info-card">
+      <h4>📋 معلومات سريعة</h4>
+      <div class="info-row"><span class="ir-label">القسم</span><span class="ir-val">أسمنت وطوب</span></div>
+      <div class="info-row"><span class="ir-label">الموقع</span><span class="ir-val">جدة، الصناعية</span></div>
+      <div class="info-row"><span class="ir-label">حجم التوريد</span><span class="ir-val green">📦 كميات كبيرة</span></div>
+      <div class="info-row"><span class="ir-label">التوصيل</span><span class="ir-val green">🚚 متاح</span></div>
+      <div class="info-row"><span class="ir-label">الحالة</span><span class="ir-val green">● نشط</span></div>
+      <div class="info-row"><span class="ir-label">عضو منذ</span><span class="ir-val">2021</span></div>
+    </div>
+
+    <!-- RATING SUMMARY -->
+    <div class="info-card">
+      <h4>⭐ ملخص التقييمات</h4>
+      <div class="rating-big">
+        <div class="rating-num">4.9</div>
+        <div class="rating-stars">⭐⭐⭐⭐⭐</div>
+        <div class="rating-count">بناءً على 87 تقييم</div>
+      </div>
+      <div class="rating-bars">
+        <div class="rbar-row"><span class="rbar-label">5⭐</span><div class="rbar-track"><div class="rbar-fill" style="width:88%"></div></div><span class="rbar-count">77</span></div>
+        <div class="rbar-row"><span class="rbar-label">4⭐</span><div class="rbar-track"><div class="rbar-fill" style="width:10%"></div></div><span class="rbar-count">8</span></div>
+        <div class="rbar-row"><span class="rbar-label">3⭐</span><div class="rbar-track"><div class="rbar-fill" style="width:2%"></div></div><span class="rbar-count">2</span></div>
+        <div class="rbar-row"><span class="rbar-label">2⭐</span><div class="rbar-track"><div class="rbar-fill" style="width:0%"></div></div><span class="rbar-count">0</span></div>
+        <div class="rbar-row"><span class="rbar-label">1⭐</span><div class="rbar-track"><div class="rbar-fill" style="width:0%"></div></div><span class="rbar-count">0</span></div>
+      </div>
+    </div>
+
+    <!-- FEATURED BADGE CARD -->
+    <div style="background:linear-gradient(135deg,#fffbeb,#fef3c7);border-radius:16px;border:1.5px solid #fde68a;padding:1.25rem;text-align:center;">
+      <div style="font-size:32px;margin-bottom:6px;">👑</div>
+      <div style="font-size:15px;font-weight:800;color:#92400e;margin-bottom:4px;">مورد مميّز</div>
+      <div style="font-size:12px;color:#b45309;line-height:1.6;">هذا المورد حاصل على شارة التميّز من منصة أوربلد بعد التحقق من جودته والتزامه</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div style="background:#0f3d26;color:#fff;padding:2rem 2rem 1rem;">
+  <div style="max-width:960px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2rem;margin-bottom:1.5rem;">
+    <div>
+      <div style="font-size:20px;font-weight:700;letter-spacing:1px;">UrBeld</div>
+      <div style="font-size:9px;letter-spacing:3px;opacity:.8;">SAUDI</div>
+      <p style="font-size:13px;color:rgba(255,255,255,.7);margin-top:8px;line-height:1.7;">المنصة الرقمية الأولى لربط أصحاب المشاريع بموردي مواد البناء في المملكة</p>
+    </div>
+    <div>
+      <h4 style="font-size:14px;font-weight:700;margin-bottom:10px;">روابط سريعة</h4>
+      <a href="#" style="display:block;font-size:13px;color:rgba(255,255,255,.65);text-decoration:none;margin-bottom:6px;">من نحن</a>
+      <a href="#" style="display:block;font-size:13px;color:rgba(255,255,255,.65);text-decoration:none;margin-bottom:6px;">الأسئلة الشائعة</a>
+    </div>
+    <div>
+      <h4 style="font-size:14px;font-weight:700;margin-bottom:10px;">خدماتنا</h4>
+      <a href="#" style="display:block;font-size:13px;color:rgba(255,255,255,.65);text-decoration:none;margin-bottom:6px;">الموردون</a>
+      <a href="#" style="display:block;font-size:13px;color:rgba(255,255,255,.65);text-decoration:none;margin-bottom:6px;">المناقصات</a>
+    </div>
+    <div>
+      <h4 style="font-size:14px;font-weight:700;margin-bottom:10px;">للموردين</h4>
+      <a href="#" style="display:block;font-size:13px;color:rgba(255,255,255,.65);text-decoration:none;margin-bottom:6px;">سجّل كمورد</a>
+      <a href="#" style="display:block;font-size:13px;color:rgba(255,255,255,.65);text-decoration:none;">الدعم الفني</a>
+    </div>
+  </div>
+  <div style="border-top:1px solid rgba(255,255,255,.15);padding-top:1rem;text-align:center;font-size:12px;color:rgba(255,255,255,.5);max-width:960px;margin:0 auto;">© جميع الحقوق محفوظة لمنصة أوربلد السعودية</div>
+</div>
+
+</body>
+</html>

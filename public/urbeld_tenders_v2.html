@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Tajawal', sans-serif; background: #f4f6f8; direction: rtl; }
+
+  .navbar {
+    background: #fff; border-bottom: 1px solid #e5e7eb;
+    padding: 0 2rem; display: flex; align-items: center;
+    justify-content: space-between; height: 64px;
+  }
+  .logo span:first-child { font-size: 22px; font-weight: 700; color: #1a3a2a; letter-spacing: 1px; display: block; }
+  .logo span:last-child { font-size: 10px; color: #1a3a2a; letter-spacing: 3px; font-weight: 500; }
+  .nav-links { display: flex; gap: 1.5rem; }
+  .nav-links a { font-size: 14px; color: #374151; text-decoration: none; font-weight: 500; }
+  .nav-actions { display: flex; gap: 0.75rem; align-items: center; }
+  .btn-lang { background: #1a5c3a; color: #fff; border: none; border-radius: 20px; padding: 6px 16px; font-size: 13px; font-family: 'Tajawal',sans-serif; cursor: pointer; font-weight: 500; }
+  .btn-account { background: transparent; color: #1a5c3a; border: 1.5px solid #1a5c3a; border-radius: 20px; padding: 6px 16px; font-size: 13px; font-family: 'Tajawal',sans-serif; cursor: pointer; font-weight: 500; }
+  .btn-logout { background: transparent; color: #374151; border: 1.5px solid #d1d5db; border-radius: 20px; padding: 6px 16px; font-size: 13px; font-family: 'Tajawal',sans-serif; cursor: pointer; }
+  .bell-icon { font-size: 20px; cursor: pointer; position: relative; }
+  .bell-dot { width: 8px; height: 8px; background: #ef4444; border-radius: 50%; position: absolute; top: -2px; right: -2px; }
+
+  .hero { background: linear-gradient(135deg, #1a5c3a 0%, #0f3d26 60%, #0a2918 100%); padding: 3rem 2rem 5rem; text-align: center; color: #fff; }
+  .hero h1 { font-size: 32px; font-weight: 700; margin-bottom: 0.5rem; }
+  .hero p { font-size: 15px; color: rgba(255,255,255,0.75); }
+
+  .filter-wrapper { max-width: 900px; margin: -2.5rem auto 0; padding: 0 1.5rem; position: relative; z-index: 10; }
+  .filter-card { background: #fff; border-radius: 16px; padding: 1.5rem; box-shadow: 0 8px 32px rgba(0,0,0,0.10); }
+  .filter-title { font-size: 15px; font-weight: 700; color: #1a3a2a; margin-bottom: 1rem; }
+  .filter-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+  .filter-group label { font-size: 12px; color: #6b7280; font-weight: 500; display: block; margin-bottom: 5px; }
+  .filter-group select { width: 100%; padding: 9px 12px; border: 1.5px solid #e5e7eb; border-radius: 8px; font-family: 'Tajawal',sans-serif; font-size: 13px; color: #374151; background: #f9fafb; outline: none; }
+  .filter-group select:focus { border-color: #1a5c3a; background: #fff; }
+  .btn-search { width: 100%; padding: 10px; background: #1a5c3a; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; font-family: 'Tajawal',sans-serif; cursor: pointer; margin-top: 14px; }
+  .btn-search:hover { background: #0f3d26; }
+
+  /* CATEGORY BOXES */
+  .cat-boxes { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-top: 16px; border-top: 1px solid #f0f0f0; padding-top: 16px; }
+  .cat-box {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 8px; padding: 14px 8px; border-radius: 12px;
+    border: 1.5px solid #e5e7eb; background: #f9fafb;
+    cursor: pointer; transition: all 0.2s; text-align: center;
+  }
+  .cat-box:hover, .cat-box.active { border-color: #1a5c3a; background: #e8f5ee; }
+  .cat-box .cat-icon { font-size: 28px; line-height: 1; }
+  .cat-box .cat-label { font-size: 13px; font-weight: 700; color: #1a3a2a; }
+  .cat-box .cat-count { font-size: 11px; color: #6b7280; }
+  .cat-box.active .cat-label { color: #1a5c3a; }
+  .cat-box.active .cat-count { color: #2d8f5e; }
+
+  .main { max-width: 900px; margin: 1.5rem auto 0; padding: 0 1.5rem 3rem; }
+
+  .top-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+  .top-row h2 { font-size: 20px; font-weight: 700; color: #1a3a2a; }
+  .back-link { font-size: 13px; color: #1a5c3a; font-weight: 500; text-decoration: none; }
+
+  .add-btn-row { display: flex; justify-content: flex-start; margin-bottom: 1.25rem; }
+  .btn-add-new { background: #1a5c3a; color: #fff; border: none; border-radius: 8px; padding: 9px 20px; font-size: 14px; font-weight: 600; font-family: 'Tajawal',sans-serif; cursor: pointer; }
+  .btn-add-new:hover { background: #0f3d26; }
+
+  .tabs { display: flex; gap: 8px; margin-bottom: 1.25rem; }
+  .tab { padding: 7px 18px; border-radius: 20px; font-size: 13px; font-weight: 600; font-family: 'Tajawal',sans-serif; cursor: pointer; border: 1.5px solid #e5e7eb; background: #fff; color: #6b7280; }
+  .tab.active { background: #1a5c3a; color: #fff; border-color: #1a5c3a; }
+  .tab:hover:not(.active) { border-color: #1a5c3a; color: #1a5c3a; }
+
+  .stats-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
+  .stats-count { font-size: 14px; color: #6b7280; font-weight: 500; }
+  .stats-count span { font-weight: 700; color: #1a3a2a; }
+  .sort-select { font-family: 'Tajawal',sans-serif; font-size: 13px; color: #374151; border: 1.5px solid #e5e7eb; border-radius: 8px; padding: 7px 12px; background: #fff; outline: none; }
+
+  /* TENDER CARD */
+  .tender-card {
+    background: #fff; border-radius: 14px; border: 1.5px solid #e5e7eb;
+    padding: 1.25rem 1.5rem; margin-bottom: 1rem;
+    display: flex; gap: 1rem; align-items: stretch;
+    transition: box-shadow 0.2s, border-color 0.2s;
+  }
+  .tender-card:hover { box-shadow: 0 4px 20px rgba(26,92,58,0.10); border-color: #b6ddc8; }
+
+  /* LEFT ACTION COLUMN */
+  .card-left {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 10px; min-width: 110px; padding: 8px 0;
+    border-left: 1.5px solid #f0f0f0; padding-left: 1rem;
+  }
+  .status-badge { border-radius: 20px; padding: 5px 14px; font-size: 12px; font-weight: 700; white-space: nowrap; text-align: center; width: 100%; }
+  .status-open { background: #dcfce7; color: #15803d; }
+  .status-closed { background: #fee2e2; color: #dc2626; }
+  .status-urgent { background: #fef9c3; color: #b45309; }
+
+  .btn-offer {
+    width: 100%; padding: 9px 0; background: #1a5c3a; color: #fff;
+    border: none; border-radius: 8px; font-size: 13px; font-weight: 700;
+    font-family: 'Tajawal',sans-serif; cursor: pointer; text-align: center;
+    transition: background 0.2s;
+  }
+  .btn-offer:hover { background: #0f3d26; }
+  .btn-offer-disabled {
+    width: 100%; padding: 9px 0; background: #f3f4f6; color: #9ca3af;
+    border: none; border-radius: 8px; font-size: 13px; font-weight: 700;
+    font-family: 'Tajawal',sans-serif; cursor: not-allowed; text-align: center;
+  }
+
+  /* RIGHT CONTENT */
+  .card-right { flex: 1; }
+  .card-title { font-size: 17px; font-weight: 700; color: #1a3a2a; margin-bottom: 8px; }
+  .card-meta { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 8px; }
+  .meta-item { display: flex; align-items: center; gap: 5px; font-size: 13px; color: #6b7280; }
+  .deadline-chip { display: inline-flex; align-items: center; gap: 5px; background: #fef3c7; color: #92400e; border-radius: 6px; padding: 3px 10px; font-size: 12px; font-weight: 500; }
+  .deadline-chip.closed { background: #fee2e2; color: #b91c1c; }
+  .card-desc { font-size: 13px; color: #4b5563; line-height: 1.65; }
+
+  .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 2rem; }
+  .page-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; border: 1.5px solid #e5e7eb; background: #fff; font-size: 14px; font-family: 'Tajawal',sans-serif; cursor: pointer; color: #374151; }
+  .page-btn.active { background: #1a5c3a; color: #fff; border-color: #1a5c3a; }
+  .page-btn:hover:not(.active) { border-color: #1a5c3a; color: #1a5c3a; }
+
+  .footer { background: #0f3d26; color: #fff; padding: 2.5rem 2rem 1rem; margin-top: 3rem; }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 2rem; max-width: 900px; margin: 0 auto 2rem; }
+  .footer-logo-text { font-size: 20px; font-weight: 700; letter-spacing: 1px; }
+  .footer-sub { font-size: 9px; letter-spacing: 3px; opacity: 0.8; display: block; }
+  .footer-desc { font-size: 13px; color: rgba(255,255,255,0.7); margin-top: 8px; line-height: 1.7; }
+  .footer-col h4 { font-size: 14px; font-weight: 700; margin-bottom: 12px; color: rgba(255,255,255,0.9); }
+  .footer-col a { display: block; font-size: 13px; color: rgba(255,255,255,0.65); text-decoration: none; margin-bottom: 7px; }
+  .footer-col a:hover { color: #fff; }
+  .footer-bottom { border-top: 1px solid rgba(255,255,255,0.15); padding-top: 1rem; text-align: center; font-size: 12px; color: rgba(255,255,255,0.5); max-width: 900px; margin: 0 auto; }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="logo">
+    <span>UrBeld</span>
+    <span>SAUDI</span>
+  </div>
+  <div class="nav-links">
+    <a href="#">الرئيسية</a>
+    <a href="#">من نحن</a>
+    <a href="#">الخدمات</a>
+    <a href="#">باقات الاشتراك</a>
+    <a href="#">تواصل معنا</a>
+  </div>
+  <div class="nav-actions">
+    <div class="bell-icon" style="position:relative;">🔔<div class="bell-dot"></div></div>
+    <button class="btn-account">حسابي</button>
+    <button class="btn-lang">English</button>
+    <button class="btn-logout">خروج</button>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>المناقصات والمشاريع</h1>
+  <p>تصفح المناقصات المتاحة وقدّم عروضك للمشاريع الهندسية في المملكة العربية السعودية</p>
+</div>
+
+<div class="filter-wrapper">
+  <div class="filter-card">
+    <div class="filter-title">🔍 ابحث عن مناقصة</div>
+    <div class="filter-grid">
+      <div class="filter-group">
+        <label>المنطقة</label>
+        <select>
+          <option>كل المناطق</option>
+          <option>منطقة مكة المكرمة</option>
+          <option>منطقة الرياض</option>
+          <option>المنطقة الشرقية</option>
+          <option>منطقة المدينة المنورة</option>
+          <option>منطقة عسير</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>المدينة</label>
+        <select>
+          <option>كل المدن</option>
+          <option>جدة</option>
+          <option>الرياض</option>
+          <option>مكة المكرمة</option>
+          <option>الدمام</option>
+          <option>تبوك</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>التخصص</label>
+        <select>
+          <option>كل التخصصات</option>
+          <option>تصميم معماري</option>
+          <option>إشراف هندسي</option>
+          <option>دراسات وتقارير</option>
+          <option>استشارات قانونية</option>
+          <option>توريد ومواد</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>الميزانية</label>
+        <select>
+          <option>أي ميزانية</option>
+          <option>أقل من 10,000</option>
+          <option>10,000 - 50,000</option>
+          <option>50,000 - 100,000</option>
+          <option>أكثر من 100,000</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn-search">🔍 بحث عن مناقصات</button>
+
+    <!-- CATEGORY BOXES -->
+    <div class="cat-boxes">
+      <div class="cat-box active" onclick="selectCat(this)">
+        <div class="cat-icon">🏗️</div>
+        <div class="cat-label">استشارات هندسية</div>
+        <div class="cat-count">18 مناقصة</div>
+      </div>
+      <div class="cat-box" onclick="selectCat(this)">
+        <div class="cat-icon">🔨</div>
+        <div class="cat-label">مقاولات</div>
+        <div class="cat-count">24 مناقصة</div>
+      </div>
+      <div class="cat-box" onclick="selectCat(this)">
+        <div class="cat-icon">📦</div>
+        <div class="cat-label">توريد</div>
+        <div class="cat-count">11 مناقصة</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="top-row">
+    <h2>المناقصات</h2>
+    <a href="#" class="back-link">← العودة للوحة الرئيسية</a>
+  </div>
+
+  <div class="add-btn-row">
+    <button class="btn-add-new">+ إضافة مناقصة جديدة</button>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="setTab(this)">الكل (12)</button>
+    <button class="tab" onclick="setTab(this)">مفتوحة (8)</button>
+    <button class="tab" onclick="setTab(this)">مغلقة (3)</button>
+    <button class="tab" onclick="setTab(this)">عاجلة (1)</button>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stats-count">عرض <span>12</span> مناقصة</div>
+    <select class="sort-select">
+      <option>ترتيب: الأحدث أولاً</option>
+      <option>ترتيب: الأعلى ميزانية</option>
+      <option>ترتيب: ينتهي قريباً</option>
+    </select>
+  </div>
+
+  <!-- CARD 1 - OPEN -->
+  <div class="tender-card">
+    <div class="card-left">
+      <span class="status-badge status-open">مفتوحة</span>
+      <button class="btn-offer">+ تقديم عرض</button>
+    </div>
+    <div class="card-right">
+      <div class="card-title">تصميم مخططات هندسية لمبنى سكني</div>
+      <div class="card-meta">
+        <div class="meta-item">📋 تصميم معماري</div>
+        <div class="meta-item">📍 جدة</div>
+        <div class="meta-item">💰 45,000 ريال</div>
+        <span class="deadline-chip">📅 ينتهي: 26/7/م</span>
+      </div>
+      <p class="card-desc">مطلوب مكتب هندسي أو مصمم متخصص لتصميم مخططات معمارية كاملة لمبنى سكني من 4 طوابق في حي الشاطئ بجدة، مع الالتزام بكود البناء السعودي.</p>
+    </div>
+  </div>
+
+  <!-- CARD 2 - OPEN -->
+  <div class="tender-card">
+    <div class="card-left">
+      <span class="status-badge status-open">مفتوحة</span>
+      <button class="btn-offer">+ تقديم عرض</button>
+    </div>
+    <div class="card-right">
+      <div class="card-title">إشراف على مشروع تجاري</div>
+      <div class="card-meta">
+        <div class="meta-item">🏗️ إشراف هندسي</div>
+        <div class="meta-item">📍 الرياض</div>
+        <div class="meta-item">💰 80,000 ريال</div>
+        <span class="deadline-chip">📅 ينتهي: 28/7/م</span>
+      </div>
+      <p class="card-desc">مطلوب مشرف هندسي ذو خبرة لمتابعة تنفيذ مشروع تجاري في حي النزهة بالرياض، مدة الإشراف 6 أشهر مع تقارير أسبوعية.</p>
+    </div>
+  </div>
+
+  <!-- CARD 3 - CLOSED -->
+  <div class="tender-card" style="opacity:0.85;">
+    <div class="card-left">
+      <span class="status-badge status-closed">مغلقة</span>
+      <button class="btn-offer-disabled" disabled>انتهت المناقصة</button>
+    </div>
+    <div class="card-right">
+      <div class="card-title">دراسة جدوى مشروع صناعي</div>
+      <div class="card-meta">
+        <div class="meta-item">📊 دراسات وتقارير</div>
+        <div class="meta-item">📍 الدمام</div>
+        <div class="meta-item">💰 25,000 ريال</div>
+        <span class="deadline-chip closed">📅 انتهى: 30/7/م</span>
+      </div>
+      <p class="card-desc">دراسة جدوى اقتصادية وفنية شاملة لإنشاء مصنع صغير لإنتاج مواد البناء في المنطقة الصناعية بالدمام.</p>
+    </div>
+  </div>
+
+  <!-- CARD 4 - URGENT -->
+  <div class="tender-card">
+    <div class="card-left">
+      <span class="status-badge status-urgent">⚡ عاجل</span>
+      <button class="btn-offer" style="background:#d97706;">+ تقديم عرض</button>
+    </div>
+    <div class="card-right">
+      <div class="card-title">توريد مواد البناء - مشروع سكني</div>
+      <div class="card-meta">
+        <div class="meta-item">📦 توريد ومواد</div>
+        <div class="meta-item">📍 جدة - المنطقة الصناعية</div>
+        <div class="meta-item">💰 142,500 ريال</div>
+        <span class="deadline-chip">⚡ ينتهي: 22/6/م</span>
+      </div>
+      <p class="card-desc">توريد جديد وأسمنت وطوب لمشروع سكني مع الكميات موضحة في ملف المواصفات المرفق. التسليم خلال أسبوعين من الترسية.</p>
+    </div>
+  </div>
+
+  <div class="pagination">
+    <button class="page-btn">›</button>
+    <button class="page-btn active">1</button>
+    <button class="page-btn">2</button>
+    <button class="page-btn">3</button>
+    <button class="page-btn">‹</button>
+  </div>
+</div>
+
+<div class="footer">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-logo-text">UrBeld</div>
+      <span class="footer-sub">SAUDI</span>
+      <p class="footer-desc">المنصة الرقمية الأولى التي تربط أصحاب المشاريع بمزودي الخدمات الهندسية والإنشائية في المملكة العربية السعودية</p>
+    </div>
+    <div class="footer-col">
+      <h4>روابط سريعة</h4>
+      <a href="#">من نحن</a>
+      <a href="#">كيف تعمل المنصة</a>
+      <a href="#">الأسئلة الشائعة</a>
+      <a href="#">المدونة</a>
+    </div>
+    <div class="footer-col">
+      <h4>خدماتنا</h4>
+      <a href="#">المقاولات العامة</a>
+      <a href="#">الاستشارات الهندسية</a>
+      <a href="#">التوريد والمواد</a>
+      <a href="#">الاستشارات القانونية</a>
+    </div>
+    <div class="footer-col">
+      <h4>للمزودين</h4>
+      <a href="#">سجّل شركتك</a>
+      <a href="#">لوحة التحكم</a>
+      <a href="#">باقات العضوية</a>
+      <a href="#">الدعم الفني</a>
+    </div>
+  </div>
+  <div class="footer-bottom">© جميع الحقوق محفوظة لمنصة أوربلد السعودية</div>
+</div>
+
+<script>
+  function selectCat(el) {
+    document.querySelectorAll('.cat-box').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+  }
+  function setTab(el) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+  }
+</script>
+</body>
+</html>

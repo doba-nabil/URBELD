@@ -1,0 +1,187 @@
+@extends('dashboard.layout.master')
+@section('title', 'Users - Edit')
+
+@section('dashboard-main')
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <h5 class="card-header">{{ __('admin.edit_profile_info') }}</h5>
+                    <div class="card-body">
+                        <form id="userForm" class="row g-6" method="POST" action="{{ route('profile.post') }}" enctype="multipart/form-data">
+                            @csrf
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">الاسم</label>
+                                <input type="text" name="name" value="{{ old('name', $user->name) }}" class="form-control">
+                                @error('name')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">البريد الاكتروني</label>
+                                <input type="email" name="email" value="{{ old('email', $user->email) }}" class="form-control">
+                                @error('email')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">الهاتف الشخصي</label>
+                                <input type="text" name="phone" value="{{ old('phone', $user->phone) }}" class="form-control">
+                                @error('phone')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-6">
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">كلمة المرور <small class="text-muted">(يترك فارغ في حالة عدم التغيير)</small></label>
+                                <input type="password" name="password" class="form-control">
+                                @error('password')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">اعادة كلمة المرور</label>
+                                <input type="password" name="password_confirmation" class="form-control">
+                            </div>
+
+                            <div class="col-12">
+                                <div class="dropzone needsclick" id="dropzone-basic">
+                                    <div class="dz-message needsclick">
+                                        {{ __('admin.Drop files here or click to upload') }}
+                                    </div>
+                                </div>
+                                @error("image")
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-12 mt-4 text-end">
+                                <button type="submit" class="btn btn-primary">تحديث</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+
+@section('dashboard-head')
+    @include('dashboard.partials.create.css')
+@endsection
+
+@section('dashboard-footer')
+    @include('dashboard.partials.edit.js')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const userForm = document.getElementById('userForm');
+            if (userForm) {
+                FormValidation.formValidation(userForm, {
+                    fields: {
+                        name: {
+                            validators: {
+                                notEmpty: {message: 'هذا الحقل مطلوب'},
+                                stringLength: {min: 3, max: 50, message: 'يجب ان يكون كحد ادنى 3 وحد اقصى 50'}
+                            }
+                        },
+                        email: {
+                            validators: {
+                                notEmpty: {message: 'الحقل مطلوب'},
+                                emailAddress: {message: 'اضافة بريد صحيح'}
+                            }
+                        },
+                        password: {
+                            validators: {
+                                stringLength: {min: 6, message: 'يجب ان يكون بحد ادنى 6 حروف'}
+                            }
+                        },
+                        password_confirmation: {
+                            validators: {
+                                identical: {
+                                    compare: () => userForm.querySelector('[name="password"]').value,
+                                    message: 'لا يتطابق مع كلمة المرور'
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        trigger: new FormValidation.plugins.Trigger(),
+                        bootstrap5: new FormValidation.plugins.Bootstrap5(),
+                        submitButton: new FormValidation.plugins.SubmitButton(),
+                        autoFocus: new FormValidation.plugins.AutoFocus(),
+                        defaultSubmit: new FormValidation.plugins.DefaultSubmit()
+                    }
+                });
+            }
+        });
+    </script>
+    <script>
+        'use strict';
+
+        (function () {
+            Dropzone.autoDiscover = false;
+
+            const dropzoneBasic = document.querySelector('#dropzone-basic');
+            if (dropzoneBasic) {
+                const myDropzone = new Dropzone(dropzoneBasic, {
+                    url: "#",
+                    autoProcessQueue: false,
+                    uploadMultiple: false,
+                    maxFiles: 1,
+                    acceptedFiles: "image/*",
+                    addRemoveLinks: true,
+                    dictDefaultMessage: "Drop files here or click to upload"
+                });
+
+                @if(isset($user) && $user->getFirstMediaUrl('users'))
+                let mockFile = { name: "الصورة الحالة", size: 100 };
+                myDropzone.emit("addedfile", mockFile);
+                myDropzone.emit("thumbnail", mockFile, "{{ $user->getFirstMediaUrl('users') }}");
+                myDropzone.emit("complete", mockFile);
+                myDropzone.files.push(mockFile);
+
+                const previewImg = dropzoneBasic.querySelector('.dz-preview img');
+                if (previewImg) {
+                    previewImg.style.width = '100%';
+                    previewImg.style.height = 'auto';
+                    previewImg.style.objectFit = 'contain';
+                }
+                @endif
+
+                myDropzone.on("addedfile", function (file) {
+                    if (myDropzone.files.length > 1) {
+                        myDropzone.removeFile(myDropzone.files[0]);
+                    }
+                    let inputFile = document.querySelector("input[name='image']");
+                    if (!inputFile) {
+                        inputFile = document.createElement("input");
+                        inputFile.type = "file";
+                        inputFile.name = "image";
+                        inputFile.classList.add("d-none");
+                        dropzoneBasic.closest("form").appendChild(inputFile);
+                    }
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    inputFile.files = dataTransfer.files;
+                });
+
+                myDropzone.on("removedfile", function (file) {
+                    const inputFile = document.querySelector("input[name='image']");
+                    if (inputFile) {
+                        inputFile.value = "";
+                    }
+                    if(file && file.name === "Current Image"){
+                    }
+                });
+            }
+        })();
+    </script>
+@endsection

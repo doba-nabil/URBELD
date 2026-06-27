@@ -1,0 +1,80 @@
+<?php
+
+namespace App\Http\Controllers\Auth;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Models\User;
+use App\Notifications\OtpNotification;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
+
+class AuthenticatedSessionController extends Controller
+{
+    /**
+     * Display the login view.
+     */
+    public function create(): View
+    {
+        return view('website.auth.login');
+    }
+
+    /**
+     * Handle an incoming authentication request (password-based).
+     */
+    public function store(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'email' => ['required', 'string', 'email'],
+            'password' => ['required', 'string'],
+        ]);
+
+        // Find user first to check status BEFORE any authentication attempt
+        $user = User::where('email', $request->email)->first();
+
+        // If user exists and is blocked, return error immediately
+        // This avoids session changes (Auth::attempt/logout) that cause 419 errors in shared browser sessions
+        if ($user && ($user->active === 'blocked' || $user->active === '0' || $user->active === 0)) {
+            return back()->withErrors([
+                'email' => __('admin.account_blocked'),
+            ])->withInput($request->only('email'));
+        }
+
+        // Attempt to authenticate with email and password
+        if (!Auth::attempt(['email' => $request->email, 'password' => $request->password], $request->boolean('remember'))) {
+            return back()->withErrors([
+                'email' => __('admin.invalid_credentials'),
+            ])->onlyInput('email');
+        }
+
+        // Re-fetch user after successful authentication
+        $user = Auth::user();
+
+        // Regenerate session
+        $request->session()->regenerate();
+
+        // Update last login and last seen timestamps
+        $user->update([
+            'last_login_at' => now(),
+            'last_seen_at' => now(),
+        ]);
+
+        return redirect()->route('home');
+    }
+
+    /**
+     * Destroy an authenticated session.
+     */
+    public function destroy(Request $request): RedirectResponse
+    {
+        Auth::guard('web')->logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        return redirect('/');
+    }
+}

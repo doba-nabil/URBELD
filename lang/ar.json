@@ -1,0 +1,18 @@
+{
+    "new": "جديد",
+    "pending": "قيد الانتظار",
+    "pending_response": "بانتظار الرد",
+    "provider_accepted": "مقبول من مقدم الخدمة",
+    "seeker_confirmed_provider": "مؤكد من طالب الخدمة",
+    "accepted": "مقبول",
+    "rejected": "مرفوض",
+    "time_expired": "منتهي الوقت",
+    "under_inspection": "قيد المعاينة",
+    "inspection_scheduled": "تمت جدولة المعاينة",
+    "inspection_done": "تمت المعاينة",
+    "agreed": "تم الاتفاق",
+    "completed": "مكتمل",
+    "work_completed": "العمل مكتمل / بانتظار التقييم",
+    "cancelled": "ملغى",
+    "timeout": "انتهت المهلة"
+}

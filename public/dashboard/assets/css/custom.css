@@ -1,0 +1,19 @@
+/* Custom Admin Panel Styles - Cairo & Tajawal Fonts */
+body {
+    font-family: 'Cairo', 'Tajawal', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+}
+
+* {
+    font-family: 'Cairo', 'Tajawal', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+}
+
+/* Ensure all text elements use the font */
+h1, h2, h3, h4, h5, h6,
+p, span, div, a, button,
+input, textarea, select,
+label, table, th, td,
+.menu-link, .app-brand-text,
+.card-header, .btn,
+.navbar-brand, .dropdown-menu {
+    font-family: 'Cairo', 'Tajawal', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+}

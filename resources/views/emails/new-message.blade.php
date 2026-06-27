@@ -1,0 +1,24 @@
+@extends('emails.layout')
+
+@section('header_title', __('admin.email_new_message_title'))
+@section('header_subtitle', config('app.name'))
+
+@section('content')
+    <h2>{{ __('admin.email_greeting', ['name' => $user->name]) }}</h2>
+    <p>{!! __('admin.email_new_message_body', ['sender' => $senderName]) !!}</p>
+
+    @if($messagePreview)
+    <div style="background: #f9f9f9; padding: 20px; border-radius: 10px; border-right: 4px solid #014D40; margin: 20px 0; font-style: italic;">
+        "{{ $messagePreview }}"
+    </div>
+    @endif
+
+    @php
+        $button_link = $chatUrl;
+        $button_text = __('admin.email_view_message');
+    @endphp
+@endsection
+
+@section('extra_content')
+    <p style="margin-top: 30px;">{{ __('admin.email_thanks') }}</p>
+@endsection
