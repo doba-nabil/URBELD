@@ -4,6 +4,7 @@
     --secondary: #61888d;
     --light: #EFFDF5;
     --dark: #0E2E50;
+    --body-color: #f4f5f6;
 }
 
 .secondary-color {
@@ -11,8 +12,8 @@
 }
 
 body {
-    font-family: 'Cairo', 'Tajawal', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f6f3ec;
+    font-family: 'Tajawal', 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--body-color);
     max-width: 100vw;
     font-size: clamp(14px, 1vw, 16px);
 }
@@ -43,7 +44,7 @@ html {
 [dir="rtl"] h4,
 [dir="rtl"] h5,
 [dir="rtl"] h6 {
-    font-family: 'Cairo', sans-serif;
+    font-family: 'Tajawal', sans-serif;
     font-weight: 700;
 }
 
@@ -54,7 +55,7 @@ html {
 }
 
 [dir="rtl"] .btn {
-    font-family: 'Cairo', sans-serif;
+    font-family: 'Tajawal', sans-serif;
     font-weight: 600;
 }
 
@@ -247,7 +248,7 @@ html {
 /* RTL Service Arrow */
 [dir="rtl"] .service-arrow {
     right: auto;
-    left: 0;
+    left: 10px;
 }
 
 [dir="ltr"] .service-arrow {
@@ -255,11 +256,11 @@ html {
     right: 0;
 }
 
-[dir="rtl"] .service-card:hover .service-arrow i {
-    transform: rotate(45deg);
+[dir="rtl"] .service-card:hover .service-arrow{
+    transform: rotate(-90deg);
 }
 
-[dir="ltr"] .service-card:hover .service-arrow i {
+[dir="ltr"] .service-card:hover .service-arrow{
     transform: rotate(-45deg);
 }
 
@@ -1473,7 +1474,8 @@ html {
     bottom: -20px;
     left: 0;
     width: 100%;
-    background: url(../img/main-header-bottom.png) no-repeat center bottom;
+    background: var(--body-color);
+    border-radius: 50px 50px 0 0;
     background-size: 100% auto;
     height: 133px;
 }
@@ -1942,7 +1944,23 @@ body.sup-page .services-section h1 {
 }
 
 .services-grid .service-card {
+    text-align: start;
     grid-row: 1 / 4;
+    background: #fff;
+    border-radius: 20px;
+    position: relative;
+}
+
+.services-grid .service-card::after{
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 58px;
+    height: 60px;
+    background-color: #f4f5f6;
+    border-top-left-radius: 40px;
+    border-bottom-left-radius: 0px;
 }
 
 /* Service Card Styling - Professional Blob Design */
@@ -1975,7 +1993,7 @@ body.sup-page .services-section h1 {
 
 .service-card {
     position: relative;
-    padding: 20px;
+    padding: 55px 55px 100px 55px;
     background: transparent;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     text-align: center;
@@ -1987,10 +2005,10 @@ body.sup-page .services-section h1 {
 }
 
 .service-image-wrapper {
+    display: inline-block;
     width: 200px;
     height: 200px;
     margin: 0 auto 20px;
-    position: relative;
     border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
     overflow: visible;
     background: #f8f9fa;
@@ -2006,38 +2024,27 @@ body.sup-page .services-section h1 {
     transition: all 0.5s ease;
 }
 
-.service-card:hover .service-image-wrapper {
-    animation: morphBlob 8s linear infinite;
-    box-shadow: 0 15px 45px rgba(1, 77, 64, 0.1);
-    transform: translateY(-8px) scale(1.02);
-}
-
 /* Integrated Service Arrow */
 .service-arrow {
     position: absolute;
-    bottom: 5px;
-    right: 5px;
-    width: 50px;
-    height: 50px;
+    bottom: 0;
+    right: 0;
+    width: 45px;
+    height: 45px;
     background: var(--primary);
-    border-radius: 20px;
+    border-radius: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
-    transform: scale(0) rotate(-45deg);
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     z-index: 5;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    border: 3px solid #FFFFFF;
+    border: 3px solid transparent;
 }
 
 [dir="rtl"] .service-arrow {
     right: auto;
-    left: 5px;
-}
-
-.service-card:hover .service-arrow {
-    transform: scale(1) rotate(0deg);
+    transform: rotate(90deg);
 }
 
 .service-arrow i {
@@ -2053,8 +2060,13 @@ body.sup-page .services-section h1 {
 .service-content h5 {
     font-size: 1.25rem;
     font-weight: 700;
-    color: #1a1a1a;
+    color: var(--primary);
     transition: color 0.3s ease;
+    margin-bottom: 1em;
+}
+
+.service-content p {
+    color: #696973;
 }
 
 .service-card:hover h5 {
@@ -2973,17 +2985,16 @@ body.sup-page .services-section h1 {
 .contact-form-section {
     position: relative;
     padding: 80px 0;
-    background-color: #ffffff;
 }
 
 .contact-background-overlay {
     position: absolute;
     top: 0;
-    left: 5%;
-    right: 5%;
-    width: 90%;
+    left: 0%;
+    right: 0%;
+    width: 100%;
     height: 100%;
-    background: url('../img/contact-bg.png') top center no-repeat;
+    background: linear-gradient(180deg, #0E5243 0%, #4C8D88 50%, #B2D6D9 100%);
     background-size: cover;
     z-index: 1;
     border-radius: 20px;
@@ -3210,7 +3221,6 @@ body.sup-page .services-section h1 {
 
 /*** What Makes Us Different Section ***/
 .what-makes-us-different-section {
-    background: #FFFFFF;
     padding: 3em 0;
     padding: 100px 0;
     overflow: hidden;
@@ -3728,8 +3738,7 @@ body.sup-page .services-section h1 {
 /*** New Footer ***/
 .new-footer {
     position: relative;
-    background: url('../img/footer-bg.png') center center no-repeat;
-    background-size: cover;
+    background: linear-gradient(180deg, #02382c 0%, #000c09 70%, #000000 100%);
     overflow: hidden;
     padding: 5em 0;
 }
@@ -9777,4 +9786,110 @@ body.sup-page .flip-card-back .service-image-wrapper {
 
 .star-rating-widget label:active {
     transform: scale(0.9);
+}
+
+/* new css */
+
+.asas-tenders-wrapper {
+    background-color: #f4f5f6;
+    padding: 60px 20px;
+}
+
+/* Header */
+.asas-tenders-wrapper .tenders-header {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 40px;
+}
+
+.asas-tenders-wrapper .tenders-badge {
+    background-color: #064B3B;
+    color: #ffffff;
+    padding: 12px 32px;
+    border-radius: 30px;
+    font-size: 15px;
+    font-weight: 700;
+    margin: 0;
+}
+
+/* Grid Layout */
+.asas-tenders-wrapper .tenders-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+}
+
+/* Cards */
+.asas-tenders-wrapper .tender-card {
+    background-color: #ffffff;
+    border-radius: 20px;
+    padding: 24px 30px;
+    border: 1px solid #eaeaea;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.asas-tenders-wrapper .tender-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+/* Card Elements */
+.asas-tenders-wrapper .tender-card .card-location {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    color: #064B3B;
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.asas-tenders-wrapper .tender-card .card-title {
+    color: #064B3B;
+    font-size: 22px;
+    font-weight: 800;
+    text-align: start;
+    margin: 0 0 30px 0;
+    line-height: 1.5;
+}
+
+.asas-tenders-wrapper .tender-card .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: auto;
+    background: #fff;
+    border-top: none;
+    padding: 0;
+}
+
+.asas-tenders-wrapper .tender-card .card-info {
+    color: #555555;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Buttons */
+.asas-tenders-wrapper .tender-card .subscribe-btn {
+    background-color: #064B3B;
+    color: #ffffff;
+    text-decoration: none;
+    padding: 10px 24px;
+    border-radius: 25px;
+    font-weight: 700;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+    border: 1px solid var(--primary);
+}
+
+.asas-tenders-wrapper .tender-card .subscribe-btn:hover {
+    background-color: #fff;
+
+    color: var(--primary);
 }

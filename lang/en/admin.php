@@ -14,6 +14,7 @@ return [
     'add' => 'Add',
     'submit' => 'Submit',
     'image' => 'Image',
+    'none_background' => 'None',
     'avatar' => 'Avatar',
     'desc' => 'About',
     'categories' => 'Categories',

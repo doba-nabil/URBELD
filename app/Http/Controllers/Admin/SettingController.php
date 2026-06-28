@@ -132,6 +132,8 @@ class SettingController extends Controller
         if ($request->hasFile('footer_background') && $request->file('footer_background')->isValid()) {
             $settingModel->clearMediaCollection('footer_background');
             $settingModel->addMedia($request->file('footer_background'))->toMediaCollection('footer_background');
+        } elseif ($request->input('footer_background_type') === 'none') {
+            $settingModel->clearMediaCollection('footer_background');
         }
         if ($request->hasFile('home_hero_image') && $request->file('home_hero_image')->isValid()) {
             $settingModel->clearMediaCollection('home_hero_image');

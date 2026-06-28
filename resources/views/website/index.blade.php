@@ -90,89 +90,6 @@
     </div>
     <!-- Header End -->
 
-    <!-- About Start -->
-    <div class="about-section">
-        <div class="container-fluid py-5 px-0">
-            <div class="">
-                <div class="about-carousel owl-carousel">
-                    @php
-                        $aboutList = json_decode(
-                            \App\Models\Setting::getValue('home_about_list', app()->getLocale(), '[]'),
-                            true,
-                        );
-                        if (empty($aboutList)) {
-                            $aboutList = [
-                                [
-                                    'title' => 'المكان الأول للعثور على العقار المثالي',
-                                    'description' =>
-                                        'نحن نساعدك في العثور على منزل أحلامك من خلال خدماتنا المتميزة. نوفر لك مجموعة واسعة من الخيارات العقارية التي تناسب احتياجاتك وميزانيتك. نلتزم بتقديم أفضل تجربة عقارية لعملائنا',
-                                    'points' => "خدمات عقارية متكاملة\nفريق محترف وخبير\nأفضل الأسعار والعروض",
-                                ],
-                            ];
-                        }
-                        $defaultImages = [
-                            asset('website/assets/img/about.jpg'),
-                            asset('website/assets/img/logo.png'),
-                            asset('website/assets/img/logo.png'),
-                        ];
-                    @endphp
-
-                    @foreach ($aboutList as $index => $item)
-                        @php
-                            $slideTitle = is_array($item['title'] ?? null) ? ($item['title'][app()->getLocale()] ?? ($item['title']['ar'] ?? '')) : ($item['title'] ?? '');
-                            $slideDesc = is_array($item['description'] ?? null) ? ($item['description'][app()->getLocale()] ?? ($item['description']['ar'] ?? '')) : ($item['description'] ?? '');
-                            $slideBtnText = is_array($item['btn_text'] ?? null) ? ($item['btn_text'][app()->getLocale()] ?? ($item['btn_text']['ar'] ?? '')) : ($item['btn_text'] ?? '');
-                            $slidePoints = is_array($item['points'] ?? null) ? ($item['points'][app()->getLocale()] ?? ($item['points']['ar'] ?? '')) : ($item['points'] ?? '');
-                        @endphp
-                        <!-- Slide {{ $index + 1 }} -->
-                        <div class="about-slide">
-                            <div class="row g-5 align-items-center">
-                                <div class="col-md-6 wow fadeIn" data-wow-delay="0.1s">
-                                    <div class="about-img position-relative overflow-hidden">
-                                        <img class="img-fluid w-100"
-                                            src="{{ \App\Models\Setting::getMediaUrl('home_about_image_' . $index) ?: $defaultImages[$index % 3] }}"
-                                            alt="{{ $slideTitle }}">
-                                    </div>
-                                </div>
-                                <div class="col-md-6 wow fadeIn" data-wow-delay="0.5s">
-                                    <h1 class="mb-4">{{ $slideTitle }}</h1>
-                                    <p class="mb-4">{{ $slideDesc }}</p>
-
-                                    @if (!empty($slidePoints))
-                                        @php
-                                            // Split points by newline and trim each
-                                            $pointsArray = array_filter(
-                                                array_map('trim', explode("\n", $slidePoints)),
-                                            );
-                                        @endphp
-                                        @foreach ($pointsArray as $point)
-                                            <p><i class="fa fa-check text-primary me-3"></i>{{ $point }}</p>
-                                        @endforeach
-                                    @endif
-
-                                    @if (!empty($item['btn_link']) || !empty($slideBtnText))
-                                        <a href="{{ $item['btn_link'] ?? route('website.categories.index') }}"
-                                            class="btn btn-icon py-3 px-5 me-3 animated fadeIn">
-                                            <span>{{ $slideBtnText ?: __('website.view_services') }}</span>
-                                            <i class="icon-btn bi bi-arrow-up-left"></i>
-                                        </a>
-                                    @else
-                                        <a href="{{ route('website.categories.index') }}"
-                                            class="btn btn-icon py-3 px-5 me-3 animated fadeIn">
-                                            <span>{{ __('website.view_services') }}</span>
-                                            <i class="icon-btn bi bi-arrow-up-left"></i>
-                                        </a>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- About End -->
-
 
     <!-- Services Category Start -->
     <div class="container-fluid services-section py-5">
@@ -198,6 +115,7 @@
                             </div>
                             <div class="service-content">
                                 <h5>{{ $category->name }}</h5>
+                                <p>{{ $category->description }}</p>
                             </div>
                         </a>
                     </div>
@@ -213,54 +131,51 @@
     <!-- Services Category End -->
 
 
-    <!-- Video Showcase Section Start -->
-    <div class="video-showcase-section">
-        <div class="row g-0">
-            <!-- Left Content Side -->
-            <div class="col-lg-6 video-content-side">
-                <div class="video-content-wrapper">
-                    <span
-                        class="video-label">{{ \App\Models\Setting::getValue('home_video_label', app()->getLocale(), 'كيف نعمل') }}</span>
+    <!--  -->
 
-                    <h1 class="video-title">
-                        {{ \App\Models\Setting::getValue('home_video_title', app()->getLocale(), 'تصاميم مبتكرة، انطباعات دائمة') }}
-                    </h1>
-
-                </div>
-            </div>
-
-            <!-- Right Video Side -->
-            <div class="col-lg-6 video-media-side">
-                <div class="video-wrapper" id="videoShowcase">
-                    <img src="{{ \App\Models\Setting::getMediaUrl('home_video_cover') ?: asset('website/assets/img/video-section.png') }}"
-                        alt="Building" class="video-thumbnail">
-                    <div class="video-overlay"></div>
-                    <button class="play-button" id="playButton">
-                        <img src="{{ asset('website/assets/img/play-button.png') }}" alt="Play" class="play-icon">
-                    </button>
-                </div>
-            </div>
-        </div>
+    <section class="asas-tenders-wrapper" dir="rtl">
+  <div class="container">
+    
+    <div class="tenders-header">
+      <h2 class="tenders-badge">أحدث المناقصات</h2>
     </div>
 
-    <!-- Video Popup Modal -->
-    <div class="video-popup" id="videoPopup">
-        <div class="video-popup-content">
-            <button class="close-video" id="closeVideo">
-                <i class="bi bi-x-lg"></i>
-            </button>
-            <video id="videoPlayer" controls autoplay>
-                @php
-                    $videoUrl =
-                        \App\Models\Setting::getValue('home_video_url') ?:
-                        \App\Models\Setting::getMediaUrl('home_video');
-                @endphp
-                <source src="{{ $videoUrl ?: asset('website/assets/img/video.mp4') }}" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
+    <div class="tenders-grid">
+      
+      <div class="tender-card">
+        <div class="card-location">
+            <svg viewBox="0 0 24 24" width="18" height="18" stroke="#fff" stroke-width="2" fill="#064B3B" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+          </svg>
+          <span>جدة</span>
         </div>
+        <h3 class="card-title">إنشاء مجمع تجاري – المرحلة الثانية</h3>
+        <div class="card-footer">
+          <span class="card-info">ميزانية تقديرية: ١٨ مليون ريال · مفتوحة للتقديم</span>
+          <a href="#" class="subscribe-btn">إشترك الأن</a>
+        </div>
+      </div>
+
+      <div class="tender-card">
+        <div class="card-location">
+            <svg viewBox="0 0 24 24" width="18" height="18" stroke="#fff" stroke-width="2" fill="#064B3B" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+          </svg>
+          <span>جدة</span>
+        </div>
+        <h3 class="card-title">إنشاء مجمع تجاري – المرحلة الثانية</h3>
+        <div class="card-footer">
+          <span class="card-info">ميزانية تقديرية: ١٨ مليون ريال · مفتوحة للتقديم</span>
+          <a href="#" class="subscribe-btn">إشترك الأن</a>
+        </div>
+      </div>
     </div>
-    <!-- Video Showcase Section End -->
+  </div>
+</section>
+
+    <!--  -->
 
     @if (count($topProviders) > 0)
         <!-- What You Need Section Start -->
@@ -399,7 +314,6 @@
     )" />
 
     <!-- Contact Form Section Start -->
-    <div class="py-3 bg-white"></div>
     <div class="contact-form-section">
         <div class="contact-background-overlay"></div>
         <div class="container">

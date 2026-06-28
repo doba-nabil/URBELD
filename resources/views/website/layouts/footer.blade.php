@@ -10,25 +10,6 @@
         <div class="position-absolute w-100 h-100" style="top: 0; left: 0; z-index: 0; background: rgba(0,0,0,0.4);"></div>
     @endif
     <div class="position-relative" style="z-index: 1;">
-    <!-- CTA Section -->
-    <div class="footer-cta-section">
-        <div class="footer-cta-big-logo">
-            <img src="{{ asset('website/assets/img/cutting-new-logo.png') }}" alt="URBELD Logo">
-        </div>
-        <div class="container">
-            <div class="footer-cta-content wow fadeInUp" data-wow-delay="0.2s">
-                <h1 class="footer-cta-title">{!! __('website.footer_cta_title') !!}</h1>
-                <!-- <p class="footer-cta-subtitle">
-                    {!! __('website.footer_cta_subtitle') !!}
-                </p> -->
-                <div class="quote-div">
-                    <a href="/#contactForm" class="btn-get-quote">
-                        <span>{!! __('website.footer_get_quote') !!}</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Footer Content -->
     <div class="container">

@@ -9,6 +9,8 @@ use App\Models\ServiceRequestResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Actions\ServiceRequests\CreateWebsiteServiceRequestAction;
+use App\Http\Requests\StoreServiceRequest;
 
 class ServiceRequestController extends Controller
 {
@@ -67,7 +69,7 @@ class ServiceRequestController extends Controller
         ]);
     }
 
-    public function store(\App\Http\Requests\StoreServiceRequest $request, \App\Actions\ServiceRequests\CreateWebsiteServiceRequestAction $action)
+    public function store(StoreServiceRequest $request, CreateWebsiteServiceRequestAction $action)
     {
         try {
             $data = $request->validated();

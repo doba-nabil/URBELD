@@ -243,6 +243,7 @@
                                                     <select name="footer_background_type" class="form-select">
                                                         <option value="image" {{ \App\Models\Setting::getValue('footer_background_type') == 'image' ? 'selected' : '' }}>{{ __('admin.image') }}</option>
                                                         <option value="video" {{ \App\Models\Setting::getValue('footer_background_type') == 'video' ? 'selected' : '' }}>{{ __('admin.video') }}</option>
+                                                        <option value="none" {{ \App\Models\Setting::getValue('footer_background_type') == 'none' ? 'selected' : '' }}>{{ __('admin.none_background') }}</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-md-8">

@@ -13,6 +13,7 @@ return [
     'add' => 'اضافة',
     'submit' => 'ارسال',
     'image' => 'صورة',
+    'none_background' => 'بدون خلفية',
     'avatar' => 'صورة شخصية',
     'desc' => 'نبذة',
     'categories' => 'الاقسام',
