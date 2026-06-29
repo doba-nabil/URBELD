@@ -1,6 +1,84 @@
 @extends('website.layouts.profile')
 
 @section('profile-content')
+    <div class="container mt-4 mb-5">
+        <div class="profile-dashboard-grid">
+            <a href="{{ route('provider.requests.index') }}" class="profile-card">
+                <span class="profile-card-badge">جديد</span>
+                <div class="profile-card-icon icon-teal">
+                    <i class="bi bi-inbox"></i>
+                </div>
+                <h3 class="profile-card-title">الطلبات الواردة</h3>
+                <p class="profile-card-subtitle">استقبال وإدارة طلبات العملاء الجديدة</p>
+            </a>
+
+            <a href="{{ route('profile.requests') }}" class="profile-card">
+                <div class="profile-card-icon icon-blue">
+                    <i class="bi bi-clipboard-check"></i>
+                </div>
+                <h3 class="profile-card-title">طلباتي</h3>
+                <p class="profile-card-subtitle">إدارة طلباتك النشطة والمكتملة</p>
+            </a>
+
+            <a href="#about-me-section" class="profile-card">
+                <div class="profile-card-icon icon-green">
+                    <i class="bi bi-person"></i>
+                </div>
+                <h3 class="profile-card-title">بياناتي</h3>
+                <p class="profile-card-subtitle">تعديل وعرض معلوماتك المهنية والتصنيفات</p>
+            </a>
+
+            <a href="{{ route('profile.reports') }}" class="profile-card">
+                <div class="profile-card-icon icon-red">
+                    <i class="bi bi-bar-chart"></i>
+                </div>
+                <h3 class="profile-card-title">التقارير</h3>
+                <p class="profile-card-subtitle">تقارير وإحصاءات العمليات والمشاريع</p>
+            </a>
+
+            <a href="{{ route('profile.subscription') }}" class="profile-card">
+                <div class="profile-card-icon icon-purple">
+                    <i class="bi bi-credit-card"></i>
+                </div>
+                <h3 class="profile-card-title">اشتراكاتي</h3>
+                <p class="profile-card-subtitle">تفاصيل الباقة والاستهلاك والترقية</p>
+            </a>
+
+            <a href="#" class="profile-card">
+                <span class="profile-card-dot"></span>
+                <div class="profile-card-icon icon-orange">
+                    <i class="bi bi-balance-scale"></i>
+                </div>
+                <h3 class="profile-card-title">المناقصات</h3>
+                <p class="profile-card-subtitle">طرح المناقصات واستقبال العروض</p>
+            </a>
+
+            <a href="#" class="profile-card">
+                <div class="profile-card-icon icon-blue">
+                    <i class="bi bi-headset"></i>
+                </div>
+                <h3 class="profile-card-title">مركز المساعدة</h3>
+                <p class="profile-card-subtitle">تجد شروحات متنوعة وفريق خدمة عملاء لتلقي إستفساراتك ومقترحاتك</p>
+            </a>
+
+            <a href="#" class="profile-card">
+                <div class="profile-card-icon icon-blue">
+                    <i class="bi bi-envelope"></i>
+                </div>
+                <h3 class="profile-card-title">الرسائل</h3>
+                <p class="profile-card-subtitle">تابع الرسائل الواردة والصادرة مع الأعضاء</p>
+            </a>
+
+            <a href="{{ route('provider.works.index') }}" class="profile-card">
+                <div class="profile-card-icon icon-indigo">
+                    <i class="bi bi-images"></i>
+                </div>
+                <h3 class="profile-card-title">معرض الأعمال</h3>
+                <p class="profile-card-subtitle">إضافة وإدارة أعمالك السابقة (البورتفوليو)</p>
+            </a>
+        </div>
+    </div>
+
     <!-- About Me Section -->
     <div class="about-me-section">
         <div class="container">

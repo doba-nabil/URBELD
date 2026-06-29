@@ -9791,8 +9791,8 @@ body.sup-page .flip-card-back .service-image-wrapper {
 /* new css */
 
 .asas-tenders-wrapper {
-    background-color: #f4f5f6;
-    padding: 60px 20px;
+    background: linear-gradient(180deg, #82b0a6 0%, #4a756e 100%);
+    padding: 60px 20px 80px 20px;
 }
 
 /* Header */
@@ -9892,4 +9892,81 @@ body.sup-page .flip-card-back .service-image-wrapper {
     background-color: #fff;
 
     color: var(--primary);
+}
+
+/* Profile Dashboard Cards */
+.profile-dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px 0;
+}
+.profile-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    border: 1px solid #f0f0f0;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+}
+.profile-card:hover {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    transform: translateY(-2px);
+    color: inherit;
+}
+.profile-card-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    font-size: 24px;
+}
+.profile-card-icon.icon-teal { background: #e6f7f4; color: #10B981; }
+.profile-card-icon.icon-blue { background: #ebf4ff; color: #3B82F6; }
+.profile-card-icon.icon-green { background: #e6f7f4; color: #10B981; }
+.profile-card-icon.icon-red { background: #fdf2f2; color: #EF4444; }
+.profile-card-icon.icon-purple { background: #f4f0ff; color: #8B5CF6; }
+.profile-card-icon.icon-orange { background: #fff8eb; color: #F59E0B; }
+.profile-card-icon.icon-indigo { background: #eef2ff; color: #6366F1; }
+
+.profile-card-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 8px;
+}
+.profile-card-subtitle {
+    font-size: 13px;
+    color: #888;
+    line-height: 1.5;
+}
+.profile-card-badge {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background: #4ade80;
+    color: white;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 600;
+}
+.profile-card-dot {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 8px;
+    height: 8px;
+    background: #f59e0b;
+    border-radius: 50%;
 }

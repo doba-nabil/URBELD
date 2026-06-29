@@ -133,69 +133,6 @@
                             <a href="{{ route('member.works', $pUser->id) }}" class="profile-tab-link">{{ __('admin.works_portfolio') ?? 'الأعمال السابقة' }}</a>
                         </li>
                     @endif
-                @else
-                    <!-- Private View Tabs (Owner) -->
-                    <li class="profile-tab-item {{ Route::is('profile.edit') ? 'active' : '' }}">
-                        <a href="{{ route('profile.edit') }}" class="profile-tab-link">{{ __('website.about_me') }}</a>
-                    </li>
-                    @if ($tabIsProvider)
-                        <li class="profile-tab-item {{ Route::is('profile.complete') ? 'active' : '' }}">
-                            <a href="{{ route('profile.complete') }}" class="profile-tab-link"
-                                @if ($tabProfileIncomplete) style="color: #d4af37; font-weight: bold;" @endif>
-                                @if ($tabProfileIncomplete)
-                                    <i class="bi bi-exclamation-circle-fill text-warning me-1"></i>
-                                    {{ __('website.complete_data') }}
-                                    <span class="badge bg-warning text-dark ms-1"
-                                        style="font-size: 0.7rem; animation: pulse 2s infinite;">{{ __('website.required_lbl') }}</span>
-                                @else
-                                    {{ __('website.my_data') }}
-                                @endif
-                            </a>
-                        </li>
-                    @endif
-                    <li class="profile-tab-item {{ Route::is('profile.requests') ? 'active' : '' }}">
-                        <a href="{{ route('profile.requests') }}" class="profile-tab-link">
-                            @if ($tabIsProvider)
-                                {{ __('website.my_requests_sent') }}
-                            @else
-                                {{ __('website.nav_requests') }}
-                            @endif
-                        </a>
-                    </li>
-                    <li class="profile-tab-item {{ Route::is('profile.reports') ? 'active' : '' }}">
-                        <a href="{{ route('profile.reports') }}" class="profile-tab-link">{{ __('website.reports') }}</a>
-                    </li>
-                    @if ($tabIsProvider)
-                        <li class="profile-tab-item {{ Route::is('provider.requests.index') ? 'active' : '' }}">
-                            <a href="{{ route('provider.requests.index') }}" class="profile-tab-link">
-                                <i class="bi bi-inbox me-1"></i> {{ __('website.incoming_requests') }}
-                            </a>
-                        </li>
-                        @if ($tabUser->provider_type === 'company')
-                            <li class="profile-tab-item {{ Route::is('provider.services.*') ? 'active' : '' }}">
-                                <a href="{{ route('provider.services.index') }}" class="profile-tab-link">
-                                    <i class="bi bi-briefcase me-1"></i> {{ __('website.my_services') }}
-                                </a>
-                            </li>
-                        @endif
-                        <li class="profile-tab-item {{ Route::is('provider.works.*') ? 'active' : '' }}">
-                            <a href="{{ route('provider.works.index') }}" class="profile-tab-link">
-                                <i class="bi bi-images me-1"></i> {{ __('admin.works_portfolio') ?? 'الأعمال السابقة' }}
-                            </a>
-                        </li>
-                        @if ($tabUser->provider_type === 'company')
-                            <li class="profile-tab-item {{ Route::is('profile.subscription') ? 'active' : '' }}">
-                                <a href="{{ route('profile.subscription') }}" class="profile-tab-link">
-                                    <i class="bi bi-card-checklist me-1"></i> {{ __('website.my_subscription') ?? 'اشتراكي' }}
-                                    @if(auth()->user()->subscription_end_at && auth()->user()->subscription_end_at->isPast())
-                                        <span class="badge bg-danger ms-1" style="font-size: 0.6rem;">{{ __('website.expired') ?? 'منتهي' }}</span>
-                                    @elseif(auth()->user()->subscription_end_at && auth()->user()->subscription_end_at->diffInDays(now()) < 7)
-                                        <span class="badge bg-warning text-dark ms-1" style="font-size: 0.6rem;">{{ __('website.expiring_soon') ?? 'يوشك على الانتهاء' }}</span>
-                                    @endif
-                                </a>
-                            </li>
-                        @endif
-                    @endif
                 @endif
             </ul>
         </div>
