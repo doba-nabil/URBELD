@@ -9970,3 +9970,100 @@ body.sup-page .flip-card-back .service-image-wrapper {
     background: #f59e0b;
     border-radius: 50%;
 }
+
+/* Subscription Profile Page Styles */
+.subscription-main-card {
+    background-color: #fafafa;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 30px;
+}
+.package-name {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #1a4331; /* dark green */
+}
+.badge-active {
+    background-color: #059669; /* emerald green */
+    color: #fff;
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 0.85rem;
+}
+.date-text {
+    color: #9ca3af;
+    font-size: 0.95rem;
+    margin-top: 5px;
+}
+.upgrade-btn {
+    background-color: #1a4331;
+    color: #fff;
+    border-radius: 8px;
+    padding: 8px 20px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.3s;
+}
+.upgrade-btn:hover {
+    background-color: #143526;
+    color: #fff;
+}
+.limit-box {
+    background-color: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 20px;
+    flex: 1;
+}
+.limit-title {
+    font-weight: 700;
+    color: #1f2937;
+    font-size: 1.05rem;
+}
+.limit-count {
+    font-weight: 700;
+    color: #1f2937;
+    font-size: 1.05rem;
+}
+.custom-progress {
+    height: 8px;
+    background-color: #d1d5db;
+    border-radius: 10px;
+    margin: 15px 0 10px 0;
+    overflow: hidden;
+}
+.custom-progress-bar {
+    background-color: #1a4331;
+    height: 100%;
+    border-radius: 10px;
+}
+.limit-subtext {
+    color: #9ca3af;
+    font-size: 0.85rem;
+}
+.features-section {
+    margin-top: 30px;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 20px;
+}
+.features-title {
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    color: #1f2937;
+}
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    color: #4b5563;
+}
+.feature-icon {
+    color: #1a4331;
+    font-size: 1.2rem;
+}
