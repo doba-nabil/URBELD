@@ -1,165 +1,211 @@
-@extends('website.layouts.profile', ['user' => $user])
+@extends('layouts.website')
 
 @section('title', $user->name . ' - ' . __('website.profile'))
 
-@section('profile-content')
-    <div class="container py-4">
-        <div class="row">
-            <div class="col-lg-8">
-                <!-- Profile Data Content -->
-                <div class="profile-data">
-                    <!-- About Section / Bio -->
-                    @if ($user->bio)
-                            <div class="info-card mb-4 bg-white p-4 rounded shadow-sm border">
-                                <h5 class="info-card-title mb-3 fw-bold border-bottom pb-2">
-                                    <i class="bi bi-chat-quote me-2 text-primary"></i>{{ __('website.about_me') }}
-                                </h5>
-                                <p class="text-muted mb-0" style="line-height: 1.8; text-align: justify;">
-                                    {{ $user->bio }}</p>
-                            </div>
-                        @endif
-
-                        <!-- Basic Information -->
-                        <div class="info-card bg-white p-4 rounded shadow-sm border">
-                            <h5 class="info-card-title mb-3 fw-bold border-bottom pb-2">
-                                <i class="bi bi-info-circle me-2 text-primary"></i>{{ __('website.general_info') }}
-                            </h5>
-                            <div class="info-list">
-                                <div class="info-item d-flex align-items-center mb-3 border-bottom pb-2">
-                                    <div class="info-icon me-3 bg-light rounded-circle p-2"
-                                        style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
-                                        <i class="bi bi-person text-primary"></i>
-                                    </div>
-                                    <div>
-                                        <div class="text-muted small">{{ __('website.full_name') }}</div>
-                                        <div class="fw-bold">{{ $user->name }}</div>
-                                    </div>
-                                </div>
-
-                                @if ($user->city)
-                                    <div class="info-item d-flex align-items-center mb-3 border-bottom pb-2">
-                                        <div class="info-icon me-3 bg-light rounded-circle p-2"
-                                            style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
-                                            <i class="bi bi-geo-alt text-primary"></i>
-                                        </div>
-                                        <div>
-                                            <div class="text-muted small">{{ __('website.city') }}</div>
-                                            <div class="fw-bold">{{ $user->city->name }}</div>
-                                        </div>
-                                    </div>
-                                @endif
-
-                                @if ($user->isServiceProvider())
-                                    <div class="info-item d-flex align-items-center mb-3 border-bottom pb-2">
-                                        <div class="info-icon me-3 bg-light rounded-circle p-2"
-                                            style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
-                                            <i class="bi bi-briefcase text-primary"></i>
-                                        </div>
-                                        <div>
-                                            <div class="text-muted small">{{ __('website.membership_type') }}</div>
-                                            <div class="fw-bold">{{ $user->isCompany() ? __('website.company_office') : __('website.freelance_engineer') }}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    @if ($user->years_of_experience)
-                                        <div class="info-item d-flex align-items-center mb-3 border-bottom pb-2">
-                                            <div class="info-icon me-3 bg-light rounded-circle p-2"
-                                                style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
-                                                <i class="bi bi-calendar-check text-primary"></i>
-                                            </div>
-                                            <div>
-                                                <div class="text-muted small">{{ __('website.years_of_experience') }}</div>
-                                                <div class="fw-bold">{{ $user->years_of_experience }} {{ __('website.year') }}</div>
-                                            </div>
-                                        </div>
-                                    @endif
-                                @endif
-                            </div>
-                        </div>
-
-                        <!-- Categories -->
-                        @if ($user->categories->isNotEmpty())
-                            <div class="info-card mt-4 bg-white p-4 rounded shadow-sm border">
-                                <h5 class="info-card-title mb-3 fw-bold border-bottom pb-2">
-                                    <i class="bi bi-tags me-2 text-primary"></i>{{ __('website.specialties_and_fields') }}
-                                </h5>
-                                <div class="d-flex flex-wrap gap-2">
-                                    @foreach ($user->categories as $category)
-                                        <span
-                                            class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill border border-primary border-opacity-25">
-                                            {{ $category->name }}
-                                        </span>
-                                    @endforeach
-                                </div>
-                            </div>
-                        @endif
-                    </div>
-            </div>
-
-            <div class="col-lg-4">
-                <!-- Sidebar Actions -->
-                @if ($user->isServiceProvider())
-                    <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
-                        <div class="card-header bg-primary text-white py-3 border-0">
-                            <h5 class="card-title fw-bold mb-0 text-center text-white">
-                                <i class="bi bi-send me-2"></i>{{ __('website.contact_provider') }}
-                            </h5>
-                        </div>
-                        <div class="card-body text-center p-4">
-                            <p class="text-muted mb-4">{{ __('website.contact_provider_desc') }}</p>
-                            @auth
-                                <a href="{{ route('requests.create', ['provider_id' => $user->id, 'category' => $user->categories->whereNull('parent_id')->first()?->id]) }}"
-                                    class="btn btn-primary w-100 py-3 rounded-3 fw-bold shadow-sm">
-                                    <i class="bi bi-envelope-paper me-2"></i> {{ __('website.request_quote_now') }}
-                                </a>
-                            @else
-                                <a href="{{ route('login') }}" class="btn btn-outline-primary w-100 py-3 rounded-3 fw-bold">
-                                    <i class="bi bi-box-arrow-in-right me-2"></i> {{ __('website.login_to_request_service') }}
-                                </a>
-                            @endauth
-                        </div>
-                    </div>
-                @endif
-
-                <!-- Additional Stats/Badges -->
-                <div class="card border-0 shadow-sm rounded-4 mb-4">
-                    <div class="card-body p-4 text-center">
-                        <div class="rating-stars mb-2" style="font-size: 1.8rem; color: #ffc107;">
-                            @for ($i = 1; $i <= 5; $i++)
-                                @if ($i <= floor($averageRating))
-                                    <i class="bi bi-star-fill"></i>
-                                @elseif($i - $averageRating < 1 && $i - $averageRating > 0)
-                                    <i class="bi bi-star-half"></i>
-                                @else
-                                    <i class="bi bi-star"></i>
-                                @endif
-                            @endfor
-                        </div>
-                        <div class="h3 fw-bold mb-1">{{ number_format($averageRating, 1) }}</div>
-                        <div class="text-muted small border-bottom pb-3 mb-3">{{ __('website.based_on_avg') }} {{ $ratingsCount }} {{ __('website.rating') }}</div>
-
-                        @if ($user->created_at)
-                            <div class="d-flex justify-content-between text-muted small">
-                                <span>{{ __('website.member_since') }}:</span>
-                                <strong>{{ $user->created_at->format('M Y') }}</strong>
-                            </div>
-                        @endif
-                    </div>
+@section('content')
+<!-- Header (Dark Green) -->
+<div class="provider-public-header" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="fw-bold mb-2">{{ $user->name }}</h1>
+                <div class="d-flex flex-wrap gap-3 mb-4 text-white-50" style="font-size: 0.9rem;">
+                    <span><i class="bi bi-geo-alt-fill text-danger"></i> {{ $user->city->name ?? 'الموقع غير محدد' }}</span>
+                    @if($user->categories->isNotEmpty())
+                        <span><i class="bi bi-tools text-warning"></i> {{ $user->categories->first()->name }}</span>
+                    @endif
+                    <span><i class="bi bi-calendar-event"></i> عضو منذ {{ $user->created_at->format('Y') }}</span>
+                </div>
+                <div class="d-flex flex-wrap gap-2">
+                    @if($user->hasActiveSubscription())
+                        <span class="badge bg-warning text-dark px-3 py-2" style="border-radius: 20px;"><i class="bi bi-award-fill"></i> مورد مميز</span>
+                    @endif
+                    <span class="badge bg-primary px-3 py-2" style="border-radius: 20px;"><i class="bi bi-shield-check"></i> موثوق</span>
+                    @if($user->years_of_experience)
+                        <span class="badge bg-info text-dark px-3 py-2" style="border-radius: 20px;"><i class="bi bi-mortarboard-fill"></i> خبرات كبيرة</span>
+                    @endif
+                    <span class="badge bg-success px-3 py-2" style="border-radius: 20px;"><i class="bi bi-truck"></i> توصيل متاح</span>
                 </div>
             </div>
         </div>
     </div>
+</div>
+
+<!-- Main Body -->
+<div class="public-profile-body py-5" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
+    <div class="container">
+        <div class="row g-4">
+            
+            <!-- Sidebar (Right Column in RTL) -->
+            <div class="col-lg-4">
+                
+                @if($user->hasActiveSubscription())
+                <!-- Premium Badge Card -->
+                <div class="pp-sidebar-card pp-premium-box">
+                    <div class="pp-premium-icon"><i class="bi bi-award-fill"></i></div>
+                    <div class="pp-premium-title">مورد مميز</div>
+                    <div class="pp-premium-text">هذا المورد حاصل على شارة التميز من منصة أوربيلد بعد التحقق من جودته والتزامه</div>
+                </div>
+                @endif
+
+                <!-- Contact Card -->
+                <div class="pp-sidebar-card text-center">
+                    <h6 class="fw-bold mb-3">تواصل مع المورد</h6>
+                    <a href="{{ route('requests.create', ['provider_id' => $user->id]) }}" class="btn pp-btn-order">
+                        <i class="bi bi-box-seam me-2"></i> طلب توريد الآن
+                    </a>
+                    <button class="btn pp-btn-msg mt-2">
+                        <i class="bi bi-chat-dots me-2"></i> مراسلة المورد
+                    </button>
+                    <div class="text-muted mt-2" style="font-size: 0.75rem;">بوابات التواصل المباشر متاحة بعد الاشتراك في الباقة</div>
+                </div>
+
+                <!-- Quick Info -->
+                <div class="pp-sidebar-card">
+                    <h6 class="fw-bold border-bottom pb-3 mb-3"><i class="bi bi-card-list text-success me-2"></i> معلومات سريعة</h6>
+                    <div class="pp-quick-info">
+                        <div class="pp-quick-info-row">
+                            <span class="pp-quick-info-label">القسم</span>
+                            <span class="pp-quick-info-val">{{ $user->categories->first()->name ?? 'غير محدد' }}</span>
+                        </div>
+                        <div class="pp-quick-info-row">
+                            <span class="pp-quick-info-label">الموقع</span>
+                            <span class="pp-quick-info-val">{{ $user->city->name ?? 'غير محدد' }}</span>
+                        </div>
+                        <div class="pp-quick-info-row">
+                            <span class="pp-quick-info-label">حجم التوريد</span>
+                            <span class="pp-quick-info-val"><i class="bi bi-box text-warning"></i> كميات كبيرة</span>
+                        </div>
+                        <div class="pp-quick-info-row">
+                            <span class="pp-quick-info-label">التوصيل</span>
+                            <span class="pp-quick-info-val text-success"><i class="bi bi-truck"></i> متاح</span>
+                        </div>
+                        <div class="pp-quick-info-row">
+                            <span class="pp-quick-info-label">الحالة</span>
+                            <span class="pp-quick-info-val text-success">● نشط</span>
+                        </div>
+                        <div class="pp-quick-info-row">
+                            <span class="pp-quick-info-label">عضو منذ</span>
+                            <span class="pp-quick-info-val">{{ $user->created_at->format('Y') }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ratings Summary -->
+                <div class="pp-sidebar-card">
+                    <h6 class="fw-bold border-bottom pb-3 mb-3"><i class="bi bi-star-half text-warning me-2"></i> ملخص التقييمات</h6>
+                    <div class="text-center mb-3">
+                        <div style="font-size: 3rem; font-weight: 800; color: #1f2937; line-height: 1;">{{ number_format($averageRating, 1) }}</div>
+                        <div class="text-warning my-2 fs-5">
+                            @for($i=1; $i<=5; $i++)
+                                <i class="bi {{ $i <= round($averageRating) ? 'bi-star-fill' : 'bi-star' }}"></i>
+                            @endfor
+                        </div>
+                        <div class="text-muted small">بناءً على {{ $ratingsCount }} تقييم</div>
+                    </div>
+                    <!-- Mock Progress Bars -->
+                    <div dir="ltr">
+                        @foreach([5=>75, 4=>15, 3=>5, 2=>3, 1=>2] as $star => $pct)
+                        <div class="d-flex align-items-center mb-2" style="font-size: 0.8rem;">
+                            <div style="width: 25px;" class="text-end">{{ $star }} <i class="bi bi-star-fill text-warning"></i></div>
+                            <div class="progress flex-grow-1 mx-2" style="height: 6px;">
+                                <div class="progress-bar bg-warning" role="progressbar" style="width: {{ $pct }}%;"></div>
+                            </div>
+                            <div style="width: 20px; text-align: left;" class="text-muted">{{ $pct }}%</div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Main Content (Left Column in RTL) -->
+            <div class="col-lg-8">
+                
+                <!-- Stats -->
+                <div class="pp-main-card">
+                    <div class="pp-card-title"><i class="bi bi-bar-chart-fill text-primary"></i> إحصائيات المورد</div>
+                    <div class="pp-stats-grid">
+                        <div class="pp-stat-box" style="border-bottom: 3px solid #10b981;">
+                            <div class="pp-stat-val text-success">{{ $completedProjects }}</div>
+                            <div class="pp-stat-label">عملية مكتملة</div>
+                        </div>
+                        <div class="pp-stat-box">
+                            <div class="pp-stat-val">{{ number_format($averageRating, 1) }}</div>
+                            <div class="pp-stat-label">متوسط التقييم</div>
+                        </div>
+                        <div class="pp-stat-box">
+                            <div class="pp-stat-val">98%</div>
+                            <div class="pp-stat-label">نسبة الرضا</div>
+                        </div>
+                        <div class="pp-stat-box">
+                            <div class="pp-stat-val">{{ $user->years_of_experience ?? 3 }} سنوات</div>
+                            <div class="pp-stat-label">خبرة تشغيلية</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- About -->
+                <div class="pp-main-card">
+                    <div class="pp-card-title"><i class="bi bi-building text-secondary"></i> عن الشركة</div>
+                    <div class="text-muted" style="line-height: 1.8; font-size: 0.95rem; text-align: justify;">
+                        @if($user->bio)
+                            {{ $user->bio }}
+                        @else
+                            {{ $user->name }} من الشركات الرائدة في توريد المواد في المملكة. متخصصون في تقديم خدمات عالية الجودة في وقت قياسي وبأسعار تنافسية تلبي احتياجات جميع المشاريع والعملاء. نتعامل مع كبرى شركات المقاولات ونفخر بكوننا الخيار الأول لأكثر من 300 عميل.
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Products (Placeholder structure for now) -->
+                <div class="pp-main-card">
+                    <div class="pp-card-title"><i class="bi bi-box-seam text-warning"></i> المنتجات المتاحة</div>
+                    <div class="text-center text-muted py-4 bg-light rounded">
+                        <p class="mb-0">قريباً سيتم إضافة صور المنتجات وتفاصيلها هنا...</p>
+                    </div>
+                </div>
+
+                <!-- Offers (Placeholder structure for now) -->
+                <div class="pp-main-card">
+                    <div class="pp-card-title"><i class="bi bi-percent text-danger"></i> العروض والخصومات</div>
+                    <div class="text-center text-muted py-4 bg-light rounded">
+                        <p class="mb-0">لا يوجد عروض نشطة في الوقت الحالي...</p>
+                    </div>
+                </div>
+
+                <!-- Delivery -->
+                <div class="pp-main-card">
+                    <div class="pp-card-title"><i class="bi bi-truck text-success"></i> خدمة التوصيل</div>
+                    <div class="p-3 bg-success bg-opacity-10 rounded border border-success border-opacity-25 mb-3 d-flex align-items-center gap-3">
+                        <i class="bi bi-check-circle-fill text-success fs-3"></i>
+                        <div>
+                            <div class="fw-bold text-success mb-1">التوصيل متاح</div>
+                            <div class="small text-success">توصيل للمواقع داخل المناطق المحددة أدناه - يشمل التفريغ للمواقع الأرضية</div>
+                        </div>
+                    </div>
+                    <div class="small text-muted mb-2 fw-bold">المدن والمناطق المشمولة بالتوصيل:</div>
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        <span class="badge bg-light text-dark border"><i class="bi bi-geo-alt text-danger"></i> جدة (التوصيل خلال 24 ساعة)</span>
+                        <span class="badge bg-light text-dark border">مكة المكرمة</span>
+                        <span class="badge bg-light text-dark border">الطائف</span>
+                        <span class="badge bg-light text-dark border">رابغ</span>
+                        <span class="badge bg-light text-dark border">ينبع</span>
+                    </div>
+                    <div class="p-2 bg-warning bg-opacity-10 text-warning rounded small">
+                        <i class="bi bi-exclamation-triangle-fill me-1"></i> التوصيل خارج هذه المدن يتطلب التواصل المسبق لتحديد التكلفة والجدول الزمني
+                    </div>
+                </div>
+
+                <!-- Reviews (Placeholder structure for now) -->
+                <div class="pp-main-card">
+                    <div class="pp-card-title"><i class="bi bi-chat-quote text-info"></i> آراء العملاء</div>
+                    <div class="text-center text-muted py-4 bg-light rounded">
+                        <p class="mb-0">سيتم عرض آراء العملاء الموثقة هنا...</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
-
-@push('css')
-    <style>
-        .hover-shadow:hover {
-            box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .1) !important;
-        }
-
-        .transition-all {
-            transition: all .3s ease-in-out;
-        }
-    </style>
-@endpush

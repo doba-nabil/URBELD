@@ -79,6 +79,7 @@ class CategoryController extends Controller
 
         return view('website.categories.show', [
             'category' => $category,
+            'allProviders' => $allProviders,
             'companyProviders' => $companyProviders,
             'individualProviders' => $individualProviders,
             'cities' => $cities,
