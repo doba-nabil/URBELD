@@ -24,4 +24,50 @@
 @section('dashboard-footer')
     {{ $dataTable->scripts() }}
     @include('dashboard.partials.index.js')
+    <script>
+        $(document).ready(function () {
+            $(document).on('click', '.toggle-recommended-btn', function (e) {
+                e.preventDefault();
+                var url = $(this).data('url');
+                var table = $(this).data('table');
+                
+                Swal.fire({
+                    title: '{{ __("admin.sure") }}',
+                    text: '{{ __("admin.sure_change_recommendation") }}',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'نعم، تأكيد',
+                    cancelButtonText: '{{ __("admin.cancel") }}'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: url,
+                            type: 'POST',
+                            data: {
+                                _token: '{{ csrf_token() }}'
+                            },
+                            success: function (response) {
+                                if (response.status === 'success') {
+                                    Swal.fire('{{ __("admin.update_success") }}', response.message, 'success');
+                                    if (typeof window.LaravelDataTables !== 'undefined') {
+                                        let tableId = Object.keys(window.LaravelDataTables)[0];
+                                        window.LaravelDataTables[tableId].ajax.reload(null, false);
+                                    } else {
+                                        $(table).DataTable().ajax.reload(null, false);
+                                    }
+                                } else {
+                                    Swal.fire('خطأ', response.message, 'error');
+                                }
+                            },
+                            error: function (xhr) {
+                                Swal.fire('خطأ', '{{ __("admin.error_executing_request") }}', 'error');
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
 @endsection

@@ -25,6 +25,7 @@ class SubscriptionPackageRequest extends FormRequest
             'features' => ['nullable', 'array'],
             'features.*' => ['nullable', 'string'],
             'is_active' => ['nullable', 'boolean'],
+            'is_recommended' => ['nullable', 'boolean'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
             'max_services' => ['nullable', 'integer', 'min:0'],
             'works_limit' => ['nullable', 'integer', 'min:0'],

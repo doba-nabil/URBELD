@@ -22,6 +22,7 @@ class Category extends Model implements HasMedia, Auditable
         'icon',
         'icon_title',
         'is_active',
+        'color',
     ];
 
     public $translatable = ['name', 'description', 'icon_title'];

@@ -24,6 +24,7 @@ class SubscriptionPackageController extends Controller
     {
         $data = $request->validated();
         $data['is_active'] = isset($data['is_active']) && $data['is_active'] == '1';
+        $data['is_recommended'] = $request->has('is_recommended');
         
         if (isset($data['features']) && is_array($data['features'])) {
             $data['features'] = json_encode($data['features']);
@@ -49,6 +50,7 @@ class SubscriptionPackageController extends Controller
         $package = SubscriptionPackage::findOrFail($id);
         $data = $request->validated();
         $data['is_active'] = isset($data['is_active']) && $data['is_active'] == '1';
+        $data['is_recommended'] = $request->has('is_recommended');
         
         if (isset($data['features']) && is_array($data['features'])) {
             $data['features'] = json_encode($data['features']);
@@ -71,6 +73,25 @@ class SubscriptionPackageController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => __('admin.delete_error')
+            ], 500);
+        }
+    }
+
+    public function toggleRecommended($id)
+    {
+        try {
+            $package = SubscriptionPackage::findOrFail($id);
+            $package->is_recommended = !$package->is_recommended;
+            $package->save();
+            
+            return response()->json([
+                'status' => 'success',
+                'message' => 'تم تغيير حالة التوصية بنجاح'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'حدث خطأ أثناء تغيير الحالة'
             ], 500);
         }
     }

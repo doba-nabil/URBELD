@@ -27,17 +27,30 @@ class SubscriptionPackage extends Model implements Auditable
         'max_services',
         'works_limit',
         'color',
+        'is_recommended',
     ];
 
     protected $casts = [
         'price' => 'decimal:2',
         'duration_days' => 'integer',
         'is_active' => 'boolean',
+        'is_recommended' => 'boolean',
         'sort_order' => 'integer',
         'features' => 'array',
         'max_services' => 'integer',
         'works_limit' => 'integer',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saved(function ($model) {
+            if ($model->is_recommended) {
+                static::where('id', '!=', $model->id)->update(['is_recommended' => false]);
+            }
+        });
+    }
 
     public function scopeActive($query)
     {

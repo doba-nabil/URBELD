@@ -23,6 +23,7 @@ class CategoryRequest extends FormRequest
             'icon_title' => ['nullable', 'array'],
             'icon_title.ar' => ['nullable', 'string', 'max:255'],
             'is_active' => ['nullable', 'boolean'],
+            'color' => ['nullable', 'string', 'max:50'],
             'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ];
 

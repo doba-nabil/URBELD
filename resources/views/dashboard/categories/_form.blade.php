@@ -76,6 +76,35 @@
         </div>
     </div>
 
+    <div class="col-md-6 mb-3" id="color-input-container">
+        <label class="form-label">{{ __('admin.color') ?? 'اللون' }}</label>
+        <input type="color" name="color" class="form-control form-control-color w-100"
+               value="{{ old('color', $isEdit ? $category->color : '#064B3B') }}"
+               title="Choose category color">
+        @error('color')<span class="text-danger">{{ $message }}</span>@enderror
+        <small class="text-muted d-block mt-1">يستخدم هذا اللون لتمييز التصنيف الرئيسي في صفحة الطلبات.</small>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const parentSelect = document.getElementById('parent_id');
+            const colorContainer = document.getElementById('color-input-container');
+            
+            function toggleColorInput() {
+                if(parentSelect.value) {
+                    colorContainer.style.display = 'none';
+                } else {
+                    colorContainer.style.display = 'block';
+                }
+            }
+            
+            if(parentSelect && colorContainer) {
+                parentSelect.addEventListener('change', toggleColorInput);
+                toggleColorInput();
+            }
+        });
+    </script>
+
 
     <div class="col-md-12 mb-3">
         <label class="form-label">{{ __('admin.image') }}</label>

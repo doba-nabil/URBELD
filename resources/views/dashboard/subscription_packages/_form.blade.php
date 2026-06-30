@@ -125,6 +125,14 @@
             <label class="form-check-label" for="is_active">{{ __('admin.is_active') }}</label>
         </div>
     </div>
+
+    <div class="col-md-2 mb-3 d-flex align-items-center">
+        <div class="form-check form-switch pt-3">
+            <input class="form-check-input" type="checkbox" name="is_recommended" value="1" id="is_recommended"
+                   {{ old('is_recommended', $isEdit ? $package->is_recommended : false) ? 'checked' : '' }}>
+            <label class="form-check-label" for="is_recommended">موصى به</label>
+        </div>
+    </div>
 </div>
 
 <script>

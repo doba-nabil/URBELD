@@ -1441,6 +1441,12 @@ return [
     'email_response_accepted' => 'لقد تم قبول عرضك لطلب الخدمة "**:title**".',
     'email_response_rejected' => 'نعتذر، لم يتم اختيار عرضك لطلب الخدمة "**:title**".',
     'email_view_request_btn' => 'مشاهدة تفاصيل الطلب',
+    'sure_change_recommendation' => 'هل أنت متأكد من تغيير حالة التوصية لهذه الباقة؟',
+    'error_executing_request' => 'حدث خطأ أثناء تنفيذ الطلب',
+    'recommended' => 'موصى بها',
+    'normal' => 'عادية',
+    'cancel_recommendation' => 'إلغاء التوصية',
+    'set_as_recommended' => 'تعيين كموصى بها',
 ];
 
 

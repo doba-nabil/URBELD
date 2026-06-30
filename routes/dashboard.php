@@ -123,6 +123,7 @@ Route::group(['prefix' => 'admin-panel', 'middleware' => [IsAdminMiddleware::cla
     Route::get('membership-history', [UserMembershipHistoryController::class, 'index'])->name('membership-history.index');
 
     // Subscription Packages
+    Route::post('subscription-packages/{package}/toggle-recommended', [SubscriptionPackageController::class, 'toggleRecommended'])->name('subscription-packages.toggle-recommended');
     Route::resource('subscription-packages', SubscriptionPackageController::class);
 
     // Subscription Types

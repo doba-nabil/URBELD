@@ -376,7 +376,34 @@ class ProfileController extends Controller
         if ($isSubscriptionEnabled) {
             $packages = \App\Models\SubscriptionPackage::active()->ordered()->get();
         }
+
+        $maxServices = 0;
+        $usedServices = 0;
+        $servicesPercent = 0;
+        $maxWorks = 0;
+        $usedWorks = 0;
+        $worksPercent = 0;
+        $currentFeatures = [];
+
+        if ($user->subscriptionPackage) {
+            $maxServices = $user->subscriptionPackage->max_services;
+            $usedServices = $user->services()->count();
+            $servicesPercent = $maxServices > 0 ? min(100, ($usedServices / $maxServices) * 100) : 0;
+
+            $maxWorks = $user->subscriptionPackage->works_limit;
+            $usedWorks = $user->works()->count();
+            $worksPercent = $maxWorks > 0 ? min(100, ($usedWorks / $maxWorks) * 100) : 0;
+
+            $featuresData = $user->subscriptionPackage->features;
+            $currentFeatures = is_string($featuresData) ? json_decode($featuresData, true) : $featuresData;
+            $currentFeatures = is_array($currentFeatures) ? array_filter($currentFeatures) : [];
+        }
         
-        return view('website.profile.subscription', compact('user', 'packages', 'isSubscriptionEnabled'));
+        return view('website.profile.subscription', compact(
+            'user', 'packages', 'isSubscriptionEnabled',
+            'maxServices', 'usedServices', 'servicesPercent',
+            'maxWorks', 'usedWorks', 'worksPercent',
+            'currentFeatures'
+        ));
     }
 }

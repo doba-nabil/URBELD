@@ -40,15 +40,29 @@ class SubscriptionPackageDataTable extends DataTable
                 $statusText = $q->is_active ? __('admin.active') : __('admin.inactive');
                 return '<span class="badge ' . $badgeClass . '">' . $statusText . '</span>';
             })
+            ->addColumn('is_recommended', function ($q) {
+                $badgeClass = $q->is_recommended ? 'bg-label-success' : 'bg-label-secondary';
+                $statusText = $q->is_recommended ? __('admin.recommended') : __('admin.normal');
+                return '<span class="badge ' . $badgeClass . '">' . $statusText . '</span>';
+            })
             ->addColumn('action', function ($q) {
                 $editUrl = route('subscription-packages.edit', $q->id);
                 $deleteUrl = route('subscription-packages.destroy', $q->id);
+                $toggleUrl = route('subscription-packages.toggle-recommended', $q->id);
+                $toggleText = $q->is_recommended ? __('admin.cancel_recommendation') : __('admin.set_as_recommended');
+                $toggleIcon = $q->is_recommended ? 'ti tabler-star-off' : 'ti tabler-star';
+                
                 return '
                     <div class="dropdown">
                         <button class="btn btn-sm btn-default" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="icon-base ti tabler-dots-vertical"></i>
                         </button>
                         <ul class="dropdown-menu">
+                            <li>
+                                <a href="javascript:void(0)" class="dropdown-item toggle-recommended-btn" data-url="' . $toggleUrl . '" data-table="#table">
+                                    <i class="icon-base ' . $toggleIcon . '"></i> ' . $toggleText . '
+                                </a>
+                            </li>
                             <li>
                                 <a href="' . $editUrl . '" class="dropdown-item">
                                     <i class="icon-base ti tabler-edit"></i> ' . __("admin.edit") . '
@@ -58,7 +72,7 @@ class SubscriptionPackageDataTable extends DataTable
                                 <a href="javascript:void(0)" class="dropdown-item delete-btn"
                                     data-id="' . $q->id . '"
                                     data-url="' . $deleteUrl . '"
-                                    data-table=".table"
+                                    data-table="#table"
                                     title="' . __("admin.delete") . '">
                                     <i class="icon-base ti tabler-trash"></i> ' . __("admin.delete") . '
                                 </a>
@@ -66,7 +80,7 @@ class SubscriptionPackageDataTable extends DataTable
                         </ul>
                     </div>';
             })
-            ->rawColumns(['action', 'name', 'price', 'duration_days', 'is_active', 'badge_name', 'sort_order'])
+            ->rawColumns(['action', 'name', 'price', 'duration_days', 'is_active', 'is_recommended', 'badge_name', 'sort_order'])
             ->setRowId('id');
     }
 
@@ -107,6 +121,7 @@ class SubscriptionPackageDataTable extends DataTable
             Column::make('works_limit')->title(__('admin.works_limit'))->addClass('text-center'),
             Column::make('max_services')->title(__('admin.max_services'))->addClass('text-center'),
             Column::make('is_active')->title(__('admin.status'))->addClass('text-center'),
+            Column::make('is_recommended')->title(__('admin.recommended'))->addClass('text-center'),
             Column::computed('action')->title(__('admin.actions'))
                 ->exportable(false)
                 ->printable(false)

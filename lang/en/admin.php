@@ -1109,6 +1109,12 @@ return [
     'create_success' => 'Created successfully',
     'update_success' => 'Updated successfully',
     'delete_success' => 'Deleted successfully',
+    'sure_change_recommendation' => 'Are you sure you want to change the recommendation status for this package?',
+    'error_executing_request' => 'An error occurred while executing the request',
+    'recommended' => 'Recommended',
+    'normal' => 'Normal',
+    'cancel_recommendation' => 'Cancel Recommendation',
+    'set_as_recommended' => 'Set as Recommended',
 ];
 
 
