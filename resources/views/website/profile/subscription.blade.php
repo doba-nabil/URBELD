@@ -114,56 +114,57 @@
                     @endif
 
                     <!-- Available Packages -->
-                    @if($isSubscriptionEnabled && count($packages) > 0)
-                        <div id="upgrade-section">
-                            <h4 class="fw-bold mb-4 text-dark">{{ __('website.available_packages') ?? 'الباقات المتاحة للترقية' }}</h4>
-                            <div class="row g-4">
+                    @if(count($packages) > 0)
+                        <div id="upgrade-section" class="upgradable-packages-section">
+                            <h4 class="upgradable-title">{{ __('website.available_packages') ?? 'الباقات المتاحة للترقية' }}</h4>
+                            <div class="row g-4 justify-content-center">
                                 @foreach($packages as $pkg)
-                                    <div class="col-md-6">
-                                        <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden transition-all hover-translate-y">
-                                            <div class="card-body p-4">
-                                                <div class="d-flex justify-content-between align-items-start mb-3">
-                                                    <div>
-                                                        <span class="badge bg-soft-primary text-primary px-3 py-1 mb-2">{{ $pkg->badge_name }}</span>
-                                                        <h5 class="fw-bold mb-0">{{ $pkg->name }}</h5>
-                                                    </div>
-                                                    <div class="text-end">
-                                                        <div class="h4 fw-bold text-primary mb-0">{{ number_format($pkg->price, 2) }}</div>
-                                                        <small class="text-muted">/ {{ $pkg->duration_days }} {{ __('website.days') ?? 'يوم' }}</small>
-                                                    </div>
-                                                </div>
-                                                
-                                                <p class="text-muted small mb-4">{{ Str::limit($pkg->description, 100) }}</p>
-                                                
-                                                <ul class="list-unstyled mb-4">
-                                                    <li class="mb-2 d-flex align-items-center">
-                                                        <i class="bi bi-check-circle-fill text-success me-2"></i>
-                                                        <span class="small">{{ __('website.max_services') ?? 'الخدمات' }}: {{ $pkg->max_services }}</span>
-                                                    </li>
-                                                    <li class="mb-2 d-flex align-items-center">
-                                                        <i class="bi bi-check-circle-fill text-success me-2"></i>
-                                                        <span class="small">{{ __('website.works_limit') ?? 'أعمال المعرض' }}: {{ $pkg->works_limit }}</span>
-                                                    </li>
-                                                    @php
-                                                        $pkgFeatures = $pkg->features;
-                                                        if(is_string($pkgFeatures)) $pkgFeatures = json_decode($pkgFeatures, true);
-                                                    @endphp
-                                                    @if(is_array($pkgFeatures))
-                                                        @foreach($pkgFeatures as $feature)
-                                                            @if(!empty($feature))
-                                                                <li class="mb-2 d-flex align-items-center">
-                                                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
-                                                                    <span class="small">{{ $feature }}</span>
-                                                                </li>
-                                                            @endif
-                                                        @endforeach
-                                                    @endif
-                                                </ul>
-                                                
-                                                <div class="alert alert-info py-2 px-3 mb-0 rounded-3" style="font-size: 0.85rem;">
-                                                    <i class="bi bi-info-circle me-1"></i>
-                                                    {{ __('website.contact_admin_to_subscribe') ?? 'يرجى التواصل مع الإدارة للاشتراك أو الترقية' }}
-                                                </div>
+                                    @php
+                                        // Assume recommended package if badge_name is set, or you can use your own condition (e.g. $pkg->is_recommended)
+                                        $isRecommended = $pkg->is_recommended ?? false; 
+                                    @endphp
+                                    <div class="col-md-4">
+                                        <div class="up-pkg-card {{ $isRecommended ? 'recommended-pkg' : '' }}">
+                                            @if($isRecommended)
+                                                <div class="up-pkg-badge">{{ __('website.recommended_package') ?? 'الباقة الموصى بها' }}</div>
+                                            @endif
+                                            
+                                            <div class="up-pkg-name">{{ $pkg->name }}</div>
+                                            
+                                            <div class="up-pkg-price-wrap">
+                                                <div class="up-pkg-price">{{ number_format($pkg->price, 0) }}</div>
+                                                <div class="up-pkg-duration">{{ __('website.rs_per_year') ?? 'ريال / سنوياً' }}</div>
+                                            </div>
+                                            
+                                            <ul class="up-pkg-features">
+                                                <li>
+                                                    <i class="bi bi-check-circle up-pkg-icon"></i>
+                                                    <span class="feature-text">{{ $pkg->max_services }} {{ __('website.services_count') ?? 'خدمات مدرجة' }}</span>
+                                                </li>
+                                                <li>
+                                                    <i class="bi bi-check-circle up-pkg-icon"></i>
+                                                    <span class="feature-text">{{ $pkg->works_limit }} {{ __('website.works_count') ?? 'أعمال معرض' }}</span>
+                                                </li>
+                                                @php
+                                                    $pkgFeatures = $pkg->features;
+                                                    if(is_string($pkgFeatures)) $pkgFeatures = json_decode($pkgFeatures, true);
+                                                @endphp
+                                                @if(is_array($pkgFeatures))
+                                                    @foreach($pkgFeatures as $feature)
+                                                        @if(!empty($feature))
+                                                            <li>
+                                                                <i class="bi bi-check-circle up-pkg-icon"></i>
+                                                                <span class="feature-text">{{ $feature }}</span>
+                                                            </li>
+                                                        @endif
+                                                    @endforeach
+                                                @endif
+                                            </ul>
+                                            
+                                            <div class="mt-auto">
+                                                <a href="javascript:void(0)" class="up-pkg-btn {{ $isRecommended ? 'recommended-btn' : '' }}">
+                                                    {{ __('website.choose_package') ?? 'اختيار الباقة' }}
+                                                </a>
                                             </div>
                                         </div>
                                     </div>

@@ -372,10 +372,7 @@ class ProfileController extends Controller
 
         $user = $request->user();
         $isSubscriptionEnabled = \App\Models\Setting::getValue('is_subscription_enabled', null, false);
-        $packages = [];
-        if ($isSubscriptionEnabled) {
-            $packages = \App\Models\SubscriptionPackage::active()->ordered()->get();
-        }
+        $packages = \App\Models\SubscriptionPackage::active()->ordered()->get();
 
         $maxServices = 0;
         $usedServices = 0;

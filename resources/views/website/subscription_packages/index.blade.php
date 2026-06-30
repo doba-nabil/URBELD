@@ -51,48 +51,51 @@
         </div>
         <div class="row g-4 justify-content-center">
             @foreach($packages as $package)
+                @php
+                    $isRecommended = $package->is_recommended ?? false; 
+                @endphp
                 <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="{{ 0.1 * ($loop->index + 1) }}s">
-                    <div class="card h-100 border-0 shadow-lg pricing-item rounded-4 overflow-hidden">
-                        <div class="p-4 text-center bg-primary text-white">
-                            <h4 class="text-white mb-2">{{ $package->name }}</h4>
-                            <div class="display-5 mb-0">
-                                {{ $package->price }} <small class="fs-6">{{ __('website.rs') }}</small>  <span class="fs-6">  {{ '/' . ' ' .$package->duration_days }} {{ __('admin.days') }}</span>
-                            </div>
-                            
+                    <div class="up-pkg-card {{ $isRecommended ? 'recommended-pkg' : '' }}">
+                        @if($isRecommended)
+                            <div class="up-pkg-badge">{{ __('website.recommended_package') ?? 'الباقة الموصى بها' }}</div>
+                        @endif
+                        
+                        <div class="up-pkg-name">{{ $package->name }}</div>
+                        
+                        <div class="up-pkg-price-wrap">
+                            <div class="up-pkg-price">{{ number_format($package->price, 0) }}</div>
+                            <div class="up-pkg-duration">{{ __('website.rs_per_year') ?? 'ريال / سنوياً' }}</div>
                         </div>
-                        <div class="card-body p-4 bg-white">
-                            @if($package->description)
-                                <p class="text-muted text-center mb-4">{{ $package->description }}</p>
+                        
+                        <ul class="up-pkg-features">
+                            <li>
+                                <i class="bi bi-check-circle up-pkg-icon"></i>
+                                <span class="feature-text">{{ $package->max_services > 0 ? $package->max_services : __('admin.all') }} {{ __('website.services_count') ?? 'خدمات مدرجة' }}</span>
+                            </li>
+                            <li>
+                                <i class="bi bi-check-circle up-pkg-icon"></i>
+                                <span class="feature-text">{{ $package->works_limit > 0 ? $package->works_limit : __('admin.all') }} {{ __('website.works_count') ?? 'أعمال معرض' }}</span>
+                            </li>
+                            @php
+                                $pkgFeatures = $package->features;
+                                if(is_string($pkgFeatures)) $pkgFeatures = json_decode($pkgFeatures, true);
+                            @endphp
+                            @if(is_array($pkgFeatures))
+                                @foreach($pkgFeatures as $feature)
+                                    @if(!empty($feature))
+                                        <li>
+                                            <i class="bi bi-check-circle up-pkg-icon"></i>
+                                            <span class="feature-text">{{ $feature }}</span>
+                                        </li>
+                                    @endif
+                                @endforeach
                             @endif
-                            <ul class="list-unstyled mb-4">
-                                @php
-                                    $features = $package->features;
-                                    if(is_string($features)) $features = json_decode($features, true);
-                                @endphp
-                                <li class="mb-2 d-flex align-items-start">
-                                    <i class="bi bi-check-circle-fill text-primary me-2 mt-1"></i>
-                                    <span>{{ __('website.max_services') }}: {{ $package->max_services > 0 ? $package->max_services : __('admin.all') }}</span>
-                                </li>
-                                <li class="mb-2 d-flex align-items-start">
-                                    <i class="bi bi-check-circle-fill text-primary me-2 mt-1"></i>
-                                    <span>{{ __('website.works_limit') }}: {{ $package->works_limit > 0 ? $package->works_limit : __('admin.all') }}</span>
-                                </li>
-                                @if(is_array($features))
-                                    @foreach($features as $feature)
-                                        @if($feature)
-                                            <li class="mb-2 d-flex align-items-start">
-                                                <i class="bi bi-check-circle-fill text-primary me-2 mt-1"></i>
-                                                <span>{{ $feature }}</span>
-                                            </li>
-                                        @endif
-                                    @endforeach
-                                @endif
-                            </ul>
-                            <div class="text-center mt-auto">
-                                <a href="{{ route('contact') }}" class="btn btn-primary px-4 py-2 rounded-pill w-100 fw-bold shadow-sm transition-all hover-up">
-                                    {{ __('website.subscribe_now') }}
-                                </a>
-                            </div>
+                        </ul>
+                        
+                        <div class="mt-auto">
+                            <a href="{{ route('contact') }}" class="up-pkg-btn {{ $isRecommended ? 'recommended-btn' : '' }}">
+                                {{ __('website.choose_package') ?? 'اختيار الباقة' }}
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -109,23 +112,4 @@
     </div>
 </div>
 <!-- Pricing Plan End -->
-
-<style>
-.pricing-item {
-    transition: all 0.3s ease;
-}
-.pricing-item:hover {
-    transform: translateY(-10px);
-}
-.hover-up:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 185, 142, 0.3) !important;
-}
-.rounded-4 {
-    border-radius: 1.5rem !important;
-}
-.transition-all {
-    transition: all 0.3s ease;
-}
-</style>
 @endsection

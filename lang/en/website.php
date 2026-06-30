@@ -484,5 +484,10 @@ return [
     'geolocation_not_supported' => 'Sorry, your browser does not support geolocation.',
     'confirm_action_proceed_msg' => 'Are you sure you want to proceed?',
     'yes_proceed' => 'Yes, proceed',
+    'rs_per_year' => 'SAR / Year',
+    'services_count' => 'Listed Services',
+    'works_count' => 'Portfolio Works',
+    'recommended_package' => 'Recommended Package',
+    'choose_package' => 'Choose Package',
 ];
 

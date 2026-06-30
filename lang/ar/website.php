@@ -489,5 +489,10 @@ return [
     'geolocation_not_supported' => 'عفوا، متصفحك لا يدعم خاصية تحديد الموقع.',
     'confirm_action_proceed_msg' => 'هل أنت متأكد من الاستمرار؟',
     'yes_proceed' => 'نعم، استمر',
+    'rs_per_year' => 'ريال / سنوياً',
+    'services_count' => 'خدمات مدرجة',
+    'works_count' => 'أعمال معرض',
+    'recommended_package' => 'الباقة الموصى بها',
+    'choose_package' => 'اختيار الباقة',
 ];
 
