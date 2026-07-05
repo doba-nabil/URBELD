@@ -18,6 +18,7 @@ return [
     'srvice_seeker_lbl' => 'طالب الخدمة',
     'id_or_iqama' => 'رقم الهوية او الاقامة',
     'commercial_record' => 'رقم السجل التجاري',
+    'representative_name' => 'اسم المفوض',
     'id_placeholder' => 'الرقم التعريفي (الهوية أو السجل)',
     
     // Auth

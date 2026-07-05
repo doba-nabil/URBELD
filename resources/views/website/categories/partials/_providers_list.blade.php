@@ -1,70 +1,49 @@
 @if ($providers->isNotEmpty())
-    <div class="row g-4" id="providers-container-inner">
+    <div class="companies-grid" id="providers-container-inner">
         @foreach ($providers as $index => $provider)
             @php
                 $isPremium = $provider->hasActiveSubscription();
             @endphp
-            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="{{ (($index % 3) + 1) * 0.1 }}s">
-                <div class="provider-card {{ $isPremium ? 'premium-card' : '' }}">
-                    <!-- Name & Location -->
-                    <div class="text-center mb-3">
-                        <h5 class="provider-name">{{ $provider->name }}</h5>
-                        <div class="provider-location">
-                            <i class="bi bi-geo-alt-fill text-danger me-1"></i> 
-                            {{ $provider->city->name ?? __('website.jeddah') }}
-                        </div>
-                    </div>
-                    
-                    <!-- Category tag -->
-                    <div class="text-center mb-3">
-                        <span class="provider-cat-tag">
-                            <i class="bi bi-tools me-1"></i> {{ $category->name }}
-                        </span>
-                    </div>
-
-                    <!-- Badges -->
-                    <div class="d-flex justify-content-center gap-2 mb-3">
-                        @if($isPremium)
-                            <span class="badge-premium"><i class="bi bi-award-fill"></i> مميز</span>
-                            <span class="badge-trusted"><i class="bi bi-check-circle-fill"></i> موثوق</span>
-                        @else
-                            <span class="badge-trusted"><i class="bi bi-check-circle-fill"></i> موثوق</span>
-                            <span class="badge-experience"><i class="bi bi-mortarboard-fill"></i> +{{ $provider->years_of_experience ?? rand(1,10) }} سنة خبرة</span>
-                        @endif
-                    </div>
-
-                    <!-- Stats -->
-                    <div class="provider-stats-row border-bottom pb-3">
-                        <div class="stat-box">
-                            <i class="bi bi-trophy-fill text-warning"></i>
-                            <span>{{ $provider->completed_projects_count ?? 0 }} مشروع</span>
-                        </div>
-                        <div class="stat-box">
-                            <i class="bi bi-clipboard-data text-secondary"></i>
-                            <span>تصنيف A</span>
-                        </div>
-                    </div>
-
-                    <!-- Footer -->
-                    <div class="d-flex justify-content-between align-items-center pt-2 mt-auto">
-                        @auth
-                            <a href="{{ route('requests.create', array_filter(['provider_id' => $provider->id, 'category' => $category->id ?? null])) }}" class="btn btn-request {{ $isPremium ? 'premium-btn' : 'normal-btn' }}">
-                                طلب عرض سعر
-                            </a>
-                        @else
-                            <a href="{{ route('login') }}" class="btn btn-request {{ $isPremium ? 'premium-btn' : 'normal-btn' }}">
-                                طلب عرض سعر
-                            </a>
-                        @endauth
-                        
-                        <div class="d-flex align-items-center gap-1 dir-ltr justify-content-end" style="direction: ltr;">
-                            <span class="provider-rating-count">({{ $provider->ratings_count ?? rand(10, 150) }} تقييم)</span>
-                            <span class="provider-rating-score">
-                                {{ number_format($provider->average_rating, 1) }} <i class="bi bi-star-fill text-warning mb-1"></i>
-                            </span>
-                        </div>
-                    </div>
+            <div class="co-card {{ $isPremium ? 'featured' : '' }}">
+              <div class="co-header">
+                @if($isPremium)
+                <div class="featured-ribbon"><i class="bi bi-award-fill"></i> مميّز</div>
+                @endif
+                <div class="co-avatar" style="background:linear-gradient(135deg,#1a5c3a,#2d8f5e);">
+                    @if($provider->getFirstMediaUrl('personal_photo'))
+                        <img src="{{ $provider->getFirstMediaUrl('personal_photo') }}" alt="">
+                    @elseif($provider->getFirstMediaUrl('users'))
+                        <img src="{{ $provider->getFirstMediaUrl('users') }}" alt="">
+                    @else
+                        {{ mb_substr($provider->name, 0, 1) }}
+                    @endif
                 </div>
+                <div class="co-name">{{ $provider->name }}</div>
+                <div class="co-city"><i class="bi bi-geo-alt-fill text-danger"></i> {{ $provider->city->name ?? __('website.jeddah') }}</div>
+                <div class="co-sub"><i class="bi bi-tools text-primary"></i> {{ $category->name }}</div>
+                <div class="badges-row">
+                  @if($isPremium)
+                  <span class="badge b-featured"><i class="bi bi-award-fill"></i> مميّز</span>
+                  @endif
+                  <span class="badge b-verified"><i class="bi bi-check-circle-fill"></i> موثوق</span>
+                  <span class="badge b-exp"><i class="bi bi-mortarboard-fill"></i> +{{ $provider->years_of_experience ?? rand(1,10) }} سنة خبرة</span>
+                  <span class="badge b-avail"><i class="bi bi-circle-fill" style="font-size: 8px;"></i> متاح</span>
+                </div>
+                <div class="co-stats">
+                  <div class="co-stat"><i class="bi bi-trophy-fill text-warning"></i> <strong>{{ $provider->completed_projects_count ?? 0 }}</strong> مشروع</div>
+                  <div class="co-stat"><i class="bi bi-clipboard-data text-secondary"></i> تصنيف <strong>A</strong></div>
+                </div>
+              </div>
+              <hr class="co-divider">
+              <div class="co-footer">
+                <div class="rating-chip"><i class="bi bi-star-fill text-warning"></i> {{ number_format($provider->average_rating, 1) }} <span style="color:#9ca3af;font-weight:400;font-size:11px;">({{ $provider->ratings_count ?? rand(10, 150) }} تقييم)</span></div>
+                
+                @auth
+                    <a href="{{ route('requests.create', array_filter(['provider_id' => $provider->id, 'category' => $category->id ?? null])) }}" class="btn-quote {{ $isPremium ? 'featured-btn' : '' }}">طلب عرض سعر</a>
+                @else
+                    <a href="{{ route('login') }}" class="btn-quote {{ $isPremium ? 'featured-btn' : '' }}">طلب عرض سعر</a>
+                @endauth
+              </div>
             </div>
         @endforeach
     </div>

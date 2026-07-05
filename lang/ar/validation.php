@@ -197,6 +197,8 @@ return [
         'country'               => 'الدولة',
         'address'               => 'العنوان',
         'phone'                 => 'الهاتف',
+        'id_number'             => 'رقم السجل التجاري / الهوية',
+        'representative_name'   => 'اسم المفوض',
         'mobile'                => 'الجوال',
         'age'                   => 'العمر',
         'sex'                   => 'الجنس',

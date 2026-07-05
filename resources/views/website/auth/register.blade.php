@@ -144,6 +144,20 @@
                         @enderror
                     </div>
 
+                    <!-- Representative Name Field (Hidden for Seekers/Individuals initially) -->
+                    <div class="form-group login-form-group" id="representativeNameGroup" style="display: none;">
+                        <label for="representativeName" class="form-label">{{ __('website.representative_name') }}</label>
+                        <input type="text" 
+                               class="form-control login-input @error('representative_name') is-invalid @enderror" 
+                               id="representativeName" 
+                               name="representative_name" 
+                               value="{{ old('representative_name') }}"
+                               placeholder="{{ __('website.representative_name') }}">
+                        @error('representative_name')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
                     <!-- Password Field -->
                     <div class="form-group login-form-group">
                         <label for="password" class="form-label">{{ __('website.password') }}</label>
@@ -223,6 +237,8 @@
             const accountTypeInput = document.getElementById('account_type');
             const idNumberGroup = document.getElementById('idNumberGroup');
             const idNumberInput = document.getElementById('idNumber');
+            const representativeNameGroup = document.getElementById('representativeNameGroup');
+            const representativeNameInput = document.getElementById('representativeName');
 
             function toggleFields(type) {
                 const idLabel = document.getElementById('idNumberLabel');
@@ -230,13 +246,18 @@
                     idNumberGroup.style.display = 'block';
                     if (idLabel) idLabel.innerText = '{{ __('website.commercial_record') }}';
                     idNumberInput.placeholder = '{{ __('website.commercial_record') }}';
+                    representativeNameGroup.style.display = 'block';
                 } else if (type === 'individual') {
                     idNumberGroup.style.display = 'block';
                     if (idLabel) idLabel.innerText = '{{ __('website.id_or_iqama') }}';
                     idNumberInput.placeholder = '{{ __('website.id_or_iqama') }}';
+                    representativeNameGroup.style.display = 'none';
+                    representativeNameInput.value = ''; // clear value
                 } else {
                     idNumberGroup.style.display = 'none';
                     idNumberInput.value = ''; // clear value
+                    representativeNameGroup.style.display = 'none';
+                    representativeNameInput.value = ''; // clear value
                 }
             }
 

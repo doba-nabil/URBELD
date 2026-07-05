@@ -27,12 +27,14 @@ class AuthenticatedSessionController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'email' => ['required', 'string', 'email'],
+            'email' => ['required', 'string'],
             'password' => ['required', 'string'],
         ]);
 
+        $loginField = filter_var($request->email, FILTER_VALIDATE_EMAIL) ? 'email' : 'id_number';
+
         // Find user first to check status BEFORE any authentication attempt
-        $user = User::where('email', $request->email)->first();
+        $user = User::where($loginField, $request->email)->first();
 
         // If user exists and is blocked, return error immediately
         // This avoids session changes (Auth::attempt/logout) that cause 419 errors in shared browser sessions
@@ -42,8 +44,8 @@ class AuthenticatedSessionController extends Controller
             ])->withInput($request->only('email'));
         }
 
-        // Attempt to authenticate with email and password
-        if (!Auth::attempt(['email' => $request->email, 'password' => $request->password], $request->boolean('remember'))) {
+        // Attempt to authenticate with email/id_number and password
+        if (!Auth::attempt([$loginField => $request->email, 'password' => $request->password], $request->boolean('remember'))) {
             return back()->withErrors([
                 'email' => __('admin.invalid_credentials'),
             ])->onlyInput('email');

@@ -75,13 +75,13 @@
                     
                     <!-- Email Field -->
                     <div class="form-group login-form-group" id="emailFieldGroup">
-                        <label for="email" class="form-label">{{ __('website.email') }}</label>
-                        <input type="email" 
+                        <label for="email" class="form-label">{{ __('website.email') . ' / ' . __('website.commercial_record') }}</label>
+                        <input type="text" 
                                class="form-control login-input @error('email') is-invalid @enderror" 
                                id="email" 
                                name="email" 
                                value="{{ old('email') }}"
-                               placeholder="{{ __('website.email') }}" 
+                               placeholder="{{ __('website.email') . ' / ' . __('website.commercial_record') }}" 
                                required 
                                autofocus>
                         @error('email')

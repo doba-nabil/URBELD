@@ -12,7 +12,7 @@
 
 @section('content')
 <!-- Header Start -->
-    <div class="services-header-section without-search">
+    <div class="services-header-section without-search bg-notwhite">
         <div class="container p-md-5 p-4 mb-md-5">
             <div class="row align-items-center">
                 <div class="col-lg-12">
@@ -23,7 +23,7 @@
     </div>
     <!-- Header End -->
     <div class="contact-form-section" style="padding-top: 60px;">
-        <div class="contact-background-overlay"></div>
+        <!-- <div class="contact-background-overlay bg-white"></div> -->
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-10 col-xl-9">
