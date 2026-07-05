@@ -2,7 +2,7 @@
 
 @section('content')
     <!-- Header Start -->
-    <div class="category-header-section text-center">
+    <div class="category-header-section text-center services-header-section without-search">
         <h1 class="fw-bold mb-3 wow fadeInUp" data-wow-delay="0.1s">{{ $category->name }}</h1>
         <p class="mb-0 wow fadeInUp" data-wow-delay="0.2s">{{ $category->description ?? __('website.browse_best_providers_and_send_request') }}</p>
     </div>
@@ -114,7 +114,7 @@
     <!-- Subcategories Tabs End -->
 
     <!-- Providers Section Start -->
-    <div class="container-fluid bg-white individuals-section py-5" id="providers-sidebar-section">
+    <div class="container-fluid individuals-section py-5" id="providers-sidebar-section">
         <div class="container">
             <!-- Providers List Header -->
             <div class="providers-list-header d-flex justify-content-between align-items-end flex-wrap gap-3 wow fadeInUp" data-wow-delay="0.1s">

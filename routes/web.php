@@ -63,6 +63,15 @@ Route::get('/services/{service}', [ServiceController::class , 'show'])->name('we
 // Provider Search (the dynamic version of companies.html)
 Route::get('/providers/search', [ProviderSearchController::class , 'index'])->name('providers.search');
 
+// Tenders / Projects (المناقصات)
+Route::get('/tenders', function () {
+    return view('website.tenders.index');
+})->name('website.tenders.index');
+
+Route::get('/tenders/{id}', function ($id) {
+    return view('website.tenders.show');
+})->name('website.tenders.show');
+
 // Subscription Packages
 Route::get('/subscription-packages', [\App\Http\Controllers\Website\SubscriptionPackageController::class, 'index'])->name('website.subscription-packages.index');
 
