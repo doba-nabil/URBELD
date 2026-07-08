@@ -25,20 +25,28 @@ class SubscriptionPackage extends Model implements Auditable
         'is_active',
         'sort_order',
         'max_services',
+        'max_products',
+        'max_offers',
         'works_limit',
         'color',
         'is_recommended',
+        'is_featured',
+        'receive_tenders_priority',
     ];
 
     protected $casts = [
-        'price' => 'decimal:2',
-        'duration_days' => 'integer',
-        'is_active' => 'boolean',
-        'is_recommended' => 'boolean',
-        'sort_order' => 'integer',
-        'features' => 'array',
-        'max_services' => 'integer',
-        'works_limit' => 'integer',
+        'price'                      => 'decimal:2',
+        'duration_days'              => 'integer',
+        'is_active'                  => 'boolean',
+        'is_recommended'             => 'boolean',
+        'is_featured'                => 'boolean',
+        'receive_tenders_priority'   => 'boolean',
+        'sort_order'                 => 'integer',
+        'features'                   => 'array',
+        'max_services'               => 'integer',
+        'max_products'               => 'integer',
+        'max_offers'                 => 'integer',
+        'works_limit'                => 'integer',
     ];
 
     protected static function boot()

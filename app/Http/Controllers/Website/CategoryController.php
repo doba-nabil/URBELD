@@ -52,8 +52,9 @@ class CategoryController extends Controller
         $allProviders = $providersQuery
             ->select('users.*')
             ->leftJoin('subscription_packages', 'users.subscription_package_id', '=', 'subscription_packages.id')
+            ->orderByRaw('COALESCE(subscription_packages.is_featured, 0) DESC')
             ->orderByRaw('COALESCE(subscription_packages.sort_order, 0) DESC')
-            ->orderByDesc('id')
+            ->orderByDesc('users.id')
             ->withCount(['serviceRequestResponses as completed_projects_count' => function ($q) {
                 $q->where('status', 'accepted')
                   ->whereHas('serviceRequest', function ($sq) {
@@ -64,6 +65,30 @@ class CategoryController extends Controller
 
         $companyProviders = $allProviders->where('provider_type', 'company');
         $individualProviders = $allProviders->where('provider_type', 'individual');
+        
+        // Cache Category Statistics
+        $statsClosure = function () use ($categoryIds) {
+            $baseQuery = User::serviceProviders()
+                ->where('users.active', 'active')
+                ->whereHas('categories', function ($q) use ($categoryIds) {
+                    $q->whereIn('categories.id', $categoryIds);
+                });
+            
+            return [
+                'companies' => (clone $baseQuery)->where('provider_type', 'company')->count(),
+                'suppliers' => (clone $baseQuery)->where('provider_type', 'supplier')->count(),
+                'premium' => (clone $baseQuery)->whereNotNull('subscription_package_id')
+                                ->where('subscription_start_at', '<=', now())
+                                ->where('subscription_end_at', '>=', now())->count(),
+                'verified' => (clone $baseQuery)->where('is_trusted', 1)->count(),
+            ];
+        };
+
+        if (\Illuminate\Support\Facades\Cache::supportsTags()) {
+            $stats = \Illuminate\Support\Facades\Cache::tags(['category_stats'])->remember('category_stats_' . $category->id, 3600, $statsClosure);
+        } else {
+            $stats = \Illuminate\Support\Facades\Cache::remember('category_stats_' . $category->id, 3600, $statsClosure);
+        }
 
         // For the search form dropdowns
         $cities = City::orderBy('name')->get();
@@ -83,7 +108,8 @@ class CategoryController extends Controller
             'companyProviders' => $companyProviders,
             'individualProviders' => $individualProviders,
             'cities' => $cities,
-            'subCategories' => $subCategories
+            'subCategories' => $subCategories,
+            'stats' => $stats
         ]);
     }
 }

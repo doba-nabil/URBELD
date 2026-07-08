@@ -87,6 +87,14 @@ Route::group(['prefix' => 'admin-panel', 'middleware' => [IsAdminMiddleware::cla
     // Environmental Activity Types
     Route::resource('activity-types', \App\Http\Controllers\Admin\ActivityTypeController::class);
 
+    // Tenders
+    Route::resource('tenders', \App\Http\Controllers\Admin\TenderController::class)->only(['index', 'show']);
+    Route::post('tenders/{tender}/approve', [\App\Http\Controllers\Admin\TenderController::class, 'approve'])->name('tenders.approve');
+    Route::post('tenders/{tender}/reject', [\App\Http\Controllers\Admin\TenderController::class, 'reject'])->name('tenders.reject');
+
+    // Banners
+    Route::resource('banners', \App\Http\Controllers\Admin\BannerController::class)->except(['show']);
+
     // Service Requests
     Route::get('service-requests/provider-categories/{id}', [ServiceRequestController::class, 'getProviderCategories'])->name('service-requests.provider-categories');
     Route::resource('service-requests', ServiceRequestController::class);

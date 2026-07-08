@@ -271,6 +271,44 @@ class ProfileController extends Controller
         return view('website.profile.reports', compact('user', 'kpis', 'recentActivity'));
     }
 
+    public function tenders(Request $request): View
+    {
+        $user = $request->user();
+        
+        // 1. Incoming Tenders (المناقصات الواردة): Active tenders matching the user's category.
+        // Only for providers and suppliers (not normal individuals)
+        $incomingTenders = collect();
+        if ($user->isServiceProvider() || $user->isSupplier() || $user->isCompanyProvider()) {
+            $userCategoryIds = $user->categories()->pluck('categories.id');
+            $incomingTenders = \App\Models\Tender::active()
+                ->whereIn('category_id', $userCategoryIds)
+                ->where('user_id', '!=', $user->id) // Exclude own tenders
+                ->with(['category', 'city'])
+                ->latest()
+                ->paginate(10, ['*'], 'incoming_page');
+        }
+
+        // 2. My Tenders & Applications (مناقصاتي وتقديماتي)
+        // We'll combine them or pass them separately. Passing separately is usually easier for the view.
+        $myTenders = $user->tenders()
+            ->withCount('applications')
+            ->latest()
+            ->get();
+            
+        $myApplications = $user->tenderApplications()
+            ->with(['tender.category'])
+            ->latest()
+            ->get();
+
+        // 3. Saved Tenders (المناقصات المحفوظة)
+        $savedTenders = $user->savedTenders()
+            ->with(['category', 'city'])
+            ->latest()
+            ->get();
+
+        return view('website.profile.tenders', compact('user', 'incomingTenders', 'myTenders', 'myApplications', 'savedTenders'));
+    }
+
     public function destroyMedia(Request $request, $mediaId): RedirectResponse
     {
         $media = \Spatie\MediaLibrary\MediaCollections\Models\Media::findOrFail($mediaId);

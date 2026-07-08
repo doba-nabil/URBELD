@@ -55,7 +55,8 @@ class ProviderSearchController extends Controller
             ->select('users.*')
             ->leftJoin('subscription_packages', 'users.subscription_package_id', '=', 'subscription_packages.id')
             ->orderByRaw('COALESCE(subscription_packages.sort_order, 0) DESC')
-            ->orderByDesc('id')
+            ->orderByDesc('users.id')
+            ->with(['city', 'subscriptionPackage', 'media', 'categories'])
             ->withCount(['serviceRequestResponses as completed_projects_count' => function ($q) {
                 $q->where('status', 'accepted')
                   ->whereHas('serviceRequest', function ($sq) {

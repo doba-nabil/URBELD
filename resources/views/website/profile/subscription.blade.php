@@ -162,7 +162,7 @@
                                             </ul>
                                             
                                             <div class="mt-auto">
-                                                <a href="javascript:void(0)" class="up-pkg-btn {{ $isRecommended ? 'recommended-btn' : '' }}">
+                                                <a href="{{ route('checkout.package', $pkg->id) }}" class="up-pkg-btn {{ $isRecommended ? 'recommended-btn' : '' }}">
                                                     {{ __('website.choose_package') ?? 'اختيار الباقة' }}
                                                 </a>
                                             </div>

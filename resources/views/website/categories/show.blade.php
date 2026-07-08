@@ -5,6 +5,28 @@
     <div class="category-header-section text-center services-header-section without-search">
         <h1 class="fw-bold mb-3 wow fadeInUp" data-wow-delay="0.1s">{{ $category->name }}</h1>
         <p class="mb-0 wow fadeInUp" data-wow-delay="0.2s">{{ $category->description ?? __('website.browse_best_providers_and_send_request') }}</p>
+
+        <!-- Stats Bar -->
+        <div class="category-stats-bar mt-4 wow fadeInUp" data-wow-delay="0.3s">
+            <div class="d-inline-flex gap-4 p-3 rounded-pill bg-white shadow-sm flex-wrap justify-content-center">
+                <div class="stat-item px-3 border-end">
+                    <span class="text-primary fw-bold fs-5">{{ $stats['companies'] ?? 0 }}</span>
+                    <span class="text-muted ms-1 small">شركة</span>
+                </div>
+                <div class="stat-item px-3 border-end">
+                    <span class="text-primary fw-bold fs-5">{{ $stats['suppliers'] ?? 0 }}</span>
+                    <span class="text-muted ms-1 small">مورد</span>
+                </div>
+                <div class="stat-item px-3 border-end">
+                    <span class="text-warning fw-bold fs-5">{{ $stats['premium'] ?? 0 }}</span>
+                    <span class="text-muted ms-1 small">مميّز</span>
+                </div>
+                <div class="stat-item px-3">
+                    <span class="text-success fw-bold fs-5">{{ $stats['verified'] ?? 0 }}</span>
+                    <span class="text-muted ms-1 small">موثوق</span>
+                </div>
+            </div>
+        </div>
     </div>
     <!-- Header End -->
 

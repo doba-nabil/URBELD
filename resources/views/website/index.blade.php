@@ -51,24 +51,30 @@
                         <div class="row g-2">
                             <div class="col-md-9">
                                 <div class="row g-2">
-                                    <div class="col-md-4">
-                                        <span class="search-text">
-                                            {!! __('website.search_your_service') !!}
+                                    <div class="col-md-3">
+                                        <span class="search-text" style="font-size: 0.9rem;">
+                                            {!! __('website.search_your_service') ?? 'ابحث عن الخدمة' !!}
                                         </span>
                                     </div>
-                                    <div class="col-md-4">
-                                        <select class="form-select select2 border-0 py-3" name="category_id">
-                                            <option selected value="">{{ __('website.service') }}</option>
-                                            @foreach (\App\Models\Category::whereNull('parent_id')->where('is_active', true)->get() as $cat)
-                                                <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-                                            @endforeach
+                                    <div class="col-md-3">
+                                        <select class="form-select select2 border-0 py-3" name="region_id">
+                                            <option selected value="">{{ __('website.region') ?? 'المنطقة' }}</option>
+                                            <option value="makkah">{{ __('website.makkah_region') ?? 'منطقة مكة المكرمة' }}</option>
                                         </select>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <select class="form-select select2 border-0 py-3" name="city_id">
                                             <option selected value="">{{ __('website.city') }}</option>
                                             @foreach (\App\Models\City::orderBy('name')->get() as $city)
                                                 <option value="{{ $city->id }}">{{ $city->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="form-select select2 border-0 py-3" name="category_id">
+                                            <option selected value="">{{ __('website.service') ?? 'التصنيف' }}</option>
+                                            @foreach (\App\Models\Category::whereNull('parent_id')->where('is_active', true)->get() as $cat)
+                                                <option value="{{ $cat->id }}">{{ $cat->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -90,6 +96,35 @@
     </div>
     <!-- Header End -->
 
+    <!-- Banner Slider Start -->
+    @if(isset($banners) && $banners->count() > 0)
+    <div class="container-fluid py-4 wow fadeInUp" data-wow-delay="0.1s">
+        <div class="container">
+            <div id="homeBannerCarousel" class="carousel slide rounded overflow-hidden shadow-sm" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    @foreach($banners as $index => $banner)
+                        <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
+                            <a href="{{ $banner->link ?? '#' }}" target="_blank">
+                                <img src="{{ $banner->image_url }}" class="d-block w-100" alt="{{ $banner->title }}" style="max-height: 400px; object-fit: cover;">
+                            </a>
+                        </div>
+                    @endforeach
+                </div>
+                @if($banners->count() > 1)
+                <button class="carousel-control-prev" type="button" data-bs-target="#homeBannerCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#homeBannerCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+                @endif
+            </div>
+        </div>
+    </div>
+    @endif
+    <!-- Banner Slider End -->
 
     <!-- Services Category Start -->
     <div class="container-fluid services-section py-5">
@@ -131,49 +166,42 @@
     <!-- Services Category End -->
 
 
-    <!--  -->
-
-    <section class="asas-tenders-wrapper" dir="rtl">
-  <div class="container">
-    
-    <div class="tenders-header">
-      <h2 class="tenders-badge">أحدث المناقصات</h2>
-    </div>
-
-    <div class="tenders-grid">
-      
-      <div class="tender-card">
-        <div class="card-location">
-            <svg viewBox="0 0 24 24" width="18" height="18" stroke="#fff" stroke-width="2" fill="#064B3B" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-            <circle cx="12" cy="10" r="3"></circle>
-          </svg>
-          <span>جدة</span>
+    <section class="asas-tenders-wrapper py-5" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
+        <div class="container">
+            <div class="tenders-header wow fadeInUp" data-wow-delay="0.1s">
+                <h2 class="tenders-badge">{{ __('tenders.latest_tenders') ?? 'أحدث المناقصات' }}</h2>
+            </div>
+            
+            <div class="tenders-grid wow fadeInUp" data-wow-delay="0.2s">
+                @if(isset($activeTenders) && $activeTenders->count() > 0)
+                    @foreach($activeTenders as $tender)
+                    <div class="tender-card">
+                        <div class="card-location">
+                            <svg viewBox="0 0 24 24" width="18" height="18" stroke="#fff" stroke-width="2" fill="#064B3B" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                            <span>{{ $tender->city ? $tender->city->name : __('website.jeddah') }}</span>
+                        </div>
+                        <h3 class="card-title">{{ $tender->title }}</h3>
+                        <div class="card-footer">
+                            <span class="card-info">{{ __('tenders.budget') ?? 'ميزانية' }}: {{ $tender->budget ? number_format($tender->budget) . ' ' . __('tenders.sar') : __('tenders.not_specified') }}</span>
+                            <a href="{{ route('website.tenders.show', $tender->id) }}" class="subscribe-btn">{{ __('tenders.apply_offer') ?? 'إشترك الأن' }}</a>
+                        </div>
+                    </div>
+                    @endforeach
+                @else
+                    <div class="col-12 text-center text-muted">لا توجد مناقصات نشطة حالياً.</div>
+                @endif
+            </div>
+            
+            @if(isset($activeTenders) && $activeTenders->count() > 0)
+            <div class="text-center mt-4 wow fadeInUp" data-wow-delay="0.3s">
+                <a href="{{ route('website.tenders.index') }}" class="btn btn-outline-success px-4" style="border-radius: 20px; font-weight: bold; border-color: #064B3B; color: #064B3B;">{{ __('tenders.view_all_tenders') ?? 'عرض كل المناقصات' }}</a>
+            </div>
+            @endif
         </div>
-        <h3 class="card-title">إنشاء مجمع تجاري – المرحلة الثانية</h3>
-        <div class="card-footer">
-          <span class="card-info">ميزانية تقديرية: ١٨ مليون ريال · مفتوحة للتقديم</span>
-          <a href="#" class="subscribe-btn">إشترك الأن</a>
-        </div>
-      </div>
-
-      <div class="tender-card">
-        <div class="card-location">
-            <svg viewBox="0 0 24 24" width="18" height="18" stroke="#fff" stroke-width="2" fill="#064B3B" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-            <circle cx="12" cy="10" r="3"></circle>
-          </svg>
-          <span>جدة</span>
-        </div>
-        <h3 class="card-title">إنشاء مجمع تجاري – المرحلة الثانية</h3>
-        <div class="card-footer">
-          <span class="card-info">ميزانية تقديرية: ١٨ مليون ريال · مفتوحة للتقديم</span>
-          <a href="#" class="subscribe-btn">إشترك الأن</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+    </section>
 
     <!--  -->
 
@@ -490,6 +518,19 @@
                 </div>
             </div>
         </div>
-    </div>
     <!-- What Makes Us Different Section End -->
 @endsection
+
+@push('js')
+<script>
+  @if(session('error_popup') == 'subscription_required')
+      document.addEventListener("DOMContentLoaded", function() {
+          if(typeof showSubscriptionPopup === 'function') {
+              showSubscriptionPopup();
+          } else {
+              alert('{{ __("tenders.sub_required") ?? "يجب الإشتراك أو ترقية الباقة لتقديم عروض على المناقصات النشطة" }}');
+          }
+      });
+  @endif
+</script>
+@endpush

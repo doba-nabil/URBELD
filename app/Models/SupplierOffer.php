@@ -14,6 +14,7 @@ class SupplierOffer extends Model implements HasMedia
     protected $fillable = [
         'user_id',
         'title',
+        'subtitle',
         'description',
         'discount_percentage',
         'badge_text',

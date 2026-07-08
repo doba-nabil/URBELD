@@ -421,6 +421,92 @@ class User extends Authenticatable implements HasMedia, Auditable
     }
 
     /**
+     * المناقصات التي أنشأها المستخدم
+     */
+    public function tenders()
+    {
+        return $this->hasMany(Tender::class);
+    }
+
+    /**
+     * العروض التي قدمها المستخدم على المناقصات
+     */
+    public function tenderApplications()
+    {
+        return $this->hasMany(TenderApplication::class);
+    }
+
+    /**
+     * المناقصات المحفوظة
+     */
+    public function savedTenders()
+    {
+        return $this->hasMany(SavedTender::class);
+    }
+
+    /**
+     * التحقق من أن المستخدم حفظ مناقصة معينة
+     */
+    public function hasSavedTender(int $tenderId): bool
+    {
+        return $this->savedTenders()->where('tender_id', $tenderId)->exists();
+    }
+
+    /**
+     * التحقق من أن المستخدم دفع للتقديم على مناقصة معينة
+     */
+    public function hasPaidForTender(int $tenderId): bool
+    {
+        return TenderPayPerUse::where('user_id', $this->id)
+            ->where('tender_id', $tenderId)
+            ->where('status', 'paid')
+            ->exists();
+    }
+
+    /**
+     * هل يمكن للمستخدم التقديم على مناقصة؟
+     * (مشترك في باقة نشطة أو دفع مرة واحدة)
+     */
+    public function canApplyToTender(int $tenderId): bool
+    {
+        return $this->hasActiveSubscription() || $this->hasPaidForTender($tenderId);
+    }
+
+    /**
+     * هل يمكن للمستخدم إنشاء مناقصة؟
+     */
+    public function canPostTender(): bool
+    {
+        return $this->hasActiveSubscription();
+    }
+
+    /**
+     * هل يمكن للمورد إضافة منتج؟ (مع التحقق من حد الباقة)
+     */
+    public function canAddProduct(): bool
+    {
+        if (!$this->hasActiveSubscription()) return false;
+
+        $pkg = $this->subscriptionPackage;
+        if (!$pkg || $pkg->max_products == 0) return true; // 0 = unlimited
+
+        return $this->products()->count() < $pkg->max_products;
+    }
+
+    /**
+     * هل يمكن للمورد إضافة عرض؟ (مع التحقق من حد الباقة)
+     */
+    public function canAddOffer(): bool
+    {
+        if (!$this->hasActiveSubscription()) return false;
+
+        $pkg = $this->subscriptionPackage;
+        if (!$pkg || $pkg->max_offers == 0) return true; // 0 = unlimited
+
+        return $this->supplierOffers()->count() < $pkg->max_offers;
+    }
+
+    /**
      * التحقق من صلاحية العضوية
      */
     public function hasActiveMembership(): bool

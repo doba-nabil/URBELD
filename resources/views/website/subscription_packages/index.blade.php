@@ -93,7 +93,7 @@
                         </ul>
                         
                         <div class="mt-auto">
-                            <a href="{{ route('contact') }}" class="up-pkg-btn {{ $isRecommended ? 'recommended-btn' : '' }}">
+                            <a href="{{ route('checkout.package', $package->id) }}" class="up-pkg-btn {{ $isRecommended ? 'recommended-btn' : '' }}">
                                 {{ __('website.choose_package') ?? 'اختيار الباقة' }}
                             </a>
                         </div>

@@ -64,13 +64,8 @@ Route::get('/services/{service}', [ServiceController::class , 'show'])->name('we
 Route::get('/providers/search', [ProviderSearchController::class , 'index'])->name('providers.search');
 
 // Tenders / Projects (المناقصات)
-Route::get('/tenders', function () {
-    return view('website.tenders.index');
-})->name('website.tenders.index');
-
-Route::get('/tenders/{id}', function ($id) {
-    return view('website.tenders.show');
-})->name('website.tenders.show');
+Route::get('/tenders', [\App\Http\Controllers\Website\TenderController::class, 'index'])->name('website.tenders.index');
+Route::get('/tenders/{id}', [\App\Http\Controllers\Website\TenderController::class, 'show'])->name('website.tenders.show')->where('id', '[0-9]+');
 
 // Subscription Packages
 Route::get('/subscription-packages', [\App\Http\Controllers\Website\SubscriptionPackageController::class, 'index'])->name('website.subscription-packages.index');
@@ -86,6 +81,14 @@ Route::get('/user/{user}', function ($user) {
 
 
 Route::middleware('auth')->group(function () {
+    // Tenders Authenticated Actions
+    Route::get('/tenders/create', [\App\Http\Controllers\Website\TenderController::class, 'create'])->name('website.tenders.create');
+    Route::get('/checkout/package/{package}', [\App\Http\Controllers\Website\CheckoutController::class, 'package'])->name('checkout.package');
+    Route::post('/tenders', [\App\Http\Controllers\Website\TenderController::class, 'store'])->name('website.tenders.store');
+    Route::get('/tenders/{id}/apply', [\App\Http\Controllers\Website\TenderController::class, 'apply'])->name('website.tenders.apply');
+    Route::post('/tenders/{id}/apply', [\App\Http\Controllers\Website\TenderController::class, 'storeApplication'])->name('website.tenders.storeApplication');
+    Route::post('/tenders/{id}/save', [\App\Http\Controllers\Website\TenderController::class, 'toggleSave'])->name('website.tenders.save');
+
     Route::get('/profile', [ProfileController::class , 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class , 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class , 'destroy'])->name('profile.destroy');
@@ -98,6 +101,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/profile/complete', [ProfileController::class , 'completeStore'])->name('profile.complete.store');
     Route::get('/profile/requests', [ProfileController::class , 'requests'])->name('profile.requests');
     Route::get('/profile/reports', [ProfileController::class , 'reports'])->name('profile.reports');
+    Route::get('/profile/tenders', [ProfileController::class , 'tenders'])->name('profile.tenders');
     Route::get('/profile/subscription', [ProfileController::class , 'subscription'])->name('profile.subscription');
     Route::delete('/profile/media/{media}', [ProfileController::class , 'destroyMedia'])->name('profile.media.destroy');
     Route::post('/profile/photo', [ProfileController::class , 'updatePhoto'])->name('profile.photo.update');

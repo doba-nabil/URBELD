@@ -176,29 +176,29 @@
 
                 <!-- Reviews -->
                 <div class="pp-main-card">
-                    <div class="pp-card-title"><i class="bi bi-chat-dots text-secondary"></i> آراء العملاء</div>
+                    <div class="pp-card-title"><i class="bi bi-chat-dots text-secondary"></i> آراء وتقييمات العملاء</div>
                     
-                    <div class="pp-review-card">
-                        <div class="pp-review-header">
-                            <div class="pp-review-name">مقاولات الإنشاء الحديث</div>
-                            <div class="pp-review-stars">
-                                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                    @if($user->ratingsReceived && $user->ratingsReceived->count() > 0)
+                        @foreach($user->ratingsReceived as $rating)
+                        <div class="pp-review-card mb-3 pb-3 border-bottom">
+                            <div class="pp-review-header d-flex justify-content-between align-items-center mb-2">
+                                <div class="pp-review-name fw-bold">{{ $rating->rater->name ?? 'مستخدم' }}</div>
+                                <div class="pp-review-stars text-warning">
+                                    @for($i=1; $i<=5; $i++)
+                                        <i class="bi {{ $i <= $rating->rating ? 'bi-star-fill' : 'bi-star' }}"></i>
+                                    @endfor
+                                </div>
                             </div>
+                            <div class="pp-review-text text-muted mb-2">{{ $rating->comment }}</div>
+                            <div class="pp-review-time text-end small" style="color: #9ca3af;">{{ $rating->created_at->diffForHumans() }}</div>
                         </div>
-                        <div class="pp-review-text">تعاملت مع الشركة في مشروع سكني كبير، التزام تام بالمواعيد وجودة ممتازة للأسمنت. سنكمل التعامل معهم بإذن الله.</div>
-                        <div class="pp-review-time text-end">منذ أسبوعين</div>
-                    </div>
-
-                    <div class="pp-review-card">
-                        <div class="pp-review-header">
-                            <div class="pp-review-name">أ. محمد الغامدي</div>
-                            <div class="pp-review-stars">
-                                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                            </div>
+                        @endforeach
+                    @else
+                        <div class="text-center py-4 text-muted">
+                            <i class="bi bi-chat-square-text fs-1 mb-2 text-light"></i>
+                            <p>لا توجد تقييمات حتى الآن.</p>
                         </div>
-                        <div class="pp-review-text">أفضل مورد أسمنت تعاملت معه في جدة. السعر منافس والكميات دقيقة ومطابقة للفاتورة تماماً.</div>
-                        <div class="pp-review-time text-end">منذ شهر</div>
-                    </div>
+                    @endif
                 </div>
 
             </div>

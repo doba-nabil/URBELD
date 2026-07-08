@@ -44,7 +44,7 @@
                 <p class="profile-card-subtitle">تفاصيل الباقة والاستهلاك والترقية</p>
             </a>
 
-            <a href="#" class="profile-card">
+            <a href="{{ route('profile.tenders') }}" class="profile-card">
                 <span class="profile-card-dot"></span>
                 <div class="profile-card-icon icon-orange">
                     <i class="bi bi-balance-scale"></i>

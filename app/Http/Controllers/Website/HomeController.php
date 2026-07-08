@@ -46,7 +46,9 @@ class HomeController extends Controller
             ->with(['user', 'category'])
             ->limit(6)->get();
 
+        $banners = \App\Models\Banner::getForPage('home');
+        $activeTenders = \App\Models\Tender::active()->latest()->limit(6)->get();
 
-        return view('website.index', compact('logoUrl', 'siteName', 'categories', 'successPartners', 'topProviders', 'activeServices'));
+        return view('website.index', compact('logoUrl', 'siteName', 'categories', 'successPartners', 'topProviders', 'activeServices', 'banners', 'activeTenders'));
     }
 }
