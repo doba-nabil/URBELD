@@ -17,16 +17,109 @@
         $cities = \App\Models\City::orderBy('name')->get();
     @endphp
 
-    <div class="professional-data-container bg-white rounded-4 p-4 shadow-sm" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
+    <style>
+        .pd-readonly-box, .pd-input-box {
+            background-color: #f9f9f9;
+            border: 1px solid #f0f0f0;
+            border-radius: 8px;
+            padding: 0 16px;
+            color: #222;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            height: 56px;
+            font-size: 0.95rem;
+        }
+        select.pd-input-box {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: left 1rem center;
+            background-size: 16px 12px;
+        }
+        .pd-input-box:focus {
+            outline: none;
+            border-color: #d1d1d1;
+            box-shadow: none;
+            background-color: #fff;
+        }
+        .pd-label {
+            color: #888;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+            display: block;
+            font-weight: 500;
+        }
+        .pd-doc-box {
+            border: 1px solid #f0f0f0;
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #fff;
+        }
+        .pd-doc-icon {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+        }
+        .pd-subcat-badge {
+            background-color: #eef2f0;
+            color: #556b60;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-top: 6px;
+        }
+        .pd-status-badge {
+            font-size: 0.75rem;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-weight: 700;
+        }
+        .pd-status-verified {
+            background-color: #e6f4ea;
+            color: #1e8e3e;
+        }
+        .pd-status-attached {
+            background-color: #e8f0fe;
+            color: #1a73e8;
+        }
+        .profile-container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .main-card {
+            background-color: #fff;
+            border-radius: 12px;
+            border: 1px solid #eaeaea;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+            padding: 40px;
+        }
+    </style>
+
+<div class="container mt-4 mb-5 profile-container" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
+    <div class="mb-4 text-start">
+        <a href="{{ route('profile.edit') }}" class="text-muted text-decoration-none small fw-bold">
+            <i class="bi bi-arrow-right me-1"></i> العودة للوحة الرئيسية
+        </a>
+    </div>
+
+    <div class="main-card">
         
         <!-- Header -->
-        <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
-            <h3 class="fw-bold mb-0">بياناتي المهنية</h3>
-            @if($isLocked)
-                <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3 fw-bold" onclick="alert('لأي تغييرات، يرجى التواصل مع الإدارة.')">
-                    <i class="bi bi-pencil-square me-1"></i> تعديل البيانات
-                </button>
-            @endif
+        <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-4">
+            <h3 class="fw-bold mb-0 text-dark" style="font-size: 1.4rem;">بياناتي المهنية</h3>
+            <a href="{{ route('profile.edit') }}" class="btn btn-white btn-sm rounded-3 px-4 py-2 fw-bold text-dark border" style="background: #fff; font-size: 0.9rem;">
+                <i class="bi bi-pencil-square me-2 text-muted"></i> تعديل البيانات
+            </a>
         </div>
 
         @if (session('success'))
@@ -36,16 +129,16 @@
         @endif
 
         @if ($isActive)
-            <div class="alert mb-4 rounded-3 d-flex align-items-center" style="background-color: #fffbeb; border: 1px solid #fde68a; color: #b45309;">
-                <i class="bi bi-exclamation-circle me-2 fs-5"></i>
-                <div>
+            <div class="alert mb-4 rounded-3 d-flex align-items-center" style="background-color: #fffbeb; border: 1px solid #fef08a; color: #b45309; padding: 16px;">
+                <i class="bi bi-exclamation-circle me-3 fs-5"></i>
+                <div class="fw-bold" style="font-size: 0.9rem;">
                     تم تفعيل عضويتك! تم إغلاق إضافة أو تعديل الشهادات والمرفقات والتصنيفات. لأي تغييرات، يرجى التواصل مع الإدارة.
                 </div>
             </div>
         @elseif ($isPendingWithId)
-            <div class="alert mb-4 rounded-3 d-flex align-items-center" style="background-color: #fffbeb; border: 1px solid #fde68a; color: #b45309;">
-                <i class="bi bi-info-circle me-2 fs-5"></i>
-                <div>
+            <div class="alert mb-4 rounded-3 d-flex align-items-center" style="background-color: #fffbeb; border: 1px solid #fef08a; color: #b45309; padding: 16px;">
+                <i class="bi bi-info-circle me-3 fs-5"></i>
+                <div class="fw-bold" style="font-size: 0.9rem;">
                     {{ __('website.membership_review_desc') }}
                 </div>
             </div>
@@ -55,16 +148,16 @@
             @csrf
 
             <!-- Form Grid -->
-            <div class="row g-4 mb-4 pb-4 border-bottom">
+            <div class="row g-4 mb-5">
                 
-                <!-- Right Column (in RTL) -->
+                <!-- Row 1 -->
                 <div class="col-md-6">
-                    <div class="mb-4">
-                        <label class="form-label text-muted small fw-bold"><i class="bi bi-diagram-3 me-1"></i> التصنيف الرئيسي</label>
+                    <div class="text-end">
+                        <label class="pd-label"><i class="bi bi-diagram-3 me-1"></i> التصنيف الرئيسي</label>
                         @if($isLocked)
-                            <div class="pd-readonly-box fw-bold fs-5">{{ $userMainCategory->name ?? 'غير محدد' }}</div>
+                            <div class="pd-readonly-box justify-content-end">{{ $userMainCategory->name ?? 'غير محدد' }}</div>
                         @else
-                            <select class="form-select bg-light border-0 py-2" id="main_category" name="categories[]">
+                            <select class="pd-input-box text-end" id="main_category" name="categories[]" dir="rtl">
                                 <option value="">{{ __('website.choose_main_category') }}</option>
                                 @foreach ($categories as $category)
                                     <option value="{{ $category->id }}" {{ $userMainCategoryId == $category->id ? 'selected' : '' }} data-subcategories="{{ json_encode($category->children) }}">
@@ -74,42 +167,15 @@
                             </select>
                         @endif
                     </div>
-
-                    <div class="mb-4">
-                        <label class="form-label text-muted small fw-bold">التصنيفات الفرعية</label>
-                        @if($isLocked)
-                            <div class="d-flex flex-wrap gap-2 mt-2">
-                                @forelse($userSubCategories as $subcat)
-                                    <span class="badge bg-light text-dark border px-3 py-2 rounded-pill">{{ $subcat->name }}</span>
-                                @empty
-                                    <span class="text-muted">لا يوجد</span>
-                                @endforelse
-                            </div>
-                        @else
-                            <select class="form-select bg-light border-0 py-2" id="sub_categories" name="categories[]" multiple>
-                                <!-- Options populated by JS -->
-                            </select>
-                        @endif
-                    </div>
-
-                    <div>
-                        <label class="form-label text-muted small fw-bold">سنوات الخبرة</label>
-                        @if($isLocked)
-                            <div class="pd-readonly-box fw-bold fs-5">{{ $user->years_of_experience ?? 0 }} سنة</div>
-                        @else
-                            <input type="number" class="form-control bg-light border-0 py-2 fw-bold" name="years_of_experience" value="{{ $user->years_of_experience ?? 0 }}">
-                        @endif
-                    </div>
                 </div>
 
-                <!-- Left Column (in RTL) -->
                 <div class="col-md-6">
-                    <div class="mb-4">
-                        <label class="form-label text-muted small fw-bold"><i class="bi bi-geo-alt me-1"></i> المدينة</label>
+                    <div class="text-end">
+                        <label class="pd-label"><i class="bi bi-geo-alt me-1"></i> المدينة</label>
                         @if($isLocked)
-                            <div class="pd-readonly-box fw-bold fs-5">{{ $user->city->name ?? 'غير محدد' }}</div>
+                            <div class="pd-readonly-box justify-content-end">{{ $user->city->name ?? 'غير محدد' }}</div>
                         @else
-                            <select class="form-select bg-light border-0 py-2" name="city_id">
+                            <select class="pd-input-box text-end" name="city_id" dir="rtl">
                                 <option value="">{{ __('website.choose_city') }}</option>
                                 @foreach ($cities as $city)
                                     <option value="{{ $city->id }}" {{ $user->city_id == $city->id ? 'selected' : '' }}>{{ $city->name }}</option>
@@ -117,23 +183,58 @@
                             </select>
                         @endif
                     </div>
+                </div>
 
-                    <div class="mb-4">
-                        <label class="form-label text-muted small fw-bold"><i class="bi bi-envelope me-1"></i> البريد الإلكتروني</label>
+                <!-- Row 2 -->
+                <div class="col-md-6">
+                    <div class="text-end">
+                        <label class="pd-label">التصنيفات الفرعية</label>
                         @if($isLocked)
-                            <div class="pd-readonly-box fw-bold fs-6">{{ $user->email }}</div>
+                            <div class="d-flex flex-wrap gap-2 justify-content-end mt-1">
+                                @forelse($userSubCategories as $subcat)
+                                    <span class="pd-subcat-badge">{{ $subcat->name }}</span>
+                                @empty
+                                    <span class="text-muted small">لا يوجد</span>
+                                @endforelse
+                            </div>
                         @else
-                            <input type="email" class="form-control bg-light border-0 py-2 fw-bold" disabled value="{{ $user->email }}">
-                            <small class="text-muted">البريد الإلكتروني لا يمكن تغييره من هنا</small>
+                            <select class="pd-input-box text-end" id="sub_categories" name="categories[]" multiple dir="rtl" style="height: auto; min-height: 56px;">
+                                <!-- Options populated by JS -->
+                            </select>
                         @endif
                     </div>
+                </div>
 
-                    <div>
-                        <label class="form-label text-muted small fw-bold"><i class="bi bi-telephone me-1"></i> رقم التواصل</label>
+                <div class="col-md-6">
+                    <div class="text-end">
+                        <label class="pd-label"><i class="bi bi-envelope me-1"></i> البريد الإلكتروني</label>
                         @if($isLocked)
-                            <div class="pd-readonly-box fw-bold fs-5">{{ $user->phone ?? 'غير متوفر' }}</div>
+                            <div class="pd-readonly-box justify-content-end font-monospace" dir="ltr">{{ $user->email }}</div>
                         @else
-                            <input type="text" class="form-control bg-light border-0 py-2 fw-bold" disabled value="{{ $user->phone }}">
+                            <input type="email" class="pd-input-box text-end font-monospace" disabled value="{{ $user->email }}" dir="ltr">
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Row 3 -->
+                <div class="col-md-6">
+                    <div class="text-end">
+                        <label class="pd-label">سنوات الخبرة</label>
+                        @if($isLocked)
+                            <div class="pd-readonly-box justify-content-end">{{ $user->years_of_experience ?? 0 }} سنة</div>
+                        @else
+                            <input type="number" class="pd-input-box text-end" name="years_of_experience" value="{{ $user->years_of_experience ?? 0 }}">
+                        @endif
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="text-end">
+                        <label class="pd-label"><i class="bi bi-telephone me-1"></i> رقم التواصل</label>
+                        @if($isLocked)
+                            <div class="pd-readonly-box justify-content-end font-monospace" dir="ltr">{{ $user->phone ?? 'غير متوفر' }}</div>
+                        @else
+                            <input type="text" class="pd-input-box text-end font-monospace" disabled value="{{ $user->phone }}" dir="ltr">
                         @endif
                     </div>
                 </div>
@@ -141,71 +242,71 @@
             </div>
 
             <!-- Official Documents -->
-            <div class="mb-4 pb-4 border-bottom">
-                <label class="form-label text-muted small fw-bold mb-3">المستندات الرسمية</label>
+            <div class="mb-5 border-top pt-4 text-end">
+                <label class="pd-label mb-3">المستندات الرسمية</label>
                 
-                <div class="row g-3">
-                    <!-- Commercial Registration / ID -->
+                <div class="row g-4 flex-row-reverse">
+                    <!-- Commercial Registration / ID (Right in visual RTL) -->
                     <div class="col-md-6">
                         @if(auth()->user()->membership_type == 'company')
                             @if(auth()->user()->getFirstMediaUrl('commercial_registration'))
-                                <div class="pd-doc-box d-flex align-items-center justify-content-between p-3 border rounded-3 bg-light">
+                                <div class="pd-doc-box">
+                                    <span class="pd-status-badge pd-status-verified">موثق</span>
                                     <div class="d-flex align-items-center gap-3">
-                                        <div class="pd-doc-icon bg-success bg-opacity-10 text-success p-2 rounded"><i class="bi bi-file-earmark-text fs-4"></i></div>
-                                        <div>
-                                            <div class="fw-bold">السجل التجاري</div>
-                                            <a href="{{ auth()->user()->getFirstMediaUrl('commercial_registration') }}" target="_blank" class="text-muted small text-decoration-none">commercial_registration.pdf</a>
+                                        <div class="text-end">
+                                            <div class="fw-bold text-dark">السجل التجاري</div>
+                                            <a href="{{ auth()->user()->getFirstMediaUrl('commercial_registration') }}" target="_blank" class="text-muted" style="font-size: 0.75rem; text-decoration: none;">commercial_registration.pdf</a>
                                         </div>
+                                        <div class="pd-doc-icon" style="background-color: #e6f4ea; color: #1e8e3e;"><i class="bi bi-file-earmark-text fs-4"></i></div>
                                     </div>
-                                    <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2">موثق</span>
                                 </div>
                             @elseif(!$isLocked)
-                                <div class="p-3 border rounded-3 bg-light">
-                                    <label class="form-label fw-bold small">رفع السجل التجاري</label>
-                                    <input type="file" class="form-control border-0" name="commercial_registration">
+                                <div class="pd-doc-box d-block text-end p-3">
+                                    <label class="pd-label mb-2 fw-bold text-dark">رفع السجل التجاري <span class="text-danger">*</span></label>
+                                    <input type="file" class="form-control bg-white" name="commercial_registration" required>
                                 </div>
                             @endif
                         @else
                             @if(auth()->user()->getFirstMediaUrl('id_front'))
-                                <div class="pd-doc-box d-flex align-items-center justify-content-between p-3 border rounded-3 bg-light">
+                                <div class="pd-doc-box">
+                                    <span class="pd-status-badge pd-status-verified">موثق</span>
                                     <div class="d-flex align-items-center gap-3">
-                                        <div class="pd-doc-icon bg-success bg-opacity-10 text-success p-2 rounded"><i class="bi bi-file-earmark-person fs-4"></i></div>
-                                        <div>
-                                            <div class="fw-bold">الهوية الوطنية (الأمام)</div>
-                                            <a href="{{ auth()->user()->getFirstMediaUrl('id_front') }}" target="_blank" class="text-muted small text-decoration-none">id_front.jpg</a>
+                                        <div class="text-end">
+                                            <div class="fw-bold text-dark">الهوية الوطنية</div>
+                                            <a href="{{ auth()->user()->getFirstMediaUrl('id_front') }}" target="_blank" class="text-muted" style="font-size: 0.75rem; text-decoration: none;">id_front.jpg</a>
                                         </div>
+                                        <div class="pd-doc-icon" style="background-color: #e6f4ea; color: #1e8e3e;"><i class="bi bi-file-earmark-person fs-4"></i></div>
                                     </div>
-                                    <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2">موثق</span>
                                 </div>
                             @elseif(!$isLocked)
-                                <div class="p-3 border rounded-3 bg-light">
-                                    <label class="form-label fw-bold small">رفع الهوية الوطنية</label>
-                                    <input type="file" class="form-control border-0" name="id_front">
+                                <div class="pd-doc-box d-block text-end p-3">
+                                    <label class="pd-label mb-2 fw-bold text-dark">رفع الهوية الوطنية <span class="text-danger">*</span></label>
+                                    <input type="file" class="form-control bg-white" name="id_front" required>
                                 </div>
                             @endif
                         @endif
                     </div>
 
-                    <!-- Additional Certificates -->
+                    <!-- Additional Certificates (Left in visual RTL) -->
                     <div class="col-md-6">
                         @if(auth()->user()->getMedia('certificates')->count() > 0)
                             @foreach(auth()->user()->getMedia('certificates') as $media)
-                                <div class="pd-doc-box d-flex align-items-center justify-content-between p-3 border rounded-3 bg-light mb-2">
+                                <div class="pd-doc-box mb-3">
+                                    <span class="pd-status-badge pd-status-attached">مرفق</span>
                                     <div class="d-flex align-items-center gap-3">
-                                        <div class="pd-doc-icon bg-primary bg-opacity-10 text-primary p-2 rounded"><i class="bi bi-file-earmark-text fs-4"></i></div>
-                                        <div>
-                                            <div class="fw-bold">{{ $media->name ?? 'أوراق ومستندات رسمية' }}</div>
-                                            <a href="{{ $media->getUrl() }}" target="_blank" class="text-muted small text-decoration-none">official_documents.pdf</a>
+                                        <div class="text-end">
+                                            <div class="fw-bold text-dark">{{ $media->name ?? 'أوراق ومستندات رسمية' }}</div>
+                                            <a href="{{ $media->getUrl() }}" target="_blank" class="text-muted" style="font-size: 0.75rem; text-decoration: none;">official_documents.pdf</a>
                                         </div>
+                                        <div class="pd-doc-icon" style="background-color: #e8f0fe; color: #1a73e8;"><i class="bi bi-file-earmark-text fs-4"></i></div>
                                     </div>
-                                    <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2">مرفق</span>
                                 </div>
                             @endforeach
                         @elseif(!$isLocked)
-                            <div class="p-3 border rounded-3 bg-light" id="certificates-container">
-                                <label class="form-label fw-bold small">إضافة شهادة أو مستند</label>
-                                <input type="file" class="form-control border-0 mb-2" name="certificates[]">
-                                <input type="text" class="form-control border-0" name="certificate_names[]" placeholder="اسم الشهادة (اختياري)">
+                            <div class="pd-doc-box d-block text-end p-3" id="certificates-container">
+                                <label class="pd-label mb-2 fw-bold text-dark">أوراق ومستندات رسمية</label>
+                                <input type="file" class="form-control bg-white mb-2" name="certificates[]">
+                                <input type="text" class="form-control bg-white text-end" name="certificate_names[]" placeholder="اسم الشهادة (اختياري)">
                             </div>
                         @endif
                     </div>
@@ -213,29 +314,30 @@
             </div>
 
             <!-- Bio -->
-            <div class="mb-4">
-                <label class="form-label text-muted small fw-bold">نبذة عن المكتب/الشركة</label>
+            <div class="mb-4 border-top pt-4 text-end">
+                <label class="pd-label">نبذة عن المكتب/الشركة</label>
                 @if($isLocked)
-                    <div class="pd-readonly-box p-3 bg-light rounded-3 text-dark" style="min-height: 80px;">
+                    <div class="pd-readonly-box justify-content-end text-end" style="min-height: 60px; font-weight: normal;">
                         {{ auth()->user()->bio ?? 'لا توجد نبذة حالياً.' }}
                     </div>
+</div>
                 @else
-                    <textarea class="form-control bg-light border-0 py-2" name="bio" rows="4">{{ auth()->user()->bio }}</textarea>
+                    <textarea class="pd-input-box text-end" name="bio" rows="4" dir="rtl" style="resize: vertical;">{{ auth()->user()->bio }}</textarea>
                 @endif
             </div>
 
             @if(!$isLocked)
                 <!-- Subscription Packages (Only if not locked and enabled) -->
                 @if (isset($isSubscriptionEnabled) && $isSubscriptionEnabled && count($packages) > 0)
-                    <div class="mb-4 pt-3 border-top">
-                        <label class="form-label text-muted small fw-bold">اختر باقة الاشتراك <span class="text-danger">*</span></label>
-                        <div class="row g-3">
+                    <div class="mb-4 pt-4 border-top text-end">
+                        <label class="pd-label">اختر باقة الاشتراك <span class="text-danger">*</span></label>
+                        <div class="row g-3 flex-row-reverse">
                             @foreach ($packages as $pkg)
                                 <div class="col-md-4">
                                     <label class="w-100 cursor-pointer">
                                         <input type="radio" name="subscription_package_id" value="{{ $pkg->id }}" class="d-none peer" {{ (old('subscription_package_id') == $pkg->id || $user->subscription_package_id == $pkg->id) ? 'checked' : '' }}>
-                                        <div class="card border-0 bg-light p-3 rounded-3 peer-checked-border">
-                                            <h6 class="fw-bold">{{ $pkg->name }}</h6>
+                                        <div class="pd-doc-box peer-checked-border text-center flex-column">
+                                            <h6 class="fw-bold mb-2">{{ $pkg->name }}</h6>
                                             <div class="fw-bold text-primary">{{ number_format($pkg->price, 2) }} ريال</div>
                                         </div>
                                     </label>
@@ -245,8 +347,8 @@
                     </div>
                 @endif
 
-                <div class="text-end mt-4">
-                    <button type="submit" class="btn btn-primary px-5 py-2 rounded-pill fw-bold">حفظ البيانات</button>
+                <div class="text-end mt-5">
+                    <button type="submit" class="btn btn-primary px-5 py-3 rounded-pill fw-bold w-100 fs-5">حفظ البيانات</button>
                 </div>
             @endif
 

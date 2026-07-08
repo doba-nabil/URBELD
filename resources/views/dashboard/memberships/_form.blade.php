@@ -93,10 +93,36 @@
                     <option value="company" {{ old('type', ($membership ? $membership->type : '')) == 'company' ? 'selected' : '' }}>
                         {{ __('admin.company') }}
                     </option>
+                    <option value="supplier" {{ old('type', ($membership ? $membership->type : '')) == 'supplier' ? 'selected' : '' }}>
+                        {{ __('admin.supplier') ?? 'مورد' }}
+                    </option>
                 </select>
                 @error('type')
                     <span class="text-danger small">{{ $message }}</span>
                 @enderror
+            </div>
+            
+            <div class="col-md-3 mb-3">
+                <label class="form-label">{{ __('admin.company_classification') ?? 'التصنيف / الحجم' }}</label>
+                <select name="classification_id" class="form-select">
+                    <option value="">{{ __('admin.none') ?? 'لا يوجد' }}</option>
+                    @foreach($classifications ?? [] as $class)
+                        <option value="{{ $class->id }}" {{ old('classification_id', (isset($provider) ? $provider->classification_id : '')) == $class->id ? 'selected' : '' }}>
+                            {{ $class->name }} ({{ $class->type == 'company' ? 'شركة' : 'مورد' }})
+                        </option>
+                    @endforeach
+                </select>
+                @error('classification_id')
+                    <span class="text-danger small">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="col-md-3 mb-3 d-flex align-items-end">
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" name="is_trusted" value="1" id="is_trusted"
+                        {{ old('is_trusted', (isset($provider) && $provider->is_trusted)) ? 'checked' : '' }}>
+                    <label class="form-check-label" for="is_trusted">{{ __('admin.is_trusted') ?? 'عضو موثوق' }}</label>
+                </div>
             </div>
         @endif
         <div class="col-md-3 mb-3">

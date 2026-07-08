@@ -19,7 +19,9 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        return view('website.auth.register');
+        $companyClassifications = \App\Models\CompanyClassification::where('type', 'company')->get();
+        $supplierVolumes = \App\Models\CompanyClassification::where('type', 'supplier')->get();
+        return view('website.auth.register', compact('companyClassifications', 'supplierVolumes'));
     }
 
     /**
@@ -35,7 +37,8 @@ class RegisteredUserController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'phone' => ['required', 'string', 'max:20', 'unique:'.User::class],
             'id_number' => ['nullable', 'string', 'max:20', 'unique:'.User::class],
-            'account_type' => ['required', 'in:seeker,individual,company'],
+            'account_type' => ['required', 'in:seeker,individual,company,supplier'],
+            'classification_id' => ['nullable', 'exists:company_classifications,id'],
             'password' => ['required', 'confirmed', 'min:8'],
         ]);
 
@@ -54,6 +57,10 @@ class RegisteredUserController extends Controller
             $userType = 'service_provider';
             $providerType = 'individual';
             $membershipType = 'individual';
+        } elseif ($request->account_type === 'supplier') {
+            $userType = 'service_provider';
+            $providerType = 'supplier';
+            $membershipType = 'supplier';
         }
 
         // Create user with password
@@ -63,6 +70,7 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'phone' => $request->phone,
             'id_number' => $request->id_number,
+            'classification_id' => $request->classification_id,
             'membership_type' => $membershipType,
             'user_type' => $userType,
             'provider_type' => $providerType,

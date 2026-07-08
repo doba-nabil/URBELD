@@ -75,6 +75,9 @@
                             <button type="button" class="account-type-btn flex-fill {{ old('account_type') == 'company' ? 'active' : '' }}" data-type="company">
                                 {{ __('website.account_types.company') }}
                             </button>
+                            <button type="button" class="account-type-btn flex-fill {{ old('account_type') == 'supplier' ? 'active' : '' }}" data-type="supplier">
+                                {{ __('website.account_types.supplier') }}
+                            </button>
                             <button type="button" class="account-type-btn flex-fill {{ old('account_type') == 'individual' ? 'active' : '' }}" data-type="individual">
                                 {{ __('website.account_types.individual') }}
                             </button>
@@ -154,6 +157,18 @@
                                value="{{ old('representative_name') }}"
                                placeholder="{{ __('website.representative_name') }}">
                         @error('representative_name')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <!-- Classification Field -->
+                    <div class="form-group login-form-group" id="classificationGroup" style="display: none;">
+                        <label for="classification_id" class="form-label" id="classificationLabel">{{ __('website.classification') }}</label>
+                        <select class="form-control login-input @error('classification_id') is-invalid @enderror" id="classification_id" name="classification_id">
+                            <option value="">{{ __('website.choose') }}</option>
+                            <!-- Options will be populated via JS -->
+                        </select>
+                        @error('classification_id')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
@@ -239,6 +254,25 @@
             const idNumberInput = document.getElementById('idNumber');
             const representativeNameGroup = document.getElementById('representativeNameGroup');
             const representativeNameInput = document.getElementById('representativeName');
+            const classificationGroup = document.getElementById('classificationGroup');
+            const classificationSelect = document.getElementById('classification_id');
+            const classificationLabel = document.getElementById('classificationLabel');
+
+            const companyClassifications = @json($companyClassifications ?? []);
+            const supplierVolumes = @json($supplierVolumes ?? []);
+
+            function populateClassifications(items) {
+                classificationSelect.innerHTML = '<option value="">{{ __('website.choose') }}</option>';
+                items.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.id;
+                    option.textContent = item.name;
+                    if (item.id == '{{ old('classification_id') }}') {
+                        option.selected = true;
+                    }
+                    classificationSelect.appendChild(option);
+                });
+            }
 
             function toggleFields(type) {
                 const idLabel = document.getElementById('idNumberLabel');
@@ -247,17 +281,32 @@
                     if (idLabel) idLabel.innerText = '{{ __('website.commercial_record') }}';
                     idNumberInput.placeholder = '{{ __('website.commercial_record') }}';
                     representativeNameGroup.style.display = 'block';
+                    classificationGroup.style.display = 'block';
+                    classificationLabel.innerText = '{{ __('website.company_classification') }}';
+                    populateClassifications(companyClassifications);
+                } else if (type === 'supplier') {
+                    idNumberGroup.style.display = 'block';
+                    if (idLabel) idLabel.innerText = '{{ __('website.commercial_record') }}';
+                    idNumberInput.placeholder = '{{ __('website.commercial_record') }}';
+                    representativeNameGroup.style.display = 'block';
+                    classificationGroup.style.display = 'block';
+                    classificationLabel.innerText = '{{ __('website.supplier_volume') }}';
+                    populateClassifications(supplierVolumes);
                 } else if (type === 'individual') {
                     idNumberGroup.style.display = 'block';
                     if (idLabel) idLabel.innerText = '{{ __('website.id_or_iqama') }}';
                     idNumberInput.placeholder = '{{ __('website.id_or_iqama') }}';
                     representativeNameGroup.style.display = 'none';
                     representativeNameInput.value = ''; // clear value
+                    classificationGroup.style.display = 'none';
+                    classificationSelect.value = '';
                 } else {
                     idNumberGroup.style.display = 'none';
                     idNumberInput.value = ''; // clear value
                     representativeNameGroup.style.display = 'none';
                     representativeNameInput.value = ''; // clear value
+                    classificationGroup.style.display = 'none';
+                    classificationSelect.value = '';
                 }
             }
 

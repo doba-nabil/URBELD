@@ -1447,6 +1447,10 @@ return [
     'normal' => 'عادية',
     'cancel_recommendation' => 'إلغاء التوصية',
     'set_as_recommended' => 'تعيين كموصى بها',
+    'company_classifications' => 'تصنيفات وحجم الشركات',
+    'company_classification' => 'التصنيف / الحجم',
+    'supplier' => 'مورد',
+    'company' => 'شركة',
 ];
 
 

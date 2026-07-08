@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\{
     LoginController as AdminLoginController,
     SettingController,
     UserController,
+    CompanyClassificationController,
     ProfileController,
     RoleController,
     AdminController,
@@ -78,6 +79,7 @@ Route::group(['prefix' => 'admin-panel', 'middleware' => [IsAdminMiddleware::cla
 
     // Services
     Route::resource('services', ServiceController::class);
+    Route::resource('company_classifications', CompanyClassificationController::class);
 
     // Success Partners
     Route::resource('success-partners', SuccessPartnerController::class);

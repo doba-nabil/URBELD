@@ -1,13 +1,14 @@
 @extends('website.layouts.profile')
 
-@section('title', __('admin.add_work') ?? 'إضافة عمل')
+@section('title', auth()->user()->isCompanyProvider() ? 'إضافة مشروع' : (__('admin.add_work') ?? 'إضافة عمل'))
 
 @section('profile-content')
     <div class="about-me-section">
         <div class="container">
+            <h2 class="about-me-title mb-4">{{ auth()->user()->isCompanyProvider() ? 'إضافة مشروع جديد' : (__('admin.add_work') ?? 'إضافة عمل جديد') }}</h2>
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-bottom py-3">
-                    <h5 class="mb-0 text-primary"><i class="bi bi-plus-circle me-2"></i> {{ __('admin.add_work') ?? 'إضافة عمل' }}</h5>
+                    <h5 class="mb-0 text-primary"><i class="bi bi-plus-circle me-2"></i> {{ auth()->user()->isCompanyProvider() ? 'إضافة مشروع' : (__('admin.add_work') ?? 'إضافة عمل') }}</h5>
                 </div>
                 <div class="card-body p-4">
                     <form action="{{ route('provider.works.store') }}" method="POST" enctype="multipart/form-data">

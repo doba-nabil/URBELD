@@ -69,13 +69,37 @@
                 <p class="profile-card-subtitle">تابع الرسائل الواردة والصادرة مع الأعضاء</p>
             </a>
 
-            <a href="{{ route('provider.works.index') }}" class="profile-card">
-                <div class="profile-card-icon icon-indigo">
-                    <i class="bi bi-images"></i>
-                </div>
-                <h3 class="profile-card-title">معرض الأعمال</h3>
-                <p class="profile-card-subtitle">إضافة وإدارة أعمالك السابقة (البورتفوليو)</p>
-            </a>
+            @if(auth()->user()->isSupplier())
+                <a href="{{ route('supplier.products.index') }}" class="profile-card">
+                    <div class="profile-card-icon icon-indigo">
+                        <i class="bi bi-box"></i>
+                    </div>
+                    <h3 class="profile-card-title">المنتجات</h3>
+                    <p class="profile-card-subtitle">إدارة منتجاتك وأسعارها</p>
+                </a>
+                <a href="{{ route('supplier.offers.index') }}" class="profile-card">
+                    <div class="profile-card-icon icon-indigo">
+                        <i class="bi bi-tags"></i>
+                    </div>
+                    <h3 class="profile-card-title">العروض والخصومات</h3>
+                    <p class="profile-card-subtitle">إدارة عروضك وخصوماتك للعملاء</p>
+                </a>
+                <a href="{{ route('supplier.cities.index') }}" class="profile-card">
+                    <div class="profile-card-icon icon-indigo">
+                        <i class="bi bi-map"></i>
+                    </div>
+                    <h3 class="profile-card-title">مدن التوصيل</h3>
+                    <p class="profile-card-subtitle">تحديد المدن التي توفر التوصيل إليها</p>
+                </a>
+            @else
+                <a href="{{ route('provider.works.index') }}" class="profile-card">
+                    <div class="profile-card-icon icon-indigo">
+                        <i class="bi bi-images"></i>
+                    </div>
+                    <h3 class="profile-card-title">{{ auth()->user()->isCompanyProvider() ? 'المشاريع' : 'معرض الأعمال' }}</h3>
+                    <p class="profile-card-subtitle">إضافة وإدارة أعمالك السابقة (البورتفوليو)</p>
+                </a>
+            @endif
         </div>
     </div>
 

@@ -1,14 +1,14 @@
 @extends('website.layouts.profile')
 
-@section('title', auth()->user()->isCompanyProvider() ? 'المشاريع' : (__('admin.works_portfolio') ?? 'الأعمال السابقة'))
+@section('title', 'المنتجات')
 
 @section('profile-content')
     <div class="about-me-section">
         <div class="container">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="about-me-title mb-0">{{ auth()->user()->isCompanyProvider() ? 'المشاريع' : (__('admin.works_portfolio') ?? 'الأعمال السابقة') }}</h2>
-                <a href="{{ route('provider.works.create') }}" class="btn btn-primary">
-                    <i class="bi bi-plus-circle"></i> {{ auth()->user()->isCompanyProvider() ? 'إضافة مشروع' : (__('admin.add_work') ?? 'إضافة عمل') }}
+                <h2 class="about-me-title mb-0">المنتجات</h2>
+                <a href="{{ route('supplier.products.create') }}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> إضافة منتج
                 </a>
             </div>
 
@@ -23,27 +23,29 @@
                 <table class="table table-bordered table-hover bg-white shadow-sm rounded">
                     <thead class="table-light">
                         <tr>
-                            <th>{{ __('website.image') ?? 'صورة' }}</th>
-                            <th>{{ __('website.title') ?? 'العنوان' }}</th>
-                            <th>{{ __('admin.work_description') ?? 'الوصف' }}</th>
-                            <th>{{ __('website.actions') ?? 'إجراءات' }}</th>
+                            <th>الصورة</th>
+                            <th>العنوان</th>
+                            <th>العنوان الفرعي</th>
+                            <th>السعر</th>
+                            <th>إجراءات</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($works as $work)
+                        @forelse($products as $product)
                             <tr>
                                 <td class="text-center align-middle">
-                                    @if($work->getFirstMediaUrl('work_images'))
-                                        <img src="{{ $work->getFirstMediaUrl('work_images') }}" width="60" class="rounded" alt="Work Image">
+                                    @if($product->getFirstMediaUrl('product_images'))
+                                        <img src="{{ $product->getFirstMediaUrl('product_images') }}" width="60" class="rounded" alt="Product Image">
                                     @else
                                         <span class="text-muted"><i class="bi bi-image" style="font-size: 2rem;"></i></span>
                                     @endif
                                 </td>
-                                <td class="align-middle fw-bold">{{ $work->title }}</td>
-                                <td class="align-middle">{{ Str::limit($work->description, 50) }}</td>
+                                <td class="align-middle fw-bold">{{ $product->title }}</td>
+                                <td class="align-middle">{{ $product->subtitle }}</td>
+                                <td class="align-middle">{{ $product->price }}</td>
                                 <td class="align-middle">
-                                    <a href="{{ route('provider.works.edit', $work->id) }}" class="btn btn-sm btn-info text-white"><i class="bi bi-pencil"></i></a>
-                                    <form action="{{ route('provider.works.destroy', $work->id) }}" method="POST" class="d-inline delete-work-form">
+                                    <a href="{{ route('supplier.products.edit', $product->id) }}" class="btn btn-sm btn-info text-white"><i class="bi bi-pencil"></i></a>
+                                    <form action="{{ route('supplier.products.destroy', $product->id) }}" method="POST" class="d-inline delete-work-form">
                                         @csrf
                                         @method('DELETE')
                                         <button type="button" class="btn btn-sm btn-danger delete-work-btn"><i class="bi bi-trash"></i></button>
@@ -52,9 +54,9 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="text-center py-5 text-muted">
-                                    <i class="bi bi-briefcase mb-3 d-block" style="font-size: 3rem;"></i>
-                                    لا توجد أعمال مضافة
+                                <td colspan="5" class="text-center py-5 text-muted">
+                                    <i class="bi bi-box mb-3 d-block" style="font-size: 3rem;"></i>
+                                    لا توجد منتجات مضافة
                                 </td>
                             </tr>
                         @endforelse
@@ -70,14 +72,14 @@
             const form = this.closest('.delete-work-form');
             
             Swal.fire({
-                title: '{{ __("website.are_you_sure") ?? "هل أنت متأكد؟" }}',
-                text: '{{ __("website.delete_request_warning") ?? "سيتم حذف هذا العمل نهائياً." }}',
+                title: 'هل أنت متأكد؟',
+                text: 'سيتم حذف هذا المنتج نهائياً.',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
                 cancelButtonColor: '#3085d6',
-                confirmButtonText: '{{ __("website.yes_delete_request") ?? "نعم، احذف" }}',
-                cancelButtonText: '{{ __("website.cancel") ?? "إلغاء" }}'
+                confirmButtonText: 'نعم، احذف',
+                cancelButtonText: 'إلغاء'
             }).then((result) => {
                 if (result.isConfirmed) {
                     form.submit();

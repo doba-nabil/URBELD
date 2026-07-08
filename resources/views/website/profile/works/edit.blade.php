@@ -1,13 +1,14 @@
 @extends('website.layouts.profile')
 
-@section('title', __('admin.edit_work') ?? 'تعديل عمل')
+@section('title', auth()->user()->isCompanyProvider() ? 'تعديل المشروع' : (__('admin.edit_work') ?? 'تعديل عمل'))
 
 @section('profile-content')
     <div class="about-me-section">
         <div class="container">
+            <h2 class="about-me-title mb-4">{{ auth()->user()->isCompanyProvider() ? 'تعديل المشروع' : (__('admin.edit_work') ?? 'تعديل عمل') }}</h2>
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-bottom py-3">
-                    <h5 class="mb-0 text-primary"><i class="bi bi-pencil me-2"></i> {{ __('admin.edit_work') ?? 'تعديل عمل' }}</h5>
+                    <h5 class="mb-0 text-primary"><i class="bi bi-pencil me-2"></i> {{ auth()->user()->isCompanyProvider() ? 'تعديل المشروع' : (__('admin.edit_work') ?? 'تعديل عمل') }}</h5>
                 </div>
                 <div class="card-body p-4">
                     <form action="{{ route('provider.works.update', $work->id) }}" method="POST" enctype="multipart/form-data">

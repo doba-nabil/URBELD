@@ -155,6 +155,30 @@ Route::middleware('auth')->group(function () {
                 'destroy' => 'provider.works.destroy',
             ]);
             Route::delete('provider/works/{work}/media/{media}', [\App\Http\Controllers\Website\ProviderWorkController::class, 'destroyImage'])->name('provider.works.media.destroy');
+
+            // Supplier Routes
+            Route::resource('supplier/products', \App\Http\Controllers\Website\Supplier\ProductController::class)->names([
+                'index' => 'supplier.products.index',
+                'create' => 'supplier.products.create',
+                'store' => 'supplier.products.store',
+                'edit' => 'supplier.products.edit',
+                'update' => 'supplier.products.update',
+                'destroy' => 'supplier.products.destroy',
+            ]);
+            Route::delete('supplier/products/{product}/media/{media}', [\App\Http\Controllers\Website\Supplier\ProductController::class, 'destroyImage'])->name('supplier.products.media.destroy');
+
+            Route::resource('supplier/offers', \App\Http\Controllers\Website\Supplier\SupplierOfferController::class)->names([
+                'index' => 'supplier.offers.index',
+                'create' => 'supplier.offers.create',
+                'store' => 'supplier.offers.store',
+                'edit' => 'supplier.offers.edit',
+                'update' => 'supplier.offers.update',
+                'destroy' => 'supplier.offers.destroy',
+            ]);
+            Route::delete('supplier/offers/{offer}/media/{media}', [\App\Http\Controllers\Website\Supplier\SupplierOfferController::class, 'destroyImage'])->name('supplier.offers.media.destroy');
+
+            Route::get('supplier/delivery-cities', [\App\Http\Controllers\Website\Supplier\DeliveryCityController::class, 'index'])->name('supplier.cities.index');
+            Route::post('supplier/delivery-cities', [\App\Http\Controllers\Website\Supplier\DeliveryCityController::class, 'store'])->name('supplier.cities.store');
         }
         );
     // Notifications

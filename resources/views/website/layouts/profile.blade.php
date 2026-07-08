@@ -47,6 +47,9 @@
                     <div class="profile-info wow fadeInUp" data-wow-delay="0.2s">
                         <h1 class="profile-name">
                             {{ $pUser->name }}
+                            @if($pUser->is_trusted)
+                                <i class="bi bi-patch-check-fill text-primary ms-2" title="{{ __('admin.is_trusted') ?? 'موثوق' }}"></i>
+                            @endif
                             <!-- Edit button could be link to settings or modal trigger -->
                             @if (Route::is('profile.edit') && auth()->id() == $pUser->id)
                                 <button class="btn-edit-profile" type="button" id="btn-toggle-edit" title="{{ __('website.edit_data') }}"
@@ -130,7 +133,7 @@
                             <a href="{{ route('member.services', $pUser->id) }}" class="profile-tab-link">{{ __('admin.services') ?? __('website.nav_services') }}</a>
                         </li>
                         <li class="profile-tab-item {{ Route::is('member.works') ? 'active' : '' }}">
-                            <a href="{{ route('member.works', $pUser->id) }}" class="profile-tab-link">{{ __('admin.works_portfolio') ?? 'الأعمال السابقة' }}</a>
+                            <a href="{{ route('member.works', $pUser->id) }}" class="profile-tab-link">{{ $pUser->isCompanyProvider() ? 'المشاريع' : (__('admin.works_portfolio') ?? 'الأعمال السابقة') }}</a>
                         </li>
                     @endif
                 @endif

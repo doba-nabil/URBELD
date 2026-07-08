@@ -11,9 +11,30 @@
              <!-- Spinner Start -->
             <div id="spinner"
                 class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
-                <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-                    <span class="sr-only">Loading...</span>
+                @php
+                    $loaderLogoUrl = app()->getLocale() == 'ar' 
+                                ? \App\Models\Setting::getMediaUrl('logo_ar') 
+                                : \App\Models\Setting::getMediaUrl('logo_en');
+                    $loaderLogoUrl = $loaderLogoUrl ?: asset('website/assets/img/logo.png');
+                @endphp
+                <div class="logo-loader-wrapper" style="position: relative; width: 120px; height: 120px;">
+                    <!-- Faded Background Logo -->
+                    <img src="{{ $loaderLogoUrl }}" alt="Loading" 
+                         style="position: absolute; width: 100%; height: 100%; object-fit: contain; opacity: 0.15; filter: grayscale(100%);">
+                    <!-- Animated Foreground Logo -->
+                    <img src="{{ $loaderLogoUrl }}" alt="Loading" class="logo-loader-animated" 
+                         style="position: absolute; width: 100%; height: 100%; object-fit: contain;">
                 </div>
+                <style>
+                    .logo-loader-animated {
+                        clip-path: inset(100% 0 0 0);
+                        animation: fillLogo 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+                    }
+                    @keyframes fillLogo {
+                        0% { clip-path: inset(100% 0 0 0); }
+                        100% { clip-path: inset(0 0 0 0); }
+                    }
+                </style>
             </div>
             <!-- Spinner End -->
             <!-- Navbar Start -->

@@ -9,16 +9,20 @@
                 @if($isPremium)
                 <div class="featured-ribbon"><i class="bi bi-award-fill"></i> مميّز</div>
                 @endif
-                <div class="co-avatar" style="background:linear-gradient(135deg,#1a5c3a,#2d8f5e);">
-                    @if($provider->getFirstMediaUrl('personal_photo'))
-                        <img src="{{ $provider->getFirstMediaUrl('personal_photo') }}" alt="">
-                    @elseif($provider->getFirstMediaUrl('users'))
-                        <img src="{{ $provider->getFirstMediaUrl('users') }}" alt="">
-                    @else
-                        {{ mb_substr($provider->name, 0, 1) }}
-                    @endif
-                </div>
-                <div class="co-name">{{ $provider->name }}</div>
+                <a href="{{ route('member.public', $provider->id) }}" class="d-block text-decoration-none text-dark">
+                    <div class="co-avatar" style="background:linear-gradient(135deg,#1a5c3a,#2d8f5e);">
+                        @if($provider->getFirstMediaUrl('personal_photo'))
+                            <img src="{{ $provider->getFirstMediaUrl('personal_photo') }}" alt="">
+                        @elseif($provider->getFirstMediaUrl('users'))
+                            <img src="{{ $provider->getFirstMediaUrl('users') }}" alt="">
+                        @else
+                            {{ mb_substr($provider->name, 0, 1) }}
+                        @endif
+                    </div>
+                </a>
+                <a href="{{ route('member.public', $provider->id) }}" class="text-decoration-none">
+                    <div class="co-name" style="color: #2c3e50;">{{ $provider->name }}</div>
+                </a>
                 <div class="co-city"><i class="bi bi-geo-alt-fill text-danger"></i> {{ $provider->city->name ?? __('website.jeddah') }}</div>
                 <div class="co-sub"><i class="bi bi-tools text-primary"></i> {{ $category->name }}</div>
                 <div class="badges-row">

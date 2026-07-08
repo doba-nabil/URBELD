@@ -116,7 +116,7 @@ class MembershipController extends Controller
             $membership = $provider->membership;
         } else {
             // Fallback if ID is actually a membership ID
-            $membership = Membership::with(['certificates', 'user.categories', 'user.city.country'])->find($id);
+            $membership = \App\Models\Membership::with(['certificates', 'user.categories', 'user.city.country'])->find($id);
             if ($membership) {
                 $provider = $membership->user;
             }
@@ -130,8 +130,9 @@ class MembershipController extends Controller
         $countries = \App\Models\Country::all();
         $cities = $provider->city ? \App\Models\City::where('country_id', $provider->city->country_id)->get() : [];
         $packages = \App\Models\SubscriptionPackage::active()->ordered()->get();
+        $classifications = \App\Models\CompanyClassification::all();
 
-        return view('dashboard.memberships.edit', compact('provider', 'membership', 'categories', 'countries', 'cities', 'packages'));
+        return view('dashboard.memberships.edit', compact('provider', 'membership', 'categories', 'countries', 'cities', 'packages', 'classifications'));
     }
 
     public function update(MembershipRequest $request, $id)
@@ -171,6 +172,8 @@ class MembershipController extends Controller
             'subscription_start_at' => $request->input('subscription_start_at'),
             'subscription_end_at' => $request->input('subscription_end_at'),
             'active' => $newActiveStatus,
+            'is_trusted' => $request->has('is_trusted'),
+            'classification_id' => $request->input('classification_id'),
         ]);
 
         // Send notification if status or type changed

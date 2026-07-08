@@ -68,7 +68,6 @@
             </div>
             <div class="filter-actions">
               <button type="submit" class="btn-search"><i class="bi bi-search me-1"></i> {{ __('website.search_providers') }}</button>
-              <button type="reset" class="btn-reset">إعادة تعيين</button>
             </div>
         </form>
       </div>
@@ -332,17 +331,7 @@
                 featuredBg.style.transition = 'opacity 0.3s ease';
             }
 
-            // Handle Reset button for Select2
-            const resetBtn = document.querySelector('.btn-reset');
-            if (resetBtn) {
-                resetBtn.addEventListener('click', function() {
-                    setTimeout(() => {
-                        if (typeof jQuery !== 'undefined') {
-                            $('.select2').trigger('change');
-                        }
-                    }, 10);
-                });
-            }
+
         });
     </script>
 @endpush

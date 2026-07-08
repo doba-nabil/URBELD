@@ -40,6 +40,8 @@ class User extends Authenticatable implements HasMedia, Auditable
         'last_seen_at',
         'active',
         'is_admin',
+        'is_trusted',
+        'classification_id',
         'google_id',
         'facebook_id',
         'membership_type', // company or individual
@@ -391,6 +393,31 @@ class User extends Authenticatable implements HasMedia, Auditable
     public function isCompanyProvider(): bool
     {
         return $this->isServiceProvider() && $this->provider_type === 'company';
+    }
+
+    public function isSupplier(): bool
+    {
+        return $this->isServiceProvider() && $this->provider_type === 'supplier';
+    }
+
+    public function classification()
+    {
+        return $this->belongsTo(CompanyClassification::class);
+    }
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
+
+    public function supplierOffers()
+    {
+        return $this->hasMany(SupplierOffer::class);
+    }
+
+    public function deliveryCities()
+    {
+        return $this->belongsToMany(City::class, 'supplier_delivery_cities', 'user_id', 'city_id')->withTimestamps();
     }
 
     /**

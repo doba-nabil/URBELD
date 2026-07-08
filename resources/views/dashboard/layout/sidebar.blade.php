@@ -167,6 +167,13 @@
             </li>
         @endif
 
+        <li class="menu-item {{ request()->is('*company_classifications*') ? 'active open' : '' }}">
+            <a href="{{ route('company_classifications.index') }}" class="menu-link">
+                <i class="menu-icon icon-base ti tabler-tags"></i>
+                <div>{{ __('admin.company_classifications') ?? 'تصنيفات وحجم الشركات' }}</div>
+            </a>
+        </li>
+
         @if(auth('admin')->user()->can('memberships.index'))
             <!-- Companies and Institutions -->
             <li class="menu-item {{ request()->is('*memberships*') && request()->get('type') == 'company' ? 'active open' : '' }}">
