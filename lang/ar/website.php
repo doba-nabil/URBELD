@@ -530,5 +530,6 @@ return [
     
     'delivery_cities' => 'مدن التوصيل',
     'delivery_vcities' => 'مدن التوصيل',
+    'nav_tenders' => 'المناقصات',
 ];
 

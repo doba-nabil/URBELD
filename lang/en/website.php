@@ -519,5 +519,6 @@ return [
 
     'delivery_cities' => 'Delivery Cities',
     'delivery_vcities' => 'Delivery Cities',
+    'nav_tenders' => 'Tenders',
 ];
 

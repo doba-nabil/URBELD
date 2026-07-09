@@ -21,13 +21,14 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <div class="navbar-nav">
-                <a href="{{ route('home') }}" class="nav-item nav-link {{ request()->routeIs('home') ? 'active' : '' }}">{{ __('website.nav_home') }}</a>
-                <a href="{{ route('about') }}" class="nav-item nav-link {{ request()->routeIs('about') ? 'active' : '' }}">{{ __('website.nav_about') }}</a>
-                <a href="{{ route('website.categories.index') }}" class="nav-item nav-link {{ request()->routeIs('website.categories.*') || request()->routeIs('website.category.*') ? 'active' : '' }}">{{ __('website.nav_services') }}</a>
+                <a href="{{ route('home') }}" class="nav-item nav-link fw-bold {{ request()->routeIs('home') ? 'active' : '' }}">{{ __('website.nav_home') }}</a>
+                <a href="{{ route('about') }}" class="nav-item nav-link fw-bold {{ request()->routeIs('about') ? 'active' : '' }}">{{ __('website.nav_about') }}</a>
+                <a href="{{ route('website.categories.index') }}" class="nav-item nav-link fw-bold {{ request()->routeIs('website.categories.*') || request()->routeIs('website.category.*') ? 'active' : '' }}">{{ __('website.nav_services') }}</a>
+                <a href="{{ route('website.tenders.index') }}" class="nav-item nav-link fw-bold {{ request()->routeIs('website.tenders.*') ? 'active' : '' }}">{{ __('website.nav_tenders') ?? 'المناقصات' }}</a>
                 @if(Auth::check() && Auth::user()->isServiceProvider() && Auth::user()->provider_type === 'company')
-                    <a href="{{ route('website.subscription-packages.index') }}" class="nav-item nav-link {{ request()->routeIs('website.subscription-packages.*') ? 'active' : '' }}">{{ __('website.nav_subscription_packages') }}</a>
+                    <a href="{{ route('website.subscription-packages.index') }}" class="nav-item nav-link fw-bold {{ request()->routeIs('website.subscription-packages.*') ? 'active' : '' }}">{{ __('website.nav_subscription_packages') }}</a>
                 @endif
-                <a href="{{ route('contact') }}" class="nav-item nav-link {{ request()->routeIs('contact') ? 'active' : '' }}">{{ __('website.nav_contact') }}</a>
+                <a href="{{ route('contact') }}" class="nav-item nav-link fw-bold {{ request()->routeIs('contact') ? 'active' : '' }}">{{ __('website.nav_contact') }}</a>
             </div>
             <div class="auth-buttons d-flex align-items-center">
                 <!-- Language Switcher -->
