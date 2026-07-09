@@ -520,5 +520,8 @@ return [
     'delivery_cities' => 'Delivery Cities',
     'delivery_vcities' => 'Delivery Cities',
     'nav_tenders' => 'Tenders',
+
+    'watch_how_platform_works' => 'Watch how the platform works',
+    'search_service_provider' => 'Search for a provider',
 ];
 

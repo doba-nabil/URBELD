@@ -531,5 +531,8 @@ return [
     'delivery_cities' => 'مدن التوصيل',
     'delivery_vcities' => 'مدن التوصيل',
     'nav_tenders' => 'المناقصات',
+
+    'watch_how_platform_works' => 'شاهد كيف تعمل المنصة',
+    'search_service_provider' => 'إبحث عن مزود خدمة',
 ];
 

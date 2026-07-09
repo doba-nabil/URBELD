@@ -31,16 +31,79 @@
                             {{ \App\Models\Setting::getValue('home_hero_desc', app()->getLocale(), 'نحن من أفضل 25 شركة بناء وتطوير ملتزمون بالكامل بعملائنا. نوفر أفضل الحلول العقارية المبتكرة') }}
                         </p>
                     </div>
-                    <div class="content justify-content-center">
-                        <a href="{{ \App\Models\Setting::getValue('home_hero_btn_link', app()->getLocale()) ?: route('website.categories.index') }}"
-                            class="auth btn btn-icon py-3 px-5 me-3 animated fadeIn">
-                            <span>{{ \App\Models\Setting::getValue('home_hero_btn_text', app()->getLocale(), 'اعرض الخدمات') }}</span>
-                            <i class="icon-btn bi bi-arrow-up-left"></i>
+                    <style>
+                        .hero-pill-btn {
+                            transition: all 0.3s ease-in-out;
+                        }
+                        .hero-pill-btn:hover {
+                            transform: translateY(-3px);
+                            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+                        }
+                        .hero-pill-btn:hover .icon-circle {
+                            transform: scale(1.1) rotate(15deg);
+                        }
+                        .hero-pill-btn .icon-circle {
+                            transition: all 0.3s ease-in-out;
+                        }
+                    </style>
+                    <div class="content d-flex gap-3 justify-content-center flex-wrap">
+                        @php
+                            $homeVideoMedia = \App\Models\Setting::getMediaUrl('home_video');
+                            $homeVideoUrl = \App\Models\Setting::getValue('home_video_url') ?: $homeVideoMedia;
+                        @endphp
+                        
+                        <!-- Watch Video Button -->
+                        @if($homeVideoUrl)
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#videoModal" class="btn rounded-pill d-inline-flex align-items-center gap-3 pe-2 ps-4 animated fadeIn hero-pill-btn" style="background-color: #aed9d9; color: #0b4541; font-weight: bold; text-decoration: none;">
+                                <span>{{ __('website.watch_how_platform_works') ?? 'شاهد كيف تعمل المنصة' }}</span>
+                                <span class="icon-circle rounded-circle d-flex align-items-center justify-content-center" style="background-color: #0b4541; color: #aed9d9; width: 40px; height: 40px;">
+                                    <i class="bi bi-arrow-up-left fs-5"></i>
+                                </span>
+                            </a>
+                        @endif
+
+                        <!-- Search Provider Button -->
+                        <a href="{{ route('providers.search') }}" class="btn rounded-pill d-inline-flex align-items-center gap-3 pe-2 ps-4 animated fadeIn hero-pill-btn" style="background-color: #ffffff; color: #333333; font-weight: bold; text-decoration: none; border: 1px solid #e0e0e0;">
+                            <span>{{ __('website.search_service_provider') ?? 'إبحث عن مزود خدمة' }}</span>
+                            <span class="icon-circle rounded-circle d-flex align-items-center justify-content-center" style="background-color: #aed9d9; color: #0b4541; width: 40px; height: 40px;">
+                                <i class="bi bi-arrow-up-left fs-5"></i>
+                            </span>
                         </a>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Video Modal -->
+        @if($homeVideoUrl)
+        <div class="modal fade" id="videoModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content bg-transparent border-0">
+                    <div class="modal-header border-0 justify-content-end p-0 mb-2">
+                        <button type="button" class="btn-close btn-close-white fs-4" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-0 rounded-4 overflow-hidden shadow-lg bg-black">
+                        @if(Str::contains($homeVideoUrl, ['youtube.com', 'youtu.be']))
+                            @php
+                                preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i', $homeVideoUrl, $match);
+                                $youtubeId = $match[1] ?? null;
+                            @endphp
+                            @if($youtubeId)
+                                <div class="ratio ratio-16x9">
+                                    <iframe src="https://www.youtube.com/embed/{{ $youtubeId }}?autoplay=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                                </div>
+                            @endif
+                        @else
+                            <video class="w-100" controls autoplay>
+                                <source src="{{ $homeVideoUrl }}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
 
         <!-- Search Start -->
         <div class="search-section">
