@@ -78,9 +78,7 @@
                             <button type="button" class="account-type-btn flex-fill {{ old('account_type') == 'supplier' ? 'active' : '' }}" data-type="supplier">
                                 {{ __('website.account_types.supplier') }}
                             </button>
-                            <button type="button" class="account-type-btn flex-fill {{ old('account_type') == 'individual' ? 'active' : '' }}" data-type="individual">
-                                {{ __('website.account_types.individual') }}
-                            </button>
+
                         </div>
                         <input type="hidden" name="account_type" id="account_type" value="{{ old('account_type', 'seeker') }}">
                         @error('account_type')

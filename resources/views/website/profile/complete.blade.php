@@ -152,12 +152,12 @@
                 
                 <!-- Row 1 -->
                 <div class="col-md-6">
-                    <div class="text-end">
+                    <div class="">
                         <label class="pd-label"><i class="bi bi-diagram-3 me-1"></i> التصنيف الرئيسي</label>
                         @if($isLocked)
-                            <div class="pd-readonly-box justify-content-end">{{ $userMainCategory->name ?? 'غير محدد' }}</div>
+                            <div class="pd-readonly-box justify-content-{{ app()->getLocale() == 'ar' ? 'end' : 'start' }}">{{ $userMainCategory->name ?? __('website.not_specified') }}</div>
                         @else
-                            <select class="pd-input-box text-end" id="main_category" name="categories[]" dir="rtl">
+                            <select class="pd-input-box text-{{ app()->getLocale() == 'ar' ? 'end' : 'start' }}" id="main_category" name="categories[]" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
                                 <option value="">{{ __('website.choose_main_category') }}</option>
                                 @foreach ($categories as $category)
                                     <option value="{{ $category->id }}" {{ $userMainCategoryId == $category->id ? 'selected' : '' }} data-subcategories="{{ json_encode($category->children) }}">
@@ -170,12 +170,12 @@
                 </div>
 
                 <div class="col-md-6">
-                    <div class="text-end">
+                    <div class="">
                         <label class="pd-label"><i class="bi bi-geo-alt me-1"></i> المدينة</label>
                         @if($isLocked)
-                            <div class="pd-readonly-box justify-content-end">{{ $user->city->name ?? 'غير محدد' }}</div>
+                            <div class="pd-readonly-box justify-content-{{ app()->getLocale() == 'ar' ? 'end' : 'start' }}">{{ $user->city->name ?? __('website.not_specified') }}</div>
                         @else
-                            <select class="pd-input-box text-end" name="city_id" dir="rtl">
+                            <select class="pd-input-box text-{{ app()->getLocale() == 'ar' ? 'end' : 'start' }}" name="city_id" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
                                 <option value="">{{ __('website.choose_city') }}</option>
                                 @foreach ($cities as $city)
                                     <option value="{{ $city->id }}" {{ $user->city_id == $city->id ? 'selected' : '' }}>{{ $city->name }}</option>
@@ -187,10 +187,10 @@
 
                 <!-- Row 2 -->
                 <div class="col-md-6">
-                    <div class="text-end">
+                    <div class="">
                         <label class="pd-label">التصنيفات الفرعية</label>
                         @if($isLocked)
-                            <div class="d-flex flex-wrap gap-2 justify-content-end mt-1">
+                            <div class="d-flex flex-wrap gap-2 justify-content-{{ app()->getLocale() == 'ar' ? 'end' : 'start' }} mt-1">
                                 @forelse($userSubCategories as $subcat)
                                     <span class="pd-subcat-badge">{{ $subcat->name }}</span>
                                 @empty
@@ -198,7 +198,7 @@
                                 @endforelse
                             </div>
                         @else
-                            <select class="pd-input-box text-end" id="sub_categories" name="categories[]" multiple dir="rtl" style="height: auto; min-height: 56px;">
+                            <select class="pd-input-box text-{{ app()->getLocale() == 'ar' ? 'end' : 'start' }}" id="sub_categories" name="categories[]" multiple dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}" style="height: auto; min-height: 56px;">
                                 <!-- Options populated by JS -->
                             </select>
                         @endif
@@ -206,35 +206,35 @@
                 </div>
 
                 <div class="col-md-6">
-                    <div class="text-end">
+                    <div class="">
                         <label class="pd-label"><i class="bi bi-envelope me-1"></i> البريد الإلكتروني</label>
                         @if($isLocked)
                             <div class="pd-readonly-box justify-content-end font-monospace" dir="ltr">{{ $user->email }}</div>
                         @else
-                            <input type="email" class="pd-input-box text-end font-monospace" disabled value="{{ $user->email }}" dir="ltr">
+                            <input type="email" class="pd-input-box  font-monospace" disabled value="{{ $user->email }}" dir="ltr">
                         @endif
                     </div>
                 </div>
 
                 <!-- Row 3 -->
                 <div class="col-md-6">
-                    <div class="text-end">
+                    <div class="">
                         <label class="pd-label">سنوات الخبرة</label>
                         @if($isLocked)
                             <div class="pd-readonly-box justify-content-end">{{ $user->years_of_experience ?? 0 }} سنة</div>
                         @else
-                            <input type="number" class="pd-input-box text-end" name="years_of_experience" value="{{ $user->years_of_experience ?? 0 }}">
+                            <input type="number" class="pd-input-box " name="years_of_experience" value="{{ $user->years_of_experience ?? 0 }}">
                         @endif
                     </div>
                 </div>
 
                 <div class="col-md-6">
-                    <div class="text-end">
+                    <div class="">
                         <label class="pd-label"><i class="bi bi-telephone me-1"></i> رقم التواصل</label>
                         @if($isLocked)
                             <div class="pd-readonly-box justify-content-end font-monospace" dir="ltr">{{ $user->phone ?? 'غير متوفر' }}</div>
                         @else
-                            <input type="text" class="pd-input-box text-end font-monospace" disabled value="{{ $user->phone }}" dir="ltr">
+                            <input type="text" class="pd-input-box  font-monospace" disabled value="{{ $user->phone }}" dir="ltr">
                         @endif
                     </div>
                 </div>
@@ -242,7 +242,7 @@
             </div>
 
             <!-- Official Documents -->
-            <div class="mb-5 border-top pt-4 text-end">
+            <div class="mb-5 border-top pt-4 ">
                 <label class="pd-label mb-3">المستندات الرسمية</label>
                 
                 <div class="row g-4 flex-row-reverse">
@@ -253,15 +253,15 @@
                                 <div class="pd-doc-box">
                                     <span class="pd-status-badge pd-status-verified">موثق</span>
                                     <div class="d-flex align-items-center gap-3">
-                                        <div class="text-end">
-                                            <div class="fw-bold text-dark">السجل التجاري</div>
-                                            <a href="{{ auth()->user()->getFirstMediaUrl('commercial_registration') }}" target="_blank" class="text-muted" style="font-size: 0.75rem; text-decoration: none;">commercial_registration.pdf</a>
+                                        <div class="">
+                                            <div class="fw-bold text-dark mb-1">السجل التجاري</div>
+                                            <a href="{{ auth()->user()->getFirstMediaUrl('commercial_registration') }}" target="_blank" class="text-primary text-decoration-underline" style="font-size: 0.85rem;"><i class="bi bi-eye me-1"></i>عرض الملف</a>
                                         </div>
                                         <div class="pd-doc-icon" style="background-color: #e6f4ea; color: #1e8e3e;"><i class="bi bi-file-earmark-text fs-4"></i></div>
                                     </div>
                                 </div>
                             @elseif(!$isLocked)
-                                <div class="pd-doc-box d-block text-end p-3">
+                                <div class="pd-doc-box d-block  p-3">
                                     <label class="pd-label mb-2 fw-bold text-dark">رفع السجل التجاري <span class="text-danger">*</span></label>
                                     <input type="file" class="form-control bg-white" name="commercial_registration" required>
                                 </div>
@@ -271,15 +271,15 @@
                                 <div class="pd-doc-box">
                                     <span class="pd-status-badge pd-status-verified">موثق</span>
                                     <div class="d-flex align-items-center gap-3">
-                                        <div class="text-end">
-                                            <div class="fw-bold text-dark">الهوية الوطنية</div>
-                                            <a href="{{ auth()->user()->getFirstMediaUrl('id_front') }}" target="_blank" class="text-muted" style="font-size: 0.75rem; text-decoration: none;">id_front.jpg</a>
+                                        <div class="">
+                                            <div class="fw-bold text-dark mb-1">الهوية الوطنية</div>
+                                            <a href="{{ auth()->user()->getFirstMediaUrl('id_front') }}" target="_blank" class="text-primary text-decoration-underline" style="font-size: 0.85rem;"><i class="bi bi-eye me-1"></i>عرض الملف</a>
                                         </div>
                                         <div class="pd-doc-icon" style="background-color: #e6f4ea; color: #1e8e3e;"><i class="bi bi-file-earmark-person fs-4"></i></div>
                                     </div>
                                 </div>
                             @elseif(!$isLocked)
-                                <div class="pd-doc-box d-block text-end p-3">
+                                <div class="pd-doc-box d-block  p-3">
                                     <label class="pd-label mb-2 fw-bold text-dark">رفع الهوية الوطنية <span class="text-danger">*</span></label>
                                     <input type="file" class="form-control bg-white" name="id_front" required>
                                 </div>
@@ -294,19 +294,26 @@
                                 <div class="pd-doc-box mb-3">
                                     <span class="pd-status-badge pd-status-attached">مرفق</span>
                                     <div class="d-flex align-items-center gap-3">
-                                        <div class="text-end">
-                                            <div class="fw-bold text-dark">{{ $media->name ?? 'أوراق ومستندات رسمية' }}</div>
-                                            <a href="{{ $media->getUrl() }}" target="_blank" class="text-muted" style="font-size: 0.75rem; text-decoration: none;">official_documents.pdf</a>
+                                        <div class="">
+                                            <div class="fw-bold text-dark mb-1">{{ $media->name ?? 'أوراق ومستندات رسمية' }}</div>
+                                            <a href="{{ $media->getUrl() }}" target="_blank" class="text-primary text-decoration-underline" style="font-size: 0.85rem;"><i class="bi bi-eye me-1"></i>عرض الملف</a>
                                         </div>
                                         <div class="pd-doc-icon" style="background-color: #e8f0fe; color: #1a73e8;"><i class="bi bi-file-earmark-text fs-4"></i></div>
                                     </div>
                                 </div>
                             @endforeach
                         @elseif(!$isLocked)
-                            <div class="pd-doc-box d-block text-end p-3" id="certificates-container">
-                                <label class="pd-label mb-2 fw-bold text-dark">أوراق ومستندات رسمية</label>
-                                <input type="file" class="form-control bg-white mb-2" name="certificates[]">
-                                <input type="text" class="form-control bg-white text-end" name="certificate_names[]" placeholder="اسم الشهادة (اختياري)">
+                            <div class="pd-doc-box d-block p-3" id="certificates-container">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <label class="pd-label mb-0 fw-bold text-dark">أوراق ومستندات رسمية</label>
+                                    <button type="button" class="btn btn-sm btn-outline-primary" id="add-certificate-btn">
+                                        <i class="bi bi-plus-lg"></i> إضافة ملف
+                                    </button>
+                                </div>
+                                <div class="certificate-group mb-3 border-bottom pb-3">
+                                    <input type="file" class="form-control bg-white mb-2" name="certificates[]">
+                                    <input type="text" class="form-control bg-white" name="certificate_names[]" placeholder="اسم الشهادة (اختياري)">
+                                </div>
                             </div>
                         @endif
                     </div>
@@ -314,22 +321,22 @@
             </div>
 
             <!-- Bio -->
-            <div class="mb-4 border-top pt-4 text-end">
+            <div class="mb-4 border-top pt-4 ">
                 <label class="pd-label">نبذة عن المكتب/الشركة</label>
                 @if($isLocked)
-                    <div class="pd-readonly-box justify-content-end text-end" style="min-height: 60px; font-weight: normal;">
+                    <div class="pd-readonly-box justify-content-end " style="min-height: 60px; font-weight: normal;">
                         {{ auth()->user()->bio ?? 'لا توجد نبذة حالياً.' }}
                     </div>
 </div>
                 @else
-                    <textarea class="pd-input-box text-end" name="bio" rows="4" dir="rtl" style="resize: vertical;">{{ auth()->user()->bio }}</textarea>
+                    <textarea class="pd-input-box " name="bio" rows="4" dir="rtl" style="resize: vertical;">{{ auth()->user()->bio }}</textarea>
                 @endif
             </div>
 
             @if(!$isLocked)
                 <!-- Subscription Packages (Only if not locked and enabled) -->
                 @if (isset($isSubscriptionEnabled) && $isSubscriptionEnabled && count($packages) > 0)
-                    <div class="mb-4 pt-4 border-top text-end">
+                    <div class="mb-4 pt-4 border-top ">
                         <label class="pd-label">اختر باقة الاشتراك <span class="text-danger">*</span></label>
                         <div class="row g-3 flex-row-reverse">
                             @foreach ($packages as $pkg)
@@ -347,12 +354,13 @@
                     </div>
                 @endif
 
-                <div class="text-end mt-5">
+                <div class=" mt-5">
                     <button type="submit" class="btn btn-primary px-5 py-3 rounded-pill fw-bold w-100 fs-5">حفظ البيانات</button>
                 </div>
             @endif
 
         </form>
+    </div>
     </div>
 @endsection
 
@@ -389,8 +397,10 @@
                 }
 
                 if (rawMainCategorySelect) {
-                    $('#main_category').select2({ dir: "rtl", width: '100%' });
-                    $('#sub_categories').select2({ dir: "rtl", width: '100%' });
+                    const dir = "{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}";
+                    $('#main_category').select2({ dir: dir, width: '100%' });
+                    $('#sub_categories').select2({ dir: dir, width: '100%' });
+                    $('select[name="city_id"]').select2({ dir: dir, width: '100%' });
 
                     if (rawMainCategorySelect.value) {
                         populateSubcategories();
@@ -398,12 +408,73 @@
 
                     $('#main_category').on('change', populateSubcategories);
                 }
+
+                // Add more certificates dynamically
+                $('#add-certificate-btn').on('click', function() {
+                    const newGroup = `
+                        <div class="certificate-group mb-3 border-bottom pb-3 position-relative">
+                            <button type="button" class="btn btn-sm btn-danger position-absolute remove-certificate-btn" style="top: 0; left: 0; z-index: 10;">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                            <input type="file" class="form-control bg-white mb-2" name="certificates[]">
+                            <input type="text" class="form-control bg-white" name="certificate_names[]" placeholder="اسم الشهادة (اختياري)">
+                        </div>
+                    `;
+                    $('#certificates-container').append(newGroup);
+                });
+
+                // Remove certificate dynamically
+                $(document).on('click', '.remove-certificate-btn', function() {
+                    $(this).closest('.certificate-group').remove();
+                });
             });
         </script>
         <style>
             .peer:checked + .peer-checked-border {
                 border: 2px solid #0d6efd !important;
                 background-color: #f0f7ff !important;
+            }
+            /* Select2 customization to match .pd-input-box */
+            .select2-container--default .select2-selection--single,
+            .select2-container--default .select2-selection--multiple {
+                background-color: #f9f9f9 !important;
+                border: 1px solid #f0f0f0 !important;
+                border-radius: 8px !important;
+                min-height: 56px !important;
+                display: flex;
+                align-items: center;
+                padding-left: 8px;
+                padding-right: 8px;
+            }
+            .select2-container--default .select2-selection--multiple {
+                height: auto !important;
+                flex-wrap: wrap;
+                padding-top: 4px;
+                padding-bottom: 4px;
+            }
+            .select2-container--default .select2-selection--single .select2-selection__rendered {
+                color: #222 !important;
+                font-weight: 700 !important;
+                font-size: 0.95rem !important;
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+            }
+            .select2-container--default .select2-selection--single .select2-selection__arrow {
+                height: 54px !important;
+                {{ app()->getLocale() == 'ar' ? 'left: 10px !important; right: auto !important;' : 'right: 10px !important; left: auto !important;' }}
+            }
+            .select2-container--default .select2-search--inline .select2-search__field {
+                margin-top: 0 !important;
+                height: 32px;
+            }
+            .select2-dropdown {
+                border: 1px solid #f0f0f0 !important;
+                border-radius: 8px !important;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            }
+            .select2-results__option {
+                font-weight: 600;
+                color: #444;
             }
         </style>
     @endif

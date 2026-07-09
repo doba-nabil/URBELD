@@ -42,6 +42,14 @@ class DashboardController extends Controller
         $usersWithActiveMembership = User::whereNotNull('membership_id')
             ->where('membership_expires_at', '>', now())
             ->count();
+        $totalSuppliers = User::where('user_type', 'service_provider')->where('provider_type', 'supplier')->count();
+        $totalProducts = \App\Models\Product::count();
+        $totalSupplierOffers = \App\Models\SupplierOffer::count();
+
+        // Tenders Statistics
+        $totalTenders = \App\Models\Tender::count();
+        $activeTenders = \App\Models\Tender::where('status', \App\Models\Tender::STATUS_ACTIVE)->count();
+        $pendingTenders = \App\Models\Tender::where('status', \App\Models\Tender::STATUS_PENDING_REVIEW)->count();
 
         // Service Requests Statistics
         $totalRequests = ServiceRequest::count();
@@ -217,6 +225,12 @@ class DashboardController extends Controller
             'companyProviders',
             'activeUsers',
             'usersWithActiveMembership',
+            'totalSuppliers',
+            'totalProducts',
+            'totalSupplierOffers',
+            'totalTenders',
+            'activeTenders',
+            'pendingTenders',
             'totalRequests',
             'newRequests',
             'pendingResponseRequests',

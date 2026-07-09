@@ -630,5 +630,12 @@ class User extends Authenticatable implements HasMedia, Auditable
     {
         return $this->notifications()->where('is_read', false)->count();
     }
+
+    public function chats()
+    {
+        return $this->belongsToMany(Chat::class, 'chat_participants')
+                    ->withPivot('last_read_at')
+                    ->withTimestamps();
+    }
 }
 

@@ -34,7 +34,15 @@ class PageController extends Controller
             'message' => 'required|string'
         ]);
 
-        Contact::create($request->all());
+        $contact = Contact::create($request->all());
+
+        // Notify admins
+        \App\Services\NotificationService::createAdminNotification(
+            'new_contact',
+            'رسالة تواصل جديدة',
+            "رسالة جديدة من: " . $contact->name,
+            route('contacts.show', $contact->id)
+        );
 
         if ($request->ajax()) {
             return response()->json(['success' => true]);

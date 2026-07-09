@@ -1447,10 +1447,31 @@ return [
     'normal' => 'عادية',
     'cancel_recommendation' => 'إلغاء التوصية',
     'set_as_recommended' => 'تعيين كموصى بها',
-    'company_classifications' => 'تصنيفات وحجم الشركات',
+    'company_classifications' => 'تصنيفات وأحجام الشركات',
+
+    // Tenders
+    'tenders' => 'طلبات المناقصات',
+    'view_all' => 'عرض الكل',
     'company_classification' => 'التصنيف / الحجم',
     'supplier' => 'مورد',
     'company' => 'شركة',
+    
+    // Suppliers & Products
+    'suppliers' => 'الموردين',
+    'supplier_products' => 'منتجات الموردين',
+    'supplier_offers' => 'عروض الموردين',
+    'product_title' => 'اسم المنتج',
+    'product_price' => 'سعر المنتج',
+    'add_product' => 'إضافة منتج',
+    'edit_product' => 'تعديل المنتج',
+    'offer_title' => 'عنوان العرض',
+    'offer_discount' => 'نسبة الخصم',
+    'add_offer' => 'إضافة عرض',
+    'edit_offer' => 'تعديل العرض',
+    'select_supplier' => 'اختر المورد',
+    'total_suppliers' => 'إجمالي الموردين',
+    'total_products' => 'إجمالي المنتجات',
+    'total_supplier_offers' => 'إجمالي عروض الموردين',
 ];
 
 

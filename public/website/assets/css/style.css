@@ -10835,6 +10835,7 @@ body.sup-page .flip-card-back .service-image-wrapper {
 }
 .pd-doc-box {
     transition: 0.3s;
+    height: 100%;
 }
 .pd-doc-box:hover {
     background-color: #f3f4f6 !important;

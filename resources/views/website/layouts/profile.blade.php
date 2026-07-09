@@ -26,11 +26,12 @@
                     <div class="profile-image-wrapper wow fadeInUp position-relative overflow-hidden" data-wow-delay="0.1s"
                         @if (auth()->check() && auth()->id() == $pUser->id) style="cursor: pointer;" onclick="document.getElementById('profilePhotoInput').click()" @endif>
                         <img src="{{ $profilePhoto ?: asset('website/assets/img/logo.png') }}" alt="{{ $pUser->name }}"
-                            class="profile-image img-thumbnail w-100 h-100 object-fit-cover">
+                            class="profile-image img-thumbnail object-fit-cover">
                         @if (auth()->check() && auth()->id() == $pUser->id)
-                            <div class="position-absolute bottom-0 w-100 text-center bg-dark bg-opacity-50 text-white py-1"
-                                style="font-size: 0.8rem;">
-                                {{ __('website.change_photo') }}
+                            <div class="position-absolute d-flex align-items-center justify-content-center shadow-sm"
+                                style="bottom: 15px; left: 15px; width: 38px; height: 38px; background-color: var(--primary); border-radius: 50%; color: #fff; border: 3px solid #fff; transition: all 0.3s ease;" 
+                                title="{{ __('website.change_photo') ?? 'تغيير الصورة' }}">
+                                <i class="fas fa-camera" style="font-size: 0.9rem;"></i>
                             </div>
                         @endif
                     </div>

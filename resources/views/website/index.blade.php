@@ -126,6 +126,7 @@
     @endif
     <!-- Banner Slider End -->
 
+    @if(isset($categories) && count($categories) > 0)
     <!-- Services Category Start -->
     <div class="container-fluid services-section py-5">
         <div class="container">
@@ -164,8 +165,9 @@
         </div>
     </div>
     <!-- Services Category End -->
+    @endif
 
-
+    @if(isset($activeTenders) && $activeTenders->count() > 0)
     <section class="asas-tenders-wrapper py-5" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
         <div class="container">
             <div class="tenders-header wow fadeInUp" data-wow-delay="0.1s">
@@ -202,6 +204,7 @@
             @endif
         </div>
     </section>
+    @endif
 
     <!--  -->
 
@@ -335,11 +338,13 @@
         <!-- Featured Services Section End -->
     @endif
 
+    @if(isset($successPartners) && count($successPartners) > 0)
     <x-website.success-partners :title="\App\Models\Setting::getValue(
         'home_partners_title',
         app()->getLocale(),
         'نفخر بالشراكة مع عملاء من الطراز الأول',
     )" />
+    @endif
 
     <!-- Contact Form Section Start -->
     <div class="contact-form-section">

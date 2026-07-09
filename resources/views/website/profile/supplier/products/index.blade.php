@@ -3,25 +3,78 @@
 @section('title', 'المنتجات')
 
 @section('profile-content')
-    <div class="about-me-section">
-        <div class="container">
+    <style>
+        .custom-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+        .custom-table th {
+            background-color: #f8f9fa;
+            color: var(--primary);
+            font-weight: 600;
+            padding: 18px 20px;
+            border-bottom: 2px solid #e9ecef;
+            white-space: nowrap;
+        }
+        .custom-table td {
+            padding: 18px 20px;
+            vertical-align: middle;
+            border-bottom: 1px solid #f1f3f5;
+            background-color: #fff;
+            color: #495057;
+        }
+        .custom-table tr:hover td {
+            background-color: #fcfcfc;
+        }
+        .custom-table tr:last-child td {
+            border-bottom: none;
+        }
+        .action-btn {
+            width: 36px;
+            height: 36px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            transition: all 0.2s;
+            border: none;
+        }
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+    </style>
+
+    <div class="incoming-requests-wrapper mt-4 mb-5" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
+        <div class="container bg-light rounded-4 p-4 shadow-sm" style="background-color: #f8f9fa !important;">
+            
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="about-me-title mb-0">المنتجات</h2>
-                <a href="{{ route('supplier.products.create') }}" class="btn btn-primary">
-                    <i class="bi bi-plus-circle"></i> إضافة منتج
-                </a>
+                <h3 class="fw-bold mb-0 text-dark">المنتجات</h3>
+                <div>
+                    <a href="{{ route('profile.edit') }}" class="text-decoration-none text-muted small fw-bold me-3">
+                        العودة للوحة الرئيسية <i class="bi bi-arrow-left ms-1"></i>
+                    </a>
+                    <a href="{{ route('supplier.products.create') }}" class="btn btn-primary rounded-pill px-4 shadow-sm fw-bold">
+                        <i class="fas fa-plus me-2"></i> إضافة منتج
+                    </a>
+                </div>
             </div>
 
             @if(session('success'))
-                <div class="alert alert-success">{{ session('success') }}</div>
+                <div class="alert alert-success rounded-pill px-4 shadow-sm border-0">{{ session('success') }}</div>
             @endif
             @if(session('error'))
-                <div class="alert alert-danger">{{ session('error') }}</div>
+                <div class="alert alert-danger rounded-pill px-4 shadow-sm border-0">{{ session('error') }}</div>
             @endif
 
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover bg-white shadow-sm rounded">
-                    <thead class="table-light">
+            <div class="table-responsive mt-2">
+                <table class="table custom-table mb-0">
+                    <thead>
                         <tr>
                             <th>الصورة</th>
                             <th>العنوان</th>
@@ -35,28 +88,36 @@
                             <tr>
                                 <td class="text-center align-middle">
                                     @if($product->getFirstMediaUrl('product_images'))
-                                        <img src="{{ $product->getFirstMediaUrl('product_images') }}" width="60" class="rounded" alt="Product Image">
+                                        <img src="{{ $product->getFirstMediaUrl('product_images') }}" width="60" height="60" class="rounded-3 object-fit-cover shadow-sm border" alt="Product Image">
                                     @else
-                                        <span class="text-muted"><i class="bi bi-image" style="font-size: 2rem;"></i></span>
+                                        <div class="bg-light rounded-3 d-flex align-items-center justify-content-center shadow-sm border mx-auto" style="width: 60px; height: 60px;">
+                                            <i class="bi bi-image text-muted fs-4"></i>
+                                        </div>
                                     @endif
                                 </td>
-                                <td class="align-middle fw-bold">{{ $product->title }}</td>
-                                <td class="align-middle">{{ $product->subtitle }}</td>
-                                <td class="align-middle">{{ $product->price }}</td>
+                                <td class="align-middle fw-bold text-dark">{{ $product->title }}</td>
+                                <td class="align-middle text-muted">{{ Str::limit($product->subtitle, 40) }}</td>
+                                <td class="align-middle fw-bold text-primary">{{ $product->price }}</td>
                                 <td class="align-middle">
-                                    <a href="{{ route('supplier.products.edit', $product->id) }}" class="btn btn-sm btn-info text-white"><i class="bi bi-pencil"></i></a>
-                                    <form action="{{ route('supplier.products.destroy', $product->id) }}" method="POST" class="d-inline delete-work-form">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="button" class="btn btn-sm btn-danger delete-work-btn"><i class="bi bi-trash"></i></button>
-                                    </form>
+                                    <div class="d-flex gap-2">
+                                        <a href="{{ route('supplier.products.edit', $product->id) }}" class="action-btn bg-info text-white shadow-sm">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </a>
+                                        <form action="{{ route('supplier.products.destroy', $product->id) }}" method="POST" class="d-inline delete-work-form">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="button" class="action-btn bg-danger text-white shadow-sm delete-work-btn">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
                                 <td colspan="5" class="text-center py-5 text-muted">
-                                    <i class="bi bi-box mb-3 d-block" style="font-size: 3rem;"></i>
-                                    لا توجد منتجات مضافة
+                                    <i class="fas fa-box-open mb-3 d-block opacity-25" style="font-size: 4rem;"></i>
+                                    <p class="fs-5 mb-0 fw-light">لا توجد منتجات مضافة حتى الآن</p>
                                 </td>
                             </tr>
                         @endforelse

@@ -49,6 +49,10 @@ Route::group(['prefix' => 'admin-panel', 'middleware' => [IsAdminMiddleware::cla
     Route::resource('users', UserController::class);
     Route::get('users/{id}/profile', [UserController::class, 'show'])->name('users.show');
 
+    // Suppliers
+    Route::resource('supplier-products', \App\Http\Controllers\Admin\SupplierProductController::class)->except(['show']);
+    Route::resource('supplier-offers', \App\Http\Controllers\Admin\SupplierOfferController::class)->except(['show']);
+
     Route::get('profile', [ProfileController::class , 'profile_page'])->name('profile.get');
     Route::post('profile', [ProfileController::class , 'profile_page_post'])->name('profile.post');
 

@@ -13,9 +13,9 @@
                            class="btn btn-{{ !request()->has('type') ? 'primary' : 'outline-primary' }}">
                             <i class="menu-icon icon-base ti tabler-list"></i> {{ __('admin.all') }}
                         </a>
-                        <a href="{{ route('memberships.index', ['type' => 'individual']) }}" 
-                           class="btn btn-{{ request()->get('type') == 'individual' ? 'primary' : 'outline-primary' }}">
-                            <i class="menu-icon icon-base ti tabler-user"></i> {{ __('admin.individual') }}
+                        <a href="{{ route('memberships.index', ['type' => 'supplier']) }}" 
+                           class="btn btn-{{ request()->get('type') == 'supplier' ? 'primary' : 'outline-primary' }}">
+                            <i class="menu-icon icon-base ti tabler-truck"></i> {{ __('admin.supplier') }}
                         </a>
                         <a href="{{ route('memberships.index', ['type' => 'company']) }}" 
                            class="btn btn-{{ request()->get('type') == 'company' ? 'primary' : 'outline-primary' }}">

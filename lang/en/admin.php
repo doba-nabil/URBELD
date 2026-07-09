@@ -921,6 +921,11 @@ return [
     'membership_type_hint' => 'Choose membership type: Individual (for individual engineers) or Company',
     'company_name' => 'Company Name',
     'company_registration_number' => 'Company Registration Number',
+    'company_classifications' => 'Company Classifications and Sizes',
+    
+    // Tenders
+    'tenders' => 'Tender Requests',
+    'view_all' => 'View All',
     'company_description' => 'Company Description',
     'ratings' => 'Ratings',
     'sort_order' => 'Display Order',
@@ -1115,6 +1120,23 @@ return [
     'normal' => 'Normal',
     'cancel_recommendation' => 'Cancel Recommendation',
     'set_as_recommended' => 'Set as Recommended',
+
+    // Suppliers & Products
+    'suppliers' => 'Suppliers',
+    'supplier_products' => 'Supplier Products',
+    'supplier_offers' => 'Supplier Offers',
+    'product_title' => 'Product Title',
+    'product_price' => 'Product Price',
+    'add_product' => 'Add Product',
+    'edit_product' => 'Edit Product',
+    'offer_title' => 'Offer Title',
+    'offer_discount' => 'Discount Percentage',
+    'add_offer' => 'Add Offer',
+    'edit_offer' => 'Edit Offer',
+    'select_supplier' => 'Select Supplier',
+    'total_suppliers' => 'Total Suppliers',
+    'total_products' => 'Total Products',
+    'total_supplier_offers' => 'Total Supplier Offers',
 ];
 
 

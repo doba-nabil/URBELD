@@ -505,5 +505,19 @@ return [
     'search_providers' => 'Search Providers',
     'browse_by_section' => 'Browse by Section',
     'provider' => 'Provider',
+
+    // Reports & Tenders
+    'no_recent_activity' => 'No recent activity',
+    'tenders_accepted' => 'Accepted Tenders',
+    'tenders_submitted' => 'Submitted Tenders',
+    'expected_revenue' => 'Expected Revenue',
+
+    // Contact Modal
+    'contact_help_center' => 'Contact Help Center',
+    'message_or_inquiry' => 'Message or Inquiry *',
+    'send_message' => 'Send Message',
+
+    'delivery_cities' => 'Delivery Cities',
+    'delivery_vcities' => 'Delivery Cities',
 ];
 

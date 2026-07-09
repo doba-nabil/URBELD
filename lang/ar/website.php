@@ -516,5 +516,19 @@ return [
     'search_providers' => 'بحث عن موردين',
     'browse_by_section' => 'تصفح حسب القسم',
     'provider' => 'مورد',
+
+    // Reports & Tenders
+    'no_recent_activity' => 'لا توجد أنشطة حديثة',
+    'tenders_accepted' => 'عروض مقبولة',
+    'tenders_submitted' => 'عروض مقدمة',
+    'expected_revenue' => 'العائد المتوقع',
+
+    // Contact Modal
+    'contact_help_center' => 'تواصل مع مركز المساعدة',
+    'message_or_inquiry' => 'الرسالة أو الاستفسار *',
+    'send_message' => 'إرسال الرسالة',
+    
+    'delivery_cities' => 'مدن التوصيل',
+    'delivery_vcities' => 'مدن التوصيل',
 ];
 

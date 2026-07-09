@@ -195,21 +195,28 @@
                 </ul>
             </li>
 
-            <!-- Individual Providers -->
-            <li class="menu-item {{ request()->is('*memberships*') && request()->get('type') == 'individual' ? 'active open' : '' }}">
+
+
+            <!-- Suppliers -->
+            <li class="menu-item {{ (request()->is('*memberships*') && request()->get('type') == 'supplier') || request()->is('*supplier-products*') || request()->is('*supplier-offers*') ? 'active open' : '' }}">
                 <a href="javascript:void(0)" class="menu-link menu-toggle">
-                    <i class="menu-icon icon-base ti tabler-user"></i>
-                    <div>{{ __('admin.individual_providers') }}</div>
+                    <i class="menu-icon icon-base ti tabler-truck"></i>
+                    <div>{{ __('admin.suppliers') }}</div>
                 </a>
                 <ul class="menu-sub">
-                    <li class="menu-item {{ request()->is('*memberships*') && request()->get('type') == 'individual' && !request()->has('status') ? 'active' : '' }}">
-                        <a href="{{ route('memberships.index', ['type' => 'individual']) }}" class="menu-link">
-                            <div>{{ __('admin.all') }}</div>
+                    <li class="menu-item {{ request()->is('*memberships*') && request()->get('type') == 'supplier' ? 'active' : '' }}">
+                        <a href="{{ route('memberships.index', ['type' => 'supplier']) }}" class="menu-link">
+                            <div>{{ __('admin.suppliers') }}</div>
                         </a>
                     </li>
-                    <li class="menu-item {{ request()->is('*memberships*') && request()->get('type') == 'individual' && request()->get('status') == 'pending' ? 'active' : '' }}">
-                        <a href="{{ route('memberships.index', ['type' => 'individual', 'status' => 'pending']) }}" class="menu-link">
-                            <div>{{ __('admin.under_review') }}</div>
+                    <li class="menu-item {{ request()->is('*supplier-products*') ? 'active' : '' }}">
+                        <a href="{{ route('supplier-products.index') }}" class="menu-link">
+                            <div>{{ __('admin.supplier_products') }}</div>
+                        </a>
+                    </li>
+                    <li class="menu-item {{ request()->is('*supplier-offers*') ? 'active' : '' }}">
+                        <a href="{{ route('supplier-offers.index') }}" class="menu-link">
+                            <div>{{ __('admin.supplier_offers') }}</div>
                         </a>
                     </li>
                 </ul>
@@ -255,9 +262,9 @@
                             <div>{{ __('admin.service_requests_companies') }}</div>
                         </a>
                     </li>
-                    <li class="menu-item {{ request()->is('*service-requests*') && request()->get('is_consultation') == '1' ? 'active' : '' }}">
-                        <a href="{{ route('service-requests.index', ['is_consultation' => 1]) }}" class="menu-link">
-                            <div>{{ __('admin.consultation_requests') }}</div>
+                    <li class="menu-item {{ request()->is('*tenders*') ? 'active' : '' }}">
+                        <a href="{{ route('tenders.index') }}" class="menu-link">
+                            <div>{{ __('admin.tenders') }}</div>
                         </a>
                     </li>
                 </ul>

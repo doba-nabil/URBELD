@@ -152,7 +152,7 @@ class MembershipDataTable extends DataTable
             ->with(['categories', 'city.country', 'membership']);
 
         // Filter by provider_type if requested
-        if (request()->has('type') && in_array(request()->get('type'), ['individual', 'company'])) {
+        if (request()->has('type') && in_array(request()->get('type'), ['individual', 'company', 'supplier'])) {
             $query->where('provider_type', request()->get('type'));
         }
 

@@ -72,6 +72,14 @@ class CreateWebsiteServiceRequestAction
 
             DB::commit();
 
+            // Notify admins
+            \App\Services\NotificationService::createAdminNotification(
+                'new_request',
+                'طلب خدمة جديد',
+                "تم إنشاء طلب خدمة جديد برقم #" . $serviceRequest->id,
+                route('service-requests.show', $serviceRequest->id)
+            );
+
             return $serviceRequest;
         } catch (\Exception $e) {
             DB::rollback();

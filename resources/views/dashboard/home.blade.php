@@ -100,6 +100,87 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- إحصائيات الموردين -->
+                        <div class="swiper-slide">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h5 class="text-white mb-0">{{ __('admin.suppliers_statistics') }}</h5>
+                                </div>
+                                <div class="col-lg-7 col-md-9 col-12 order-2 order-md-1 pt-md-9">
+                                    <h6 class="text-white mt-0 mt-md-3 mb-4">{{ __('admin.suppliers_statistics') }}</h6>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <ul class="list-unstyled mb-0">
+                                                <li class="d-flex mb-4 align-items-center">
+                                                    <p class="mb-0 fw-medium me-2 website-analytics-text-bg">
+                                                        {{ number_format($totalSuppliers) }}</p>
+                                                    <p class="mb-0">{{ __('admin.suppliers') }}</p>
+                                                </li>
+                                                <li class="d-flex align-items-center">
+                                                    <p class="mb-0 fw-medium me-2 website-analytics-text-bg">
+                                                        {{ number_format($totalProducts) }}</p>
+                                                    <p class="mb-0">{{ __('admin.supplier_products') }}</p>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-6">
+                                            <ul class="list-unstyled mb-0">
+                                                <li class="d-flex mb-4 align-items-center">
+                                                    <p class="mb-0 fw-medium me-2 website-analytics-text-bg">
+                                                        {{ number_format($totalSupplierOffers) }}</p>
+                                                    <p class="mb-0">{{ __('admin.supplier_offers') }}</p>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-5 col-md-3 col-12 order-1 order-md-2 my-4 my-md-0 text-center">
+                                    <img src="{{ asset('dashboard') }}/assets/img/illustrations/card-website-analytics-1.png"
+                                        alt="إحصائيات الموردين" height="150" class="card-website-analytics-img" />
+                                </div>
+                            </div>
+                        </div>
+                        <!-- إحصائيات المناقصات -->
+                        <div class="swiper-slide">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h5 class="text-white mb-0">{{ __('admin.tenders') }}</h5>
+                                </div>
+                                <div class="col-lg-7 col-md-9 col-12 order-2 order-md-1 pt-md-9">
+                                    <h6 class="text-white mt-0 mt-md-3 mb-4">{{ __('admin.tenders') }}</h6>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <ul class="list-unstyled mb-0">
+                                                <li class="d-flex mb-4 align-items-center">
+                                                    <p class="mb-0 fw-medium me-2 website-analytics-text-bg">
+                                                        {{ number_format($totalTenders) }}</p>
+                                                    <p class="mb-0">{{ __('admin.all') }}</p>
+                                                </li>
+                                                <li class="d-flex align-items-center">
+                                                    <p class="mb-0 fw-medium me-2 website-analytics-text-bg">
+                                                        {{ number_format($activeTenders) }}</p>
+                                                    <p class="mb-0">{{ __('admin.active') ?? 'نشطة' }}</p>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-6">
+                                            <ul class="list-unstyled mb-0">
+                                                <li class="d-flex mb-4 align-items-center">
+                                                    <p class="mb-0 fw-medium me-2 website-analytics-text-bg">
+                                                        {{ number_format($pendingTenders) }}</p>
+                                                    <p class="mb-0">{{ __('admin.under_review') }}</p>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-5 col-md-3 col-12 order-1 order-md-2 my-4 my-md-0 text-center">
+                                    <img src="{{ asset('dashboard') }}/assets/img/illustrations/card-website-analytics-2.png"
+                                        alt="إحصائيات المناقصات" height="150" class="card-website-analytics-img" />
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="swiper-pagination"></div>
                 </div>
@@ -502,7 +583,7 @@
                                             </td>
                                             <td>
                                                 <a href="{{ route('users.show', $provider->id) }}" class="btn btn-icon btn-sm btn-label-primary">
-                                                    <i class="ti ti-eye"></i>
+                                                    <i class="icon-base ti tabler-eye"></i>
                                                 </a>
                                             </td>
                                         </tr>

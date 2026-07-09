@@ -20,7 +20,7 @@
                 <p class="profile-card-subtitle">إدارة طلباتك النشطة والمكتملة</p>
             </a>
 
-            <a href="#about-me-section" class="profile-card">
+            <a href="{{ route('profile.complete') }}" class="profile-card">
                 <div class="profile-card-icon icon-green">
                     <i class="bi bi-person"></i>
                 </div>
@@ -53,7 +53,7 @@
                 <p class="profile-card-subtitle">طرح المناقصات واستقبال العروض</p>
             </a>
 
-            <a href="#" class="profile-card">
+            <a href="#" class="profile-card" data-bs-toggle="modal" data-bs-target="#contactModal">
                 <div class="profile-card-icon icon-blue">
                     <i class="bi bi-headset"></i>
                 </div>
@@ -61,7 +61,7 @@
                 <p class="profile-card-subtitle">تجد شروحات متنوعة وفريق خدمة عملاء لتلقي إستفساراتك ومقترحاتك</p>
             </a>
 
-            <a href="#" class="profile-card">
+            <a href="{{ route('chat.index') }}" class="profile-card">
                 <div class="profile-card-icon icon-blue">
                     <i class="bi bi-envelope"></i>
                 </div>
@@ -103,94 +103,40 @@
         </div>
     </div>
 
-    <!-- About Me Section -->
-    <div class="about-me-section">
-        <div class="container">
-            <h2 class="about-me-title">{{ __('website.about_me') }}</h2>
-            <div class="about-me-content">
-                <p class="about-me-text">
-                    {{ auth()->user()->bio ?? __('website.no_bio') }}
-                </p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Update Forms Section -->
-    <div class="leave-reply-section">
-        <div class="container">
-            <div class="row justify-content-center">
-                    <!-- Read-Only View -->
-                    <div class="profile-readonly-container">
-                        <div class="card mb-4 shadow-sm border-0">
-                            <div class="card-header bg-white border-0">
-                                <h5 class="mb-0 fw-bold text-primary">{{ __('website.personal_info') }}</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <strong class="text-muted d-block mb-1">{{ __('website.name') }}:</strong>
-                                        <div class="p-2 bg-light rounded">{{ auth()->user()->name }}</div>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <strong class="text-muted d-block mb-1">{{ __('website.email') }}:</strong>
-                                        <div class="p-2 bg-light rounded">{{ auth()->user()->email }}</div>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <strong class="text-muted d-block mb-1">{{ __('website.phone') }}:</strong>
-                                        <div class="p-2 bg-light rounded">{{ auth()->user()->phone ?? __('website.none') }}</div>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <strong class="text-muted d-block mb-1">{{ __('website.city') }}:</strong>
-                                        <div class="p-2 bg-light rounded">{{ auth()->user()->city->name ?? __('website.none') }}</div>
-                                    </div>
-                                </div>
-                            </div>
+    <!-- Contact Modal -->
+    <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="contactModalLabel">{{ __('website.contact_help_center') ?? 'تواصل مع مركز المساعدة' }}</h5>
+                    <button type="button" class="btn-close m-0" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('website.contact.store') }}" method="POST">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="name" class="form-label">{{ __('website.name') }}</label>
+                            <input type="text" class="form-control" id="name" name="name" value="{{ auth()->user()->name }}" required>
                         </div>
-                    </div>
-
-                    <!-- Edit Forms View -->
-                    <div class="profile-edit-form-container" style="display: none;">
-                        <div class="card mb-4 shadow-sm border-0">
-                            <div class="card-header bg-white border-0">
-                                <h5 class="mb-0 fw-bold text-primary">{{ __('website.update_personal_info') }}</h5>
-                            </div>
-                        <div class="card-body">
-                            @include('website.profile.partials.update-profile-information-form')
+                        <div class="mb-3">
+                            <label for="email" class="form-label">{{ __('website.email') }}</label>
+                            <input type="email" class="form-control" id="email" name="email" value="{{ auth()->user()->email }}" required>
                         </div>
-                    </div>
-
-                    <div class="profile-edit-form-container" style="display: none;">
-                        <div class="card mb-4 shadow-sm border-0">
-                            <div class="card-header bg-white border-0">
-                                <h5 class="mb-0 fw-bold text-primary">{{ __('website.update_password') }}</h5>
-                            </div>
-                        <div class="card-body">
-                            @include('website.profile.partials.update-password-form')
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">{{ __('website.phone') }}</label>
+                            <input type="text" class="form-control" id="phone" name="phone" value="{{ auth()->user()->phone }}">
                         </div>
-                    </div>
-
-                    <div class="profile-edit-form-container" style="display: none;">
-                        <div class="card mb-4 shadow-sm border-0">
-                            <div class="card-header bg-white border-0">
-                                <h5 class="mb-0 fw-bold text-danger">{{ __('website.delete_account') }}</h5>
-                            </div>
-                        <div class="card-body">
-                            @include('website.profile.partials.delete-user-form')
+                        <div class="mb-3">
+                            <label for="message" class="form-label">{{ __('website.message_or_inquiry') ?? 'الرسالة أو الاستفسار' }} <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
                         </div>
-                    </div>
-
-                    <div class="card mb-4 shadow-sm border-0 mt-5">
-                        <div class="card-header bg-white border-0">
-                            <h5 class="mb-0 fw-bold text-primary">{{ __('website.notification_settings') }}</h5>
+                        <div class="text-end">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('website.cancel') ?? 'إلغاء' }}</button>
+                            <button type="submit" class="btn btn-primary px-4">{{ __('website.send_message') ?? 'إرسال الرسالة' }}</button>
                         </div>
-                        <div class="card-body">
-                            @include('website.profile.partials.notification-settings-form')
-                        </div>
-                    </div>
-                    </div> <!-- End Edit Forms View container -->
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 @endsection
-

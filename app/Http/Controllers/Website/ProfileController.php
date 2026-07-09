@@ -207,10 +207,10 @@ class ProfileController extends Controller
                 })->sum('proposed_price');
 
             $kpis = [
-                ['title' => __('admin.total_responses_submitted'), 'value' => $totalResponses, 'icon' => 'bi-briefcase', 'color' => 'primary'],
-                ['title' => __('admin.completed_projects'), 'value' => $completedProjects, 'icon' => 'bi-check-circle', 'color' => 'success'],
-                ['title' => __('admin.total_revenue'), 'value' => number_format($totalRevenue, 2) . ' ' . __('admin.currency'), 'icon' => 'bi-cash-stack', 'color' => 'info'],
-                ['title' => __('admin.average_rating'), 'value' => number_format($user->average_rating, 1) . ' / 5', 'icon' => 'bi-star-fill', 'color' => 'warning'],
+                ['title' => __('admin.total_responses_submitted'), 'value' => $totalResponses, 'icon' => 'fas fa-briefcase', 'color' => 'primary'],
+                ['title' => __('admin.completed_projects'), 'value' => $completedProjects, 'icon' => 'fas fa-check', 'color' => 'success'],
+                ['title' => __('admin.total_revenue'), 'value' => number_format($totalRevenue, 2) . ' ' . __('admin.currency'), 'icon' => 'fas fa-money-bill', 'color' => 'info'],
+                ['title' => __('admin.average_rating'), 'value' => number_format($user->average_rating, 1) . ' / 5', 'icon' => 'fas fa-star', 'color' => 'warning'],
             ];
 
             // Recent Completed Projects
@@ -227,7 +227,35 @@ class ProfileController extends Controller
                         'date' => $response->created_at->format('Y-m-d'),
                         'status' => __('admin.' . $response->serviceRequest->status),
                         'status_code' => $response->serviceRequest->status,
-                        'amount' => number_format($response->proposed_price, 2) . ' ' . __('admin.currency')
+                        'amount' => number_format($response->proposed_price, 2) . ' ' . __('admin.currency'),
+                        'route' => route('requests.show', $response->serviceRequest->id)
+                    ];
+                });
+
+            // Provider Tender Reports
+            $totalTenderResponses = $user->tenderApplications()->count();
+            $completedTenderProjects = $user->tenderApplications()->where('status', \App\Models\TenderApplication::STATUS_ACCEPTED)->count();
+            $totalTenderRevenue = $user->tenderApplications()->where('status', \App\Models\TenderApplication::STATUS_ACCEPTED)->sum('price');
+
+            $tenderKpis = [
+                ['title' => __('website.tenders_submitted') ?? 'عروض مقدمة', 'value' => $totalTenderResponses, 'icon' => 'fas fa-briefcase', 'color' => 'primary'],
+                ['title' => __('website.tenders_accepted') ?? 'عروض مقبولة', 'value' => $completedTenderProjects, 'icon' => 'fas fa-check', 'color' => 'success'],
+                ['title' => __('website.expected_revenue') ?? 'إيرادات محتملة', 'value' => number_format($totalTenderRevenue, 2) . ' ' . __('admin.currency'), 'icon' => 'fas fa-money-bill', 'color' => 'info'],
+            ];
+
+            $recentTenderActivity = $user->tenderApplications()->with('tender')
+                ->latest()
+                ->take(10)
+                ->get()
+                ->map(function($app) {
+                    return [
+                        'request_id' => $app->tender_id,
+                        'title' => $app->tender->title ?? 'مناقصة',
+                        'date' => $app->created_at->format('Y-m-d'),
+                        'status' => __('admin.' . $app->status) ?? $app->status,
+                        'status_code' => $app->status,
+                        'amount' => number_format($app->price, 2) . ' ' . __('admin.currency'),
+                        'route' => route('tenders.show', $app->tender_id)
                     ];
                 });
 
@@ -245,9 +273,9 @@ class ProfileController extends Controller
                 });
 
             $kpis = [
-                ['title' => __('admin.total_requests_created'), 'value' => $totalRequests, 'icon' => 'bi-file-earmark-plus', 'color' => 'primary'],
-                ['title' => __('admin.completed_requests_count'), 'value' => $completedRequests, 'icon' => 'bi-check2-all', 'color' => 'success'],
-                ['title' => __('admin.total_amount_paid'), 'value' => number_format($totalSpent, 2) . ' ' . __('admin.currency'), 'icon' => 'bi-wallet2', 'color' => 'info'],
+                ['title' => __('admin.total_requests_created'), 'value' => $totalRequests, 'icon' => 'fas fa-file-alt', 'color' => 'primary'],
+                ['title' => __('admin.completed_requests_count'), 'value' => $completedRequests, 'icon' => 'fas fa-check', 'color' => 'success'],
+                ['title' => __('admin.total_amount_paid'), 'value' => number_format($totalSpent, 2) . ' ' . __('admin.currency'), 'icon' => 'fas fa-credit-card', 'color' => 'info'],
             ];
 
             // Recent Requests
@@ -263,12 +291,47 @@ class ProfileController extends Controller
                         'date' => $req->created_at->format('Y-m-d'),
                         'status' => __('admin.' . $req->status),
                         'status_code' => $req->status,
-                        'amount' => $req->acceptedResponse ? number_format($req->acceptedResponse->proposed_price, 2) . ' ' . __('admin.currency') : __('admin.no_cost_defined')
+                        'amount' => $req->acceptedResponse ? number_format($req->acceptedResponse->proposed_price, 2) . ' ' . __('admin.currency') : __('admin.no_cost_defined'),
+                        'route' => route('requests.show', $req->id)
+                    ];
+                });
+
+            // Seeker Tender Reports
+            $totalTenders = $user->tenders()->count();
+            $completedTenders = $user->tenders()->where('status', \App\Models\Tender::STATUS_CLOSED)->count();
+            $totalTenderSpent = $user->tenders()->where('status', \App\Models\Tender::STATUS_CLOSED)
+                ->with('applications')
+                ->get()
+                ->sum(function($tender) {
+                    return $tender->applications->where('status', \App\Models\TenderApplication::STATUS_ACCEPTED)->sum('price');
+                });
+
+            $tenderKpis = [
+                ['title' => __('website.total_tenders') ?? 'إجمالي المناقصات', 'value' => $totalTenders, 'icon' => 'fas fa-file-alt', 'color' => 'primary'],
+                ['title' => __('website.completed_tenders') ?? 'مناقصات مكتملة', 'value' => $completedTenders, 'icon' => 'fas fa-check', 'color' => 'success'],
+                ['title' => __('website.total_spent') ?? 'الإنفاق الإجمالي', 'value' => number_format($totalTenderSpent, 2) . ' ' . __('admin.currency'), 'icon' => 'fas fa-credit-card', 'color' => 'info'],
+            ];
+
+            $recentTenderActivity = $user->tenders()
+                ->with('applications')
+                ->latest()
+                ->take(10)
+                ->get()
+                ->map(function($tender) {
+                    $acceptedApp = $tender->applications->where('status', \App\Models\TenderApplication::STATUS_ACCEPTED)->first();
+                    return [
+                        'request_id' => $tender->id,
+                        'title' => $tender->title,
+                        'date' => $tender->created_at->format('Y-m-d'),
+                        'status' => __('admin.' . $tender->status) ?? $tender->status,
+                        'status_code' => $tender->status,
+                        'amount' => $acceptedApp ? number_format($acceptedApp->price, 2) . ' ' . __('admin.currency') : '-',
+                        'route' => route('tenders.show', $tender->id)
                     ];
                 });
         }
 
-        return view('website.profile.reports', compact('user', 'kpis', 'recentActivity'));
+        return view('website.profile.reports', compact('user', 'kpis', 'recentActivity', 'tenderKpis', 'recentTenderActivity'));
     }
 
     public function tenders(Request $request): View

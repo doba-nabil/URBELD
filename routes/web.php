@@ -120,6 +120,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/requests/{serviceRequest}/accept-provider/{provider}', [\App\Http\Controllers\Website\ServiceRequestController::class , 'acceptProvider'])->name('requests.accept-provider');
 
     // Chat Routes (Accessible by both seeker and provider if they are participants)
+    Route::get('/chats', [\App\Http\Controllers\Website\ChatController::class , 'index'])->name('chat.index');
     Route::get('chat/{chat}', [\App\Http\Controllers\Website\ChatController::class , 'show'])->name('dashboard.chat.index'); // using the same name for now to avoid breaking existing links or dashboard.chat.show
     Route::get('chat/{chat}/show', [\App\Http\Controllers\Website\ChatController::class , 'show'])->name('dashboard.chat.show');
     Route::get('chat/{chat}/messages', [\App\Http\Controllers\Website\ChatController::class , 'getMessages'])->name('chat.messages');

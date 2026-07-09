@@ -11,6 +11,23 @@ use Illuminate\Support\Facades\Auth;
 class ChatController extends Controller
 {
     /**
+     * Display a listing of the user's chats.
+     */
+    public function index()
+    {
+        $chats = Auth::user()->chats()
+            ->with(['serviceRequest', 'participants' => function($query) {
+                $query->where('users.id', '!=', Auth::id());
+            }, 'messages' => function($query) {
+                $query->latest()->limit(1);
+            }])
+            ->orderByDesc('updated_at')
+            ->get();
+
+        return view('website.chat.index', compact('chats'));
+    }
+
+    /**
      * Display the specified chat.
      */
     public function show(Chat $chat)

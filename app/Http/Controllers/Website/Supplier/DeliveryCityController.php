@@ -10,7 +10,7 @@ class DeliveryCityController extends Controller
 {
     public function index()
     {
-        $allCities = City::where('is_active', true)->get();
+        $allCities = City::all();
         $selectedCities = auth()->user()->deliveryCities()->pluck('cities.id')->toArray();
         return view('website.profile.supplier.cities.index', compact('allCities', 'selectedCities'));
     }
