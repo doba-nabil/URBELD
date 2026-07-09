@@ -132,4 +132,5 @@ return [
     
     // Whatsapp
     'wa_share' => 'Check out this tender on URBELD: ',
+    'latest_tenders' => 'Latest Tenders',
 ];

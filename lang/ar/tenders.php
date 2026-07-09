@@ -132,4 +132,5 @@ return [
     
     // Whatsapp
     'wa_share' => 'شاهد هذه المناقصة على أوربلد: ',
+    'latest_tenders' => 'أحدث المناقصات',
 ];
