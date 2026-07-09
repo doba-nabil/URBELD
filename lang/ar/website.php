@@ -155,7 +155,7 @@ return [
     'submit_request_now' => 'قدم طلبك الآن',
     'service_providers_for' => 'الشركات والمؤسسات لـ',
     'companies_and_institutions' => 'الشركات والمؤسسات',
-    'individual_providers' => 'مزودي الخدمات الأفراد',
+    'individual_providers' => 'الموردين',
     'for' => 'لـ',
     'providers_desc' => 'لقد قمنا بتجميع أفضل المواهب المستقلة والمصممين الخبراء حتى تتمكن من العثور على الموهبة المناسبة التي تحتاجها وتضمينها في مشاريعك.',
     

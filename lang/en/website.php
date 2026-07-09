@@ -146,7 +146,7 @@ return [
     'submit_request_now' => 'Submit Your Request Now',
     'service_providers_for' => 'Companies and Institutions for',
     'companies_and_institutions' => 'Companies and Institutions',
-    'individual_providers' => 'Individual Service Providers',
+    'individual_providers' => 'Suppliers',
     'for' => 'for',
     'providers_desc' => 'We have gathered the best independent talents and expert designers so you can find the right talent you need and include it in your projects.',
     
