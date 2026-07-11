@@ -132,7 +132,7 @@
           <h2 id="providers-title">شركات <span id="activeSubLabel">{{ $category->name }}</span></h2>
           <p id="countLabel">{{ $allProviders->count() ?? 0 }} شركة مسجّلة في هذا القسم</p>
         </div>
-        <select class="sort-sel" id="sort-select">
+        <select class="sort-sel d-none" id="sort-select">
           <option value="premium">{{ __('website.sort_premium') ?? 'المميّزون أولاً' }}</option>
           <option value="rating">{{ __('website.sort_rating') ?? 'الأعلى تقييماً' }}</option>
           <option value="newest">{{ __('website.sort_newest') ?? 'الأحدث تسجيلاً' }}</option>

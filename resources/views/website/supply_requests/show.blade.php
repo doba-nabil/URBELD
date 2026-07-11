@@ -111,7 +111,7 @@
                 <div class="card border-0 shadow-sm rounded-4 sticky-top" style="top: 100px;">
                     <div class="card-body p-4">
                         <div class="d-flex align-items-center mb-4">
-                            <img src="{{ $supplyRequest->user->profile_photo_url ?? asset('website/assets/img/default-user.png') }}" class="rounded-circle" width="60" height="60" alt="User">
+                            <img src="{{ $supplyRequest->user->getFirstMediaUrl('personal_photo') ?: $supplyRequest->user->getFirstMediaUrl('users') ?: asset('website/assets/img/default-user.png') }}" class="rounded-circle object-fit-cover" width="60" height="60" alt="User">
                             <div class="ms-3">
                                 <h6 class="mb-1 fw-bold">{{ $supplyRequest->user->name }}</h6>
                                 <small class="text-muted">صاحب الطلب</small>

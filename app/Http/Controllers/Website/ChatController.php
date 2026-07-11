@@ -28,6 +28,47 @@ class ChatController extends Controller
     }
 
     /**
+     * Start a direct chat with another user.
+     */
+    public function startChat(\App\Models\User $user)
+    {
+        if (Auth::id() == $user->id) {
+            return back()->with('error', 'لا يمكنك محادثة نفسك.');
+        }
+
+        // Check if chat already exists
+        $chat = Chat::whereNull('service_request_id')
+            ->whereHas('participants', function($q) {
+                $q->where('users.id', Auth::id());
+            })
+            ->whereHas('participants', function($q) use ($user) {
+                $q->where('users.id', $user->id);
+            })
+            ->first();
+
+        if (!$chat) {
+            $chat = Chat::create([
+                'uuid' => \Illuminate\Support\Str::uuid(),
+            ]);
+            $chat->participants()->attach([Auth::id(), $user->id]);
+        }
+
+        return redirect()->route('dashboard.chat.show', $chat->id);
+    }
+    {
+        $chats = Auth::user()->chats()
+            ->with(['serviceRequest', 'participants' => function($query) {
+                $query->where('users.id', '!=', Auth::id());
+            }, 'messages' => function($query) {
+                $query->latest()->limit(1);
+            }])
+            ->orderByDesc('updated_at')
+            ->get();
+
+        return view('website.chat.index', compact('chats'));
+    }
+
+    /**
      * Display the specified chat.
      */
     public function show(Chat $chat)

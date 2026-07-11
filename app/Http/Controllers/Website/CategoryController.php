@@ -112,6 +112,7 @@ class CategoryController extends Controller
 
         // For the search form dropdowns
         $cities = City::orderBy('name')->get();
+        $regions = \App\Models\Region::orderBy('name')->get();
         $subCategories = $category->children;
 
         if ($request->ajax()) {
