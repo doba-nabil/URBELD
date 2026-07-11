@@ -2,7 +2,7 @@
 
 namespace App\DataTables;
 
-use App\Models\Region;
+use App\Models\SupplyRequest;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
@@ -10,25 +10,38 @@ use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Services\DataTable;
 
-class RegionDataTable extends DataTable
+class SupplyRequestDataTable extends DataTable
 {
-    /**
-     * Build the DataTable class.
-     *
-     * @param QueryBuilder<Region> $query Results from query() method.
-     */
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
-            ->addColumn('name', function ($q) {
-                return '<span>' . e($q->name) . '</span>';
+            ->addColumn('user', function ($q) {
+                return '<span>' . e($q->user->name ?? '-') . '</span>';
             })
-            ->addColumn('country', function ($q) {
-                return '<span>' . e($q->country->name ?? __('admin.not_specified')) . '</span>';
+            ->addColumn('city', function ($q) {
+                return '<span>' . e($q->city->name ?? '-') . '</span>';
+            })
+            ->addColumn('status', function ($q) {
+                $statusLabels = [
+                    'pending' => ['label' => 'قيد المراجعة', 'class' => 'bg-label-secondary'],
+                    'open' => ['label' => 'طلب جديد', 'class' => 'bg-label-primary'],
+                    'in_progress' => ['label' => 'قيد التنفيذ', 'class' => 'bg-label-warning'],
+                    'completed' => ['label' => 'مكتمل', 'class' => 'bg-label-success'],
+                    'closed' => ['label' => 'مغلق', 'class' => 'bg-label-danger'],
+                ];
+                $status = $statusLabels[$q->status] ?? ['label' => $q->status, 'class' => 'bg-label-secondary'];
+                return '<span class="badge ' . $status['class'] . '">' . $status['label'] . '</span>';
+            })
+            ->addColumn('created_at', function ($q) {
+                return '<span class="text-nowrap">' . $q->created_at->format('Y-m-d H:i') . '</span>';
+            })
+            ->addColumn('responses_count', function ($q) {
+                $count = $q->responses()->count();
+                return '<span class="badge bg-label-info">' . $count . '</span>';
             })
             ->addColumn('action', function ($q) {
-                $editUrl = url('/admin-panel/regions/' . $q->id.'/edit');
-                $deleteUrl = url('/admin-panel/regions/' . $q->id);
+                $showUrl = url('/admin-panel/supply-requests/' . $q->id);
+                $deleteUrl = url('/admin-panel/supply-requests/' . $q->id);
 
                 return '
         <div class="dropdown">
@@ -37,15 +50,15 @@ class RegionDataTable extends DataTable
             </button>
             <ul class="dropdown-menu">
                 <li>
-                    <a href="' . $editUrl . '" class="dropdown-item">
-                        <i class="icon-base ti tabler-edit"></i> ' . __("admin.edit") . '
+                    <a href="' . $showUrl . '" class="dropdown-item">
+                        <i class="icon-base ti tabler-eye"></i> ' . __("admin.view") . '
                     </a>
                 </li>
                 <li>
                     <a href="javascript:void(0)" class="dropdown-item delete-btn"
                         data-id="' . $q->id . '"
                         data-url="' . $deleteUrl . '"
-                        data-table="#table"
+                        data-table=".table"
                         title="' . __("admin.delete") . '">
                         <i class="icon-base ti tabler-trash"></i> ' . __("admin.delete") . '
                     </a>
@@ -53,26 +66,26 @@ class RegionDataTable extends DataTable
             </ul>
         </div>';
             })
-            ->rawColumns(['action', 'name', 'country'])
+            ->rawColumns(['action', 'user', 'city', 'status', 'responses_count', 'created_at'])
             ->setRowId('id')
-            ->filterColumn('name', function($query, $keyword) {
-                $query->where('name', 'like', "%{$keyword}%");
+            ->filterColumn('user', function ($query, $keyword) {
+                $query->whereHas('user', function ($q) use ($keyword) {
+                    $q->where('name', 'like', "%{$keyword}%");
+                });
+            })
+            ->filterColumn('city', function ($query, $keyword) {
+                $query->whereHas('city', function ($q) use ($keyword) {
+                    $q->where('name->ar', 'like', "%{$keyword}%")
+                        ->orWhere('name->en', 'like', "%{$keyword}%");
+                });
             });
     }
 
-    /**
-     * Get the query source of dataTable.
-     *
-     * @return QueryBuilder<Region>
-     */
-    public function query(Region $model): QueryBuilder
+    public function query(SupplyRequest $model): QueryBuilder
     {
-        return $model->newQuery()->with('country');
+        return $model->newQuery()->with(['user', 'city', 'responses'])->latest();
     }
 
-    /**
-     * Optional method if you want to use the html builder.
-     */
     public function html(): HtmlBuilder
     {
         return $this->builder()
@@ -89,32 +102,31 @@ class RegionDataTable extends DataTable
                 Button::make('reset'),
                 Button::make('reload')
             ])->parameters([
-                'language' => $this->getDataTableLanguage()
+                'language' => $this->getDataTableLanguage(),
+                'scrollX' => true,
             ]);
     }
 
-    /**
-     * Get the dataTable columns definition.
-     */
     public function getColumns(): array
     {
         return [
-            Column::make('name')->title(__('admin.name'))->addClass('text-start'),
-            Column::make('country')->title(__('admin.country'))->addClass('text-start'),
-            Column::computed('action')->title(__('admin.action'))
-                  ->exportable(false)
-                  ->printable(false)
-                  ->width(60)
-                  ->addClass('text-start'),
+            Column::make('title')->title('عنوان الطلب'),
+            Column::make('user')->title('صاحب الطلب'),
+            Column::make('city')->title('المدينة'),
+            Column::make('status')->title('الحالة')->addClass('text-center'),
+            Column::make('responses_count')->title('العروض')->addClass('text-center')->searchable(false)->orderable(false),
+            Column::make('created_at')->title('تاريخ الطلب'),
+            Column::computed('action')->title('إجراءات')
+                ->exportable(false)
+                ->printable(false)
+                ->width(60)
+                ->addClass('text-center'),
         ];
     }
 
-    /**
-     * Get the filename for export.
-     */
     protected function filename(): string
     {
-        return 'Region_' . date('YmdHis');
+        return 'SupplyRequests_' . date('YmdHis');
     }
 
     protected function getDataTableLanguage(): array

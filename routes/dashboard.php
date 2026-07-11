@@ -115,6 +115,9 @@ Route::group(['prefix' => 'admin-panel', 'middleware' => [IsAdminMiddleware::cla
     Route::post('service-requests/{id}/complete', [ServiceRequestController::class, 'complete'])->name('service-requests.complete');
     Route::post('service-requests/{id}/update-response/{responseId}', [ServiceRequestController::class, 'updateResponse'])->name('service-requests.update-response');
 
+    // Supply Requests
+    Route::resource('supply-requests', \App\Http\Controllers\Admin\SupplyRequestController::class)->only(['index', 'show', 'destroy']);
+
     Route::get('contacts', [ContactController::class, 'index'])->name('contacts.index');
     Route::get('contacts/{id}', [ContactController::class, 'show'])->name('contacts.show');
     Route::delete('contacts/{id}', [ContactController::class, 'destroy'])->name('contacts.destroy');

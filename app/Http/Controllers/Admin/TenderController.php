@@ -13,10 +13,9 @@ class TenderController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(\App\DataTables\TenderDataTable $dataTable)
     {
-        $tenders = Tender::with(['user', 'category', 'city'])->latest()->paginate(15);
-        return view('dashboard.tenders.index', compact('tenders'));
+        return $dataTable->render('dashboard.tenders.index');
     }
 
     /**

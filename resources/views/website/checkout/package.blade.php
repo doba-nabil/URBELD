@@ -18,7 +18,10 @@
                     هذه الصفحة عبارة عن واجهة مؤقتة (Placeholder) لبوابة الدفع.
                 </div>
                 <div class="mt-4">
-                    <button class="btn btn-primary btn-lg px-5 disabled">تأكيد الدفع</button>
+                    <form action="{{ route('checkout.package.process', $package->id) }}" method="POST" class="d-inline">
+                        @csrf
+                        <button type="submit" class="btn btn-primary btn-lg px-5">تأكيد الدفع</button>
+                    </form>
                     <a href="{{ route('profile.subscription') }}" class="btn btn-outline-secondary btn-lg px-5">العودة</a>
                 </div>
             </div>

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class SupplyRequest extends Model implements \Spatie\MediaLibrary\HasMedia
 {
     use \Illuminate\Database\Eloquent\Factories\HasFactory, \Illuminate\Database\Eloquent\SoftDeletes;
-    use \Spatie\MediaLibrary\HasMedia, \Spatie\MediaLibrary\InteractsWithMedia;
+    use \Spatie\MediaLibrary\InteractsWithMedia;
 
     protected $fillable = [
         'user_id',

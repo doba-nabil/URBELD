@@ -15,4 +15,19 @@ class CheckoutController extends Controller
     {
         return view('website.checkout.package', compact('package'));
     }
+
+    /**
+     * Process the payment for a package (Mock).
+     */
+    public function process(Request $request, SubscriptionPackage $package)
+    {
+        $user = $request->user();
+        
+        $user->subscription_package_id = $package->id;
+        $user->subscription_start_at = now();
+        $user->subscription_end_at = now()->addDays($package->duration_days);
+        $user->save();
+
+        return redirect()->route('profile.subscription')->with('success', 'تم تأكيد الدفع وتفعيل الباقة بنجاح!');
+    }
 }

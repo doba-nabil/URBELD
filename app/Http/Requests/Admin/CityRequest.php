@@ -24,8 +24,8 @@ class CityRequest extends FormRequest
         $rules = [
             'name' => ['required', 'array'],
             'name.ar' => ['required', 'string', 'max:255'],
-            'country_id' => ['nullable', 'exists:countries,id'],
-            'region_id' => ['nullable', 'exists:regions,id'],
+            'country_id' => ['required', 'exists:countries,id'],
+            'region_id' => ['required', 'exists:regions,id'],
         ];
 
         if (count(\LaravelLocalization::getSupportedLocales()) > 1 && isset(\LaravelLocalization::getSupportedLocales()['en'])) {

@@ -15,17 +15,6 @@
                 @if($isPremium)
                 <div class="featured-ribbon" style="background-color: {{ $themeColor }};"><i class="bi bi-award-fill"></i> مميّز</div>
                 @endif
-                <a href="{{ route('member.public', $provider->id) }}" class="d-block text-decoration-none text-dark">
-                    <div class="co-avatar" style="background:linear-gradient(135deg,#1a5c3a,#2d8f5e);">
-                        @if($provider->getFirstMediaUrl('personal_photo'))
-                            <img src="{{ $provider->getFirstMediaUrl('personal_photo') }}" alt="">
-                        @elseif($provider->getFirstMediaUrl('users'))
-                            <img src="{{ $provider->getFirstMediaUrl('users') }}" alt="">
-                        @else
-                            {{ mb_substr($provider->name, 0, 1) }}
-                        @endif
-                    </div>
-                </a>
                 <a href="{{ route('member.public', $provider->id) }}" class="text-decoration-none">
                     <div class="co-name" style="color: #2c3e50;">{{ $provider->name }}</div>
                 </a>
@@ -51,7 +40,7 @@
                   <span class="badge b-avail"><i class="bi bi-circle-fill" style="font-size: 8px;"></i> {{ __('website.available') ?? 'متاح' }}</span>
                 </div>
                 <div class="co-stats">
-                  <div class="co-stat"><i class="bi bi-trophy-fill text-warning"></i> <strong>{{ $provider->completed_projects_count ?? 0 }}</strong> {{ __('website.project') ?? 'مشروع' }}</div>
+                  <div class="co-stat"><strong>{{ $provider->products()->count() }}</strong> {{ __('website.products_count') ?? 'منتج' }}</div>
                 </div>
               </div>
               <hr class="co-divider">

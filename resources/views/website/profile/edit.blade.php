@@ -4,7 +4,9 @@
     <div class="container mt-4 mb-5">
         <div class="profile-dashboard-grid">
             <a href="{{ route('provider.requests.index') }}" class="profile-card">
-                <span class="profile-card-badge">جديد</span>
+                @if(auth()->user()->hasNewIncomingRequests())
+                    <span class="profile-card-badge">جديد</span>
+                @endif
                 <div class="profile-card-icon icon-teal">
                     <i class="bi bi-inbox"></i>
                 </div>
@@ -13,6 +15,9 @@
             </a>
 
             <a href="{{ route('profile.requests') }}" class="profile-card">
+                @if(auth()->user()->hasNewMyRequests())
+                    <span class="profile-card-badge">جديد</span>
+                @endif
                 <div class="profile-card-icon icon-blue">
                     <i class="bi bi-clipboard-check"></i>
                 </div>
@@ -45,7 +50,9 @@
             </a>
 
             <a href="{{ route('profile.tenders') }}" class="profile-card">
-                <span class="profile-card-dot"></span>
+                @if(auth()->user()->hasNewTendersActivity())
+                    <span class="profile-card-badge">جديد</span>
+                @endif
                 <div class="profile-card-icon icon-orange">
                     <i class="bi bi-balance-scale"></i>
                 </div>

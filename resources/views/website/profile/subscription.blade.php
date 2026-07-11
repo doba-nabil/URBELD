@@ -38,29 +38,55 @@
                         </div>
 
                         <div class="d-flex gap-4 flex-column flex-md-row">
-                            <!-- Services Limit Box -->
-                            <div class="limit-box">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span class="limit-title">{{ __('website.services_limit') ?? 'استهلاك الخدمات' }}</span>
-                                    <span class="limit-count">{{ $user->subscriptionPackage->max_services }} / {{ $user->services()->count() }}</span>
+                            @if(auth()->user()->isSupplier())
+                                <!-- Products Limit Box -->
+                                <div class="limit-box">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="limit-title">{{ __('website.products_limit') ?? 'استهلاك المنتجات' }}</span>
+                                        <span class="limit-count">{{ $maxProducts }} / {{ $usedProducts }}</span>
+                                    </div>
+                                    <div class="custom-progress">
+                                        <div class="custom-progress-bar" style="width: {{ $productsPercent }}%"></div>
+                                    </div>
+                                    <div class="limit-subtext">يمكنك إضافة المزيد من المنتجات لمتجرك</div>
                                 </div>
-                                <div class="custom-progress">
-                                    <div class="custom-progress-bar" style="width: {{ ($user->subscriptionPackage->max_services > 0) ? min(100, ($user->services()->count() / $user->subscriptionPackage->max_services) * 100) : 0 }}%"></div>
-                                </div>
-                                <div class="limit-subtext">يمكنك استقبال المزيد من الطلبات للخدمات المتاحة</div>
-                            </div>
 
-                            <!-- Works Limit Box -->
-                            <div class="limit-box">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span class="limit-title">{{ __('website.works_limit') ?? 'أعمال معرض الأعمال' }}</span>
-                                    <span class="limit-count">{{ $user->subscriptionPackage->works_limit }} / {{ $user->works()->count() }}</span>
+                                <!-- Offers Limit Box -->
+                                <div class="limit-box">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="limit-title">{{ __('website.offers_limit') ?? 'العروض والخصومات' }}</span>
+                                        <span class="limit-count">{{ $maxOffers }} / {{ $usedOffers }}</span>
+                                    </div>
+                                    <div class="custom-progress">
+                                        <div class="custom-progress-bar" style="width: {{ $offersPercent }}%"></div>
+                                    </div>
+                                    <div class="limit-subtext">عزز مبيعاتك بإضافة المزيد من العروض للعملاء</div>
                                 </div>
-                                <div class="custom-progress">
-                                    <div class="custom-progress-bar" style="width: {{ ($user->subscriptionPackage->works_limit > 0) ? min(100, ($user->works()->count() / $user->subscriptionPackage->works_limit) * 100) : 0 }}%"></div>
+                            @else
+                                <!-- Services Limit Box -->
+                                <div class="limit-box">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="limit-title">{{ __('website.services_limit') ?? 'استهلاك الخدمات' }}</span>
+                                        <span class="limit-count">{{ $maxServices }} / {{ $usedServices }}</span>
+                                    </div>
+                                    <div class="custom-progress">
+                                        <div class="custom-progress-bar" style="width: {{ $servicesPercent }}%"></div>
+                                    </div>
+                                    <div class="limit-subtext">يمكنك استقبال المزيد من الطلبات للخدمات المتاحة</div>
                                 </div>
-                                <div class="limit-subtext">عزز معرض أعمالك لجذب المزيد من العملاء</div>
-                            </div>
+
+                                <!-- Works Limit Box -->
+                                <div class="limit-box">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="limit-title">{{ __('website.works_limit') ?? 'أعمال معرض الأعمال' }}</span>
+                                        <span class="limit-count">{{ $maxWorks }} / {{ $usedWorks }}</span>
+                                    </div>
+                                    <div class="custom-progress">
+                                        <div class="custom-progress-bar" style="width: {{ $worksPercent }}%"></div>
+                                    </div>
+                                    <div class="limit-subtext">عزز معرض أعمالك لجذب المزيد من العملاء</div>
+                                </div>
+                            @endif
                         </div>
 
                         <div class="features-section">
@@ -83,14 +109,25 @@
                                     @endif
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="feature-item">
-                                        <i class="bi bi-check-circle feature-icon"></i>
-                                        <span>{{ $user->subscriptionPackage->max_services }} خدمات مدرجة</span>
-                                    </div>
-                                    <div class="feature-item">
-                                        <i class="bi bi-check-circle feature-icon"></i>
-                                        <span>{{ $user->subscriptionPackage->works_limit }} أعمال معرض</span>
-                                    </div>
+                                    @if(auth()->user()->isSupplier())
+                                        <div class="feature-item">
+                                            <i class="bi bi-check-circle feature-icon"></i>
+                                            <span>{{ $maxProducts }} منتجات متوفرة</span>
+                                        </div>
+                                        <div class="feature-item">
+                                            <i class="bi bi-check-circle feature-icon"></i>
+                                            <span>{{ $maxOffers }} عروض متوفرة</span>
+                                        </div>
+                                    @else
+                                        <div class="feature-item">
+                                            <i class="bi bi-check-circle feature-icon"></i>
+                                            <span>{{ $maxServices }} خدمات مدرجة</span>
+                                        </div>
+                                        <div class="feature-item">
+                                            <i class="bi bi-check-circle feature-icon"></i>
+                                            <span>{{ $maxWorks }} أعمال معرض</span>
+                                        </div>
+                                    @endif
                                     @if(is_array($features))
                                         @foreach(array_slice($features, ceil(count($features)/2)) as $feature)
                                             @if(!empty($feature))
@@ -137,14 +174,25 @@
                                             </div>
                                             
                                             <ul class="up-pkg-features">
-                                                <li>
-                                                    <i class="bi bi-check-circle up-pkg-icon"></i>
-                                                    <span class="feature-text">{{ $pkg->max_services }} {{ __('website.services_count') ?? 'خدمات مدرجة' }}</span>
-                                                </li>
-                                                <li>
-                                                    <i class="bi bi-check-circle up-pkg-icon"></i>
-                                                    <span class="feature-text">{{ $pkg->works_limit }} {{ __('website.works_count') ?? 'أعمال معرض' }}</span>
-                                                </li>
+                                                @if(auth()->user()->isSupplier())
+                                                    <li>
+                                                        <i class="bi bi-check-circle up-pkg-icon"></i>
+                                                        <span class="feature-text">{{ $pkg->max_products }} منتجات متوفرة</span>
+                                                    </li>
+                                                    <li>
+                                                        <i class="bi bi-check-circle up-pkg-icon"></i>
+                                                        <span class="feature-text">{{ $pkg->max_offers }} عروض متوفرة</span>
+                                                    </li>
+                                                @else
+                                                    <li>
+                                                        <i class="bi bi-check-circle up-pkg-icon"></i>
+                                                        <span class="feature-text">{{ $pkg->max_services }} {{ __('website.services_count') ?? 'خدمات مدرجة' }}</span>
+                                                    </li>
+                                                    <li>
+                                                        <i class="bi bi-check-circle up-pkg-icon"></i>
+                                                        <span class="feature-text">{{ $pkg->works_limit }} {{ __('website.works_count') ?? 'أعمال معرض' }}</span>
+                                                    </li>
+                                                @endif
                                                 @php
                                                     $pkgFeatures = $pkg->features;
                                                     if(is_string($pkgFeatures)) $pkgFeatures = json_decode($pkgFeatures, true);
@@ -171,6 +219,14 @@
                                 @endforeach
                             </div>
                         </div>
+                    @else
+                        @if(isset($user) && $user->hasActiveSubscription())
+                            <div class="text-center py-5">
+                                <i class="bi bi-star-fill fs-1 text-warning mb-3"></i>
+                                <h5>أنت بالفعل على الباقة الأعلى!</h5>
+                                <p class="text-muted">شكراً لثقتك بنا، أنت تتمتع بأفضل المميزات المتاحة حالياً.</p>
+                            </div>
+                        @endif
                     @endif
                 </div>
             </div>

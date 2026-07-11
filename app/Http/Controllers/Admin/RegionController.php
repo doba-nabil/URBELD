@@ -75,3 +75,4 @@ class RegionController extends Controller
             })
         ]);
     }
+}

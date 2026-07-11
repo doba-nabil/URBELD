@@ -198,7 +198,7 @@
                 <!-- Contact Card -->
                 <div class="pp-sidebar-card text-center">
                     <h6 class="fw-bold mb-3">تواصل مع المورد</h6>
-                    <a href="{{ route('requests.create', ['provider_id' => $user->id]) }}" class="btn pp-btn-order">
+                    <a href="{{ route('website.supply-requests.create', array_filter(['provider_id' => $user->id, 'category' => $user->categories->first()->id ?? null])) }}" class="btn pp-btn-order">
                         <i class="bi bi-box-seam me-2"></i> طلب توريد الآن
                     </a>
                     <button class="btn pp-btn-msg mt-2">

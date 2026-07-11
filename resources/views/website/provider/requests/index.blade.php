@@ -149,6 +149,97 @@
                 </div>
             @endforelse
 
+            {{-- طلبات التوريد المفتوحة - للموردين فقط --}}
+            @if(isset($supplyRequests) && $supplyRequests->isNotEmpty())
+            <hr class="my-4">
+            <h4 class="fw-bold mb-4 mt-3" style="color: #d97706;">
+                <i class="bi bi-box-seam me-2"></i> طلبات التوريد الواردة
+                <span class="badge ms-2" style="background: #d97706; font-size: 0.8rem;">{{ $supplyRequests->count() }}</span>
+            </h4>
+            @foreach($supplyRequests as $supplyReq)
+                @php
+                    $alreadyApplied = $supplyReq->responses->isNotEmpty();
+                @endphp
+                <div class="card shadow-sm mb-3 border-0 request-card" style="border-right-color: #d97706 !important;">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <span class="badge mb-2" style="background: rgba(217,119,6,0.12); color: #d97706; border: 1px solid #d97706;">
+                                    <i class="bi bi-box-seam me-1"></i> طلب توريد
+                                </span>
+                                <h5 class="fw-bold mb-1">{{ $supplyReq->title }}</h5>
+                                <p class="text-muted small mb-0">
+                                    <i class="bi bi-geo-alt-fill text-danger me-1"></i> {{ $supplyReq->city->name ?? '' }}
+                                    @if($supplyReq->delivery_date)
+                                        &nbsp;|&nbsp; <i class="bi bi-calendar me-1"></i> التسليم: {{ $supplyReq->delivery_date->format('Y-m-d') }}
+                                    @endif
+                                </p>
+                            </div>
+                            @if($alreadyApplied)
+                                <span class="badge bg-success">تم تقديم عرض</span>
+                            @else
+                                <span class="badge bg-warning text-dark">جديد</span>
+                            @endif
+                        </div>
+
+                        <p class="text-muted mt-2 mb-3">{{ Str::limit($supplyReq->description, 120) }}</p>
+
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <small class="text-muted">
+                                <i class="bi bi-person-circle me-1"></i>
+                                <a href="{{ route('member.public', $supplyReq->user->id) }}" class="text-decoration-none text-muted fw-bold">
+                                    {{ $supplyReq->user->name ?? 'غير معروف' }}
+                                </a>
+                                &nbsp;|&nbsp; {{ $supplyReq->created_at->diffForHumans() }}
+                            </small>
+                            <div>
+                                <a href="{{ route('website.supply-requests.show', $supplyReq->id) }}" class="btn btn-info btn-sm text-white px-3 me-2">
+                                    <i class="bi bi-eye"></i> التفاصيل
+                                </a>
+                                @if(!$alreadyApplied)
+                                    <button type="button" class="btn btn-sm px-4" style="background: #d97706; color: white;"
+                                        data-bs-toggle="modal" data-bs-target="#supplyApplyModal{{ $supplyReq->id }}">
+                                        تقديم عرض توريد
+                                    </button>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Modal تقديم عرض على طلب التوريد --}}
+                @if(!$alreadyApplied)
+                <div class="modal fade" id="supplyApplyModal{{ $supplyReq->id }}" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">تقديم عرض توريد</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <form action="{{ route('website.supply-requests.storeApplication', $supplyReq->id) }}" method="POST">
+                                @csrf
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">السعر المقترح (ر.س) <span class="text-danger">*</span></label>
+                                        <input type="number" name="proposed_price" class="form-control" min="0" step="0.01" required placeholder="مثال: 15000">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">ملاحظات - اختياري</label>
+                                        <textarea name="notes" class="form-control" rows="3" placeholder="أي تفاصيل إضافية عن عرضك..."></textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                                    <button type="submit" class="btn" style="background: #d97706; color: white;">إرسال العرض</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                @endif
+            @endforeach
+            @endif
+
             <!-- Tabs for Active and Completed -->
             <ul class="nav nav-pills mb-4 mt-5 custom-nav-pills form-floating-custom" id="provider-requests-tab"
                 role="tablist">

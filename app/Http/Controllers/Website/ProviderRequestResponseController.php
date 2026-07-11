@@ -28,7 +28,22 @@ class ProviderRequestResponseController extends Controller
         })
             ->get();
 
-        return view('website.provider.requests.index', compact('responses', 'activeResponses'));
+        // Supply requests: only for suppliers
+        $supplyRequests = collect();
+        if (Auth::user()->isSupplier()) {
+            $supplyRequests = \App\Models\SupplyRequest::with(['user', 'city', 'responses' => function($q) {
+                $q->where('user_id', Auth::id());
+            }])
+            ->where(function($q) {
+                $q->whereDoesntHave('responses', function($sq) {
+                    $sq->where('user_id', Auth::id())->where('status', 'accepted');
+                })->where('status', 'open');
+            })
+            ->latest()
+            ->get();
+        }
+
+        return view('website.provider.requests.index', compact('responses', 'activeResponses', 'supplyRequests'));
     }
 
     /**

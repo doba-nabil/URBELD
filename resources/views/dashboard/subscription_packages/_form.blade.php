@@ -95,20 +95,36 @@
         </button>
     </div>
 
-    <div class="col-md-4 mb-3">
+    <div class="col-md-3 mb-3">
         <label class="form-label">{{ __('admin.works_limit') }}</label>
         <input type="number" name="works_limit" class="form-control" min="0"
                value="{{ old('works_limit', $isEdit ? $package->works_limit : '0') }}">
-        <small class="text-muted">{{ __('admin.works_limit_hint') }}</small>
+        <small class="text-muted">{{ __('admin.works_limit_hint') ?? '0 لغير المحدود' }}</small>
         @error('works_limit')<span class="text-danger">{{ $message }}</span>@enderror
     </div>
 
-    <div class="col-md-4 mb-3">
+    <div class="col-md-3 mb-3">
         <label class="form-label">{{ __('admin.max_services') }}</label>
         <input type="number" name="max_services" class="form-control" min="0"
                value="{{ old('max_services', $isEdit ? $package->max_services : '0') }}">
-        <small class="text-muted">{{ __('admin.max_services_hint') }}</small>
+        <small class="text-muted">{{ __('admin.max_services_hint') ?? '0 لغير المحدود' }}</small>
         @error('max_services')<span class="text-danger">{{ $message }}</span>@enderror
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <label class="form-label">أقصى عدد منتجات</label>
+        <input type="number" name="max_products" class="form-control" min="0"
+               value="{{ old('max_products', $isEdit ? $package->max_products : '0') }}">
+        <small class="text-muted">0 لغير المحدود</small>
+        @error('max_products')<span class="text-danger">{{ $message }}</span>@enderror
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <label class="form-label">أقصى عدد عروض</label>
+        <input type="number" name="max_offers" class="form-control" min="0"
+               value="{{ old('max_offers', $isEdit ? $package->max_offers : '0') }}">
+        <small class="text-muted">0 لغير المحدود</small>
+        @error('max_offers')<span class="text-danger">{{ $message }}</span>@enderror
     </div>
 
     <div class="col-md-2 mb-3">

@@ -116,11 +116,6 @@
           <h2 id="providers-title">الموردين <span id="activeSubLabel"></span></h2>
           <p id="countLabel">{{ $suppliers->count() ?? 0 }} مورد مسجّل في هذا القسم</p>
         </div>
-        <select class="sort-sel" id="sort-select">
-          <option value="premium">{{ __('website.sort_premium') ?? 'المميّزون أولاً' }}</option>
-          <option value="rating">{{ __('website.sort_rating') ?? 'الأعلى تقييماً' }}</option>
-          <option value="newest">{{ __('website.sort_newest') ?? 'الأحدث تسجيلاً' }}</option>
-        </select>
       </div>
 
       <div class="wow fadeIn" id="providerTabsContent" data-wow-delay="0.2s">
@@ -128,35 +123,4 @@
       </div>
     </div>
     
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Handle Sorting Dropdown Change (Using jQuery to support select2/nice-select if used)
-            $('#sort-select').on('change', function() {
-                const sortValue = $(this).val();
-                const urlParams = new URLSearchParams(window.location.search);
-                urlParams.set('sort', sortValue);
-                
-                const fetchUrl = `{{ route('website.suppliers.index') }}?${urlParams.toString()}`;
-
-                const providersTabsContent = document.getElementById('providerTabsContent');
-                providersTabsContent.style.opacity = '0.5';
-                    
-                    fetch(fetchUrl, {
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
-                        }
-                    })
-                    .then(response => response.text())
-                    .then(html => {
-                        providersTabsContent.innerHTML = html;
-                        providersTabsContent.style.opacity = '1';
-                    })
-                    .catch(error => {
-                        console.error('Error fetching providers:', error);
-                        providersTabsContent.style.opacity = '1';
-                    });
-                });
-            });
-        });
-    </script>
 @endsection

@@ -29,6 +29,8 @@ class SubscriptionPackageRequest extends FormRequest
             'sort_order' => ['nullable', 'integer', 'min:0'],
             'max_services' => ['nullable', 'integer', 'min:0'],
             'works_limit' => ['nullable', 'integer', 'min:0'],
+            'max_products' => ['nullable', 'integer', 'min:0'],
+            'max_offers' => ['nullable', 'integer', 'min:0'],
             'color' => ['nullable', 'string', 'max:10'],
         ];
 

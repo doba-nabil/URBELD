@@ -32,13 +32,19 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label">{{ __('admin.region') ?? 'المنطقة' }} (اختياري)</label>
-                                <select name="region_id" id="region_id" class="form-select">
+                                <label class="form-label">{{ __('admin.region') ?? 'المنطقة' }}</label>
+                                <select name="region_id" id="region_id" class="form-select" required>
                                     <option value="">{{ __('admin.choose_region') ?? 'اختر المنطقة' }}</option>
-                                    @if(isset($model) && $model->region_id)
-                                        <option value="{{ $model->region_id }}" selected>{{ $model->region->name }}</option>
-                                    @endif
-                                    <!-- Regions will be populated via JS -->
+                                    @php
+                                        $currentCountry = old('country_id', $model->country_id ?? null);
+                                    @endphp
+                                    @foreach($regions as $region)
+                                        @if(!$currentCountry || $region->country_id == $currentCountry)
+                                            <option value="{{ $region->id }}" {{ old('region_id', $model->region_id ?? '') == $region->id ? 'selected' : '' }}>
+                                                {{ $region->name }}
+                                            </option>
+                                        @endif
+                                    @endforeach
                                 </select>
                                 @error('region_id')
                                 <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -131,6 +137,13 @@
                                     message: messages.required
                                 }
                             }
+                        },
+                        region_id: {
+                            validators: {
+                                notEmpty: {
+                                    message: messages.required
+                                }
+                            }
                         }
                     },
                     plugins: {
@@ -164,58 +177,36 @@
                         }
                     }
                 });
-                    }
-                });
             }
 
             // Region Fetching logic
-            const countrySelect = document.getElementById('country_id');
-            const regionSelect = document.getElementById('region_id');
+            const $countrySelect = $('#country_id');
+            const $regionSelect = $('#region_id');
 
-            if (countrySelect && regionSelect) {
-                countrySelect.addEventListener('change', function() {
-                    const countryId = this.value;
-                    regionSelect.innerHTML = '<option value="">{{ __('admin.choose_region') ?? 'اختر المنطقة' }}</option>';
+            if ($countrySelect.length && $regionSelect.length) {
+                $countrySelect.on('change', function() {
+                    const countryId = $(this).val();
+                    $regionSelect.empty().append('<option value="">{{ __('admin.choose_region') ?? 'اختر المنطقة' }}</option>');
+                    $regionSelect.trigger('change');
                     
                     if (countryId) {
-                        fetch(`/admin-panel/regions/by-country/${countryId}`)
-                            .then(response => response.json())
-                            .then(data => {
+                        $.ajax({
+                            url: `{{ url('/admin-panel/regions/by-country') }}/${countryId}`,
+                            type: 'GET',
+                            success: function(data) {
                                 if (data.status === 'success') {
                                     data.regions.forEach(region => {
-                                        const option = document.createElement('option');
-                                        option.value = region.id;
-                                        option.textContent = region.name;
-                                        regionSelect.appendChild(option);
+                                        $regionSelect.append(new Option(region.name, region.id));
                                     });
+                                    $regionSelect.trigger('change');
                                 }
-                            });
-                    }
-                });
-
-                // Trigger change on load if not editing (or if we need to load list but keep selected)
-                if (countrySelect.value && !regionSelect.value) {
-                    countrySelect.dispatchEvent(new Event('change'));
-                } else if (countrySelect.value && regionSelect.value) {
-                    // Fetch list but keep current selection
-                    const currentVal = regionSelect.value;
-                    fetch(`/admin-panel/regions/by-country/${countrySelect.value}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.status === 'success') {
-                                regionSelect.innerHTML = '<option value="">{{ __('admin.choose_region') ?? 'اختر المنطقة' }}</option>';
-                                data.regions.forEach(region => {
-                                    const option = document.createElement('option');
-                                    option.value = region.id;
-                                    option.textContent = region.name;
-                                    if (region.id == currentVal) {
-                                        option.selected = true;
-                                    }
-                                    regionSelect.appendChild(option);
-                                });
+                            },
+                            error: function(err) {
+                                console.error('Error fetching regions:', err);
                             }
                         });
-                }
+                    }
+                });
             }
         });
     </script>

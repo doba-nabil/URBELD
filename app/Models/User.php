@@ -468,6 +468,53 @@ class User extends Authenticatable implements HasMedia, Auditable
             ->where('subscription_end_at', '>=', now());
     }
     /**
+     * Check if there are new incoming requests
+     */
+    public function hasNewIncomingRequests(): bool
+    {
+        return \App\Models\ServiceRequestResponse::where('user_id', $this->id)
+            ->where('status', 'pending')
+            ->exists();
+    }
+
+    /**
+     * Check if there are new replies to my requests
+     */
+    public function hasNewMyRequests(): bool
+    {
+        return \App\Models\ServiceRequestResponse::whereHas('serviceRequest', function ($q) {
+                $q->where('user_id', $this->id);
+            })
+            ->where('status', 'under_review') // When provider replies, status is under_review
+            ->exists();
+    }
+
+    /**
+     * Check if there are new tenders or new replies to my tenders
+     */
+    public function hasNewTendersActivity(): bool
+    {
+        $hasNewResponsesOnMyTenders = \App\Models\TenderApplication::whereHas('tender', function ($q) {
+            $q->where('user_id', $this->id);
+        })->where('status', 'pending')->exists();
+        
+        $hasNewIncomingTenders = false;
+        if ($this->isServiceProvider() || $this->isSupplier() || $this->isCompanyProvider()) {
+            $userCategoryIds = $this->categories()->pluck('categories.id');
+            $hasNewIncomingTenders = \App\Models\Tender::active()
+                ->whereIn('category_id', $userCategoryIds)
+                ->where('user_id', '!=', $this->id)
+                ->whereDoesntHave('applications', function($q) {
+                    $q->where('user_id', $this->id);
+                })
+                ->where('created_at', '>=', now()->subDays(3))
+                ->exists();
+        }
+        
+        return $hasNewResponsesOnMyTenders || $hasNewIncomingTenders;
+    }
+
+    /**
      * Get user's notifications
      */
     public function notifications()

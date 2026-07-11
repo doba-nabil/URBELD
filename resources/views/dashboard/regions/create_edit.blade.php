@@ -1,12 +1,12 @@
 @extends('dashboard.layout.master')
-@section('title', isset($model) ? __('admin.edit') .' '. $model->name : __('admin.create_region') ?? 'إضافة منطقة')
+@section('title', isset($model) ? __('admin.edit') .' '. $model->name : __('admin.create_region'))
 
 @section('dashboard-main')
     <div class="container-xxl flex-grow-1 container-p-y">
         <div class="row">
             <div class="col-12">
                 <div class="card">
-                    <h5 class="card-header">{{ isset($model) ? __('admin.edit') .' '. $model->name : __('admin.create') .' '. (__('admin.region') ?? 'المنطقة') }}</h5>
+                    <h5 class="card-header">{{ isset($model) ? __('admin.edit') .' '. $model->name : __('admin.create_region') }}</h5>
                     <div class="card-body">
                         <form id="formValidationExamples" class="row g-6" method="POST"
                               action="{{ isset($model) ? route('regions.update', $model->id) : route('regions.store') }}">

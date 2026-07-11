@@ -71,6 +71,7 @@ Route::middleware('auth')->group(function () {
     // Tenders Authenticated Actions
     Route::get('/tenders/create', [\App\Http\Controllers\Website\TenderController::class, 'create'])->name('website.tenders.create');
     Route::get('/checkout/package/{package}', [\App\Http\Controllers\Website\CheckoutController::class, 'package'])->name('checkout.package');
+    Route::post('/checkout/package/{package}/process', [\App\Http\Controllers\Website\CheckoutController::class, 'process'])->name('checkout.package.process');
     Route::post('/tenders', [\App\Http\Controllers\Website\TenderController::class, 'store'])->name('website.tenders.store');
     Route::get('/tenders/{id}/apply', [\App\Http\Controllers\Website\TenderController::class, 'apply'])->name('website.tenders.apply');
     Route::post('/tenders/{id}/apply', [\App\Http\Controllers\Website\TenderController::class, 'storeApplication'])->name('website.tenders.storeApplication');

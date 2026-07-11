@@ -72,6 +72,18 @@
                                             <div class="alert alert-success mt-3 mb-0 p-2 text-center">
                                                 <i class="bi bi-star-fill text-warning"></i> {{ __('website.offer_accepted') ?? 'العرض المقبول' }}
                                             </div>
+                                            @php
+                                                $existingChat = \App\Models\Chat::whereHas('participants', function($q) use ($supplyRequest) {
+                                                    $q->where('users.id', $supplyRequest->user_id);
+                                                })->whereHas('participants', function($q) use ($response) {
+                                                    $q->where('users.id', $response->user_id);
+                                                })->first();
+                                            @endphp
+                                            @if($existingChat)
+                                                <a href="{{ route('dashboard.chat.show', $existingChat->id) }}" class="btn btn-outline-primary w-100 mt-2">
+                                                    <i class="bi bi-chat-dots me-1"></i> محادثة مع المورد
+                                                </a>
+                                            @endif
                                             @if($supplyRequest->status === \App\Models\SupplyRequest::STATUS_IN_PROGRESS)
                                                 <form action="{{ route('website.supply-requests.completeWork', $supplyRequest->id) }}" method="POST" class="mt-2">
                                                     @csrf

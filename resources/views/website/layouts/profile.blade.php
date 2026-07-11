@@ -73,6 +73,21 @@
                                     <span>{{ $pUser->city->name }}</span>
                                 </div>
                             @endif
+                            @php
+                                $memberType = $pUser->membership_type ?? $pUser->provider_type ?? null;
+                                $memberLabel = match($memberType) {
+                                    'supplier'    => ['label' => 'مورد',         'icon' => 'bi-box-seam',      'color' => '#d97706'],
+                                    'company'     => ['label' => 'شركة / مؤسسة', 'icon' => 'bi-building',      'color' => '#0284c7'],
+                                    'individual'  => ['label' => 'مقدم خدمة',    'icon' => 'bi-person-badge',  'color' => '#059669'],
+                                    default       => null,
+                                };
+                            @endphp
+                            @if($memberLabel)
+                                <div class="profile-detail-item">
+                                    <i class="bi {{ $memberLabel['icon'] }}" style="color: {{ $memberLabel['color'] }};"></i>
+                                    <span style="color: {{ $memberLabel['color'] }}; font-weight: 600;">{{ $memberLabel['label'] }}</span>
+                                </div>
+                            @endif
                         </div>
 
                         <!-- NEW METRICS ROW -->

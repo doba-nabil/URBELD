@@ -35,6 +35,7 @@ class HomeController extends Controller
                     });
             }])
             ->leftJoin('subscription_packages', 'users.subscription_package_id', '=', 'subscription_packages.id')
+            ->having('completed_projects_count', '>', 0)
             ->orderByDesc('completed_projects_count')
             ->orderByRaw('COALESCE(subscription_packages.sort_order, 0) DESC')
             ->limit(3)

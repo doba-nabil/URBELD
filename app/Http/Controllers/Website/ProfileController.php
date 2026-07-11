@@ -168,7 +168,14 @@ class ProfileController extends Controller
                 ->latest()
                 ->get();
         }
-        return view('website.profile.requests', compact('requests'));
+
+        // Supply requests created by the user (طلبات التوريد بتاعتهم)
+        $supplyRequests = \App\Models\SupplyRequest::with(['city', 'responses'])
+            ->where('user_id', $user->id)
+            ->latest()
+            ->get();
+
+        return view('website.profile.requests', compact('requests', 'supplyRequests'));
     }
     public function reports(Request $request): View
     {
@@ -354,6 +361,8 @@ class ProfileController extends Controller
     }
     /**
      * Show the public profile of any user (personal info + certificates only).
+     * - supplier membership_type or provider_type => public-profile-supplier
+     * - company/institution membership_type or provider_type => public-profile-company
      */
     public function showPublic(\App\Models\User $user)
     {
@@ -363,11 +372,15 @@ class ProfileController extends Controller
         $ratingsCount = \App\Models\Rating::where('rated_id', $user->id)->count();
         // Get certificates
         $certificates = $user->getMedia('certificates');
-        // Completed projects count (matching HomeController/SearchController logic)
+        // Completed projects count
         $completedProjects = \App\Models\ServiceRequest::where('awarded_provider_id', $user->id)
             ->whereIn('status', [\App\Models\ServiceRequest::STATUS_COMPLETED, 'work_completed'])
             ->count();
-        if ($user->provider_type === 'supplier') {
+
+        // Determine profile type: membership_type takes priority, fallback to provider_type
+        $membershipType = $user->membership_type ?? $user->provider_type;
+
+        if ($membershipType === 'supplier' || $user->provider_type === 'supplier') {
             $user->load('classification');
             return view('website.profile.public-profile-supplier', compact(
                 'user',
@@ -377,6 +390,8 @@ class ProfileController extends Controller
                 'completedProjects'
             ));
         }
+
+        // company, institution, individual, company (provider_type) all go to company profile
         return view('website.profile.public-profile-company', compact(
             'user',
             'averageRating',
@@ -426,14 +441,40 @@ class ProfileController extends Controller
         $maxWorks = 0;
         $usedWorks = 0;
         $worksPercent = 0;
+        
+        $maxProducts = 0;
+        $usedProducts = 0;
+        $productsPercent = 0;
+        
+        $maxOffers = 0;
+        $usedOffers = 0;
+        $offersPercent = 0;
+        
         $currentFeatures = [];
+        if ($user->hasActiveSubscription() && $user->subscriptionPackage) {
+            $currentPrice = $user->subscriptionPackage->price;
+            $packages = $packages->filter(function($package) use ($currentPrice) {
+                return $package->price > $currentPrice;
+            });
+        }
+        
         if ($user->subscriptionPackage) {
+            // Service provider limits
             $maxServices = $user->subscriptionPackage->max_services;
             $usedServices = $user->services()->count();
             $servicesPercent = $maxServices > 0 ? min(100, ($usedServices / $maxServices) * 100) : 0;
             $maxWorks = $user->subscriptionPackage->works_limit;
             $usedWorks = $user->works()->count();
             $worksPercent = $maxWorks > 0 ? min(100, ($usedWorks / $maxWorks) * 100) : 0;
+            
+            // Supplier limits
+            $maxProducts = $user->subscriptionPackage->max_products;
+            $usedProducts = $user->products()->count();
+            $productsPercent = $maxProducts > 0 ? min(100, ($usedProducts / $maxProducts) * 100) : 0;
+            $maxOffers = $user->subscriptionPackage->max_offers;
+            $usedOffers = $user->supplierOffers()->count();
+            $offersPercent = $maxOffers > 0 ? min(100, ($usedOffers / $maxOffers) * 100) : 0;
+            
             $featuresData = $user->subscriptionPackage->features;
             $currentFeatures = is_string($featuresData) ? json_decode($featuresData, true) : $featuresData;
             $currentFeatures = is_array($currentFeatures) ? array_filter($currentFeatures) : [];
@@ -442,6 +483,8 @@ class ProfileController extends Controller
             'user', 'packages', 'isSubscriptionEnabled',
             'maxServices', 'usedServices', 'servicesPercent',
             'maxWorks', 'usedWorks', 'worksPercent',
+            'maxProducts', 'usedProducts', 'productsPercent',
+            'maxOffers', 'usedOffers', 'offersPercent',
             'currentFeatures'
         ));
     }
