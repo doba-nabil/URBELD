@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Models;
-
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,22 +11,19 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Permission\Traits\HasRoles;
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Auditable as AuditableTrait;
-
 class User extends Authenticatable implements HasMedia, Auditable
 {
-
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasRoles, InteractsWithMedia,AuditableTrait;
-
     /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
      */
-
     protected $fillable = [
         'name',
         'representative_name',
+        'company_registration_number',
         'email',
         'password',
         'phone',
@@ -57,7 +52,6 @@ class User extends Authenticatable implements HasMedia, Auditable
         'subscription_end_at',
         'theme_mode',
     ];
-
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -67,8 +61,6 @@ class User extends Authenticatable implements HasMedia, Auditable
         'password',
         'remember_token',
     ];
-
-
     protected static function boot()
     {
         parent::boot();
@@ -78,14 +70,12 @@ class User extends Authenticatable implements HasMedia, Auditable
                 $user->uuid = (string) Str::uuid();
             }
         });
-
         static::updating(function ($user) {
             if (empty($user->uuid)) {
                 $user->uuid = (string) Str::uuid();
             }
         });
     }
-
     protected static function generateUniqueUserNumber()
     {
         do {
@@ -93,12 +83,10 @@ class User extends Authenticatable implements HasMedia, Auditable
         } while (self::where('user_number', $number)->exists());
         return $number;
     }
-
     public function getUuidAttribute($value)
     {
         return $value ?: $this->id;
     }
-
     // display_name removed - not used in estate project
     /**
      * Get the attributes that should be cast.
@@ -118,40 +106,30 @@ class User extends Authenticatable implements HasMedia, Auditable
             'receive_email_notifications' => 'boolean',
         ];
     }
-    
-    
     public function favourites()
     {
         return $this->belongsToMany(User::class, 'favourites', 'user_id', 'favourite_user_id')
             ->withTimestamps();
     }
-
     public function favoriteCount()
     {
         return $this->favorites()->count();
     }
-
-
     public function lovedBy()
     {
         return $this->belongsToMany(User::class, 'favourites', 'favourite_user_id', 'user_id')
             ->withTimestamps();
     }
-
     // Profile relationship removed - not used in estate project
     // Users are linked to memberships directly, not profiles
-
     public function compatibility_tests()
     {
         return $this->hasMany(UserAnswer::class, 'user_id')->where('exam_type', 'test');
     }
-
     public function profile_tests()
     {
         return $this->hasMany(UserAnswer::class, 'user_id')->where('exam_type', 'profile');
     }
-
-
     public function hasInterestWith($userId)
     {
         // Check if there's mutual interest (either user added the other to favorites)
@@ -160,7 +138,6 @@ class User extends Authenticatable implements HasMedia, Auditable
                 ->where('favourite_user_id', $this->id)
                 ->exists();
     }
-
     /**
      * Users that this user has blocked
      */
@@ -169,7 +146,6 @@ class User extends Authenticatable implements HasMedia, Auditable
         return $this->belongsToMany(User::class, 'blocked_users', 'user_id', 'blocked_user_id')
             ->withTimestamps();
     }
-
     /**
      * Users who have blocked this user
      */
@@ -178,7 +154,6 @@ class User extends Authenticatable implements HasMedia, Auditable
         return $this->belongsToMany(User::class, 'blocked_users', 'blocked_user_id', 'user_id')
             ->withTimestamps();
     }
-
     /**
      * Check if this user has blocked another user
      */
@@ -186,7 +161,6 @@ class User extends Authenticatable implements HasMedia, Auditable
     {
         return $this->blockedUsers()->where('blocked_user_id', $userId)->exists();
     }
-
     /**
      * Check if this user is blocked by another user
      */
@@ -194,7 +168,6 @@ class User extends Authenticatable implements HasMedia, Auditable
     {
         return $this->blockedBy()->where('user_id', $userId)->exists();
     }
-
     /**
      * Block a user
      */
@@ -206,7 +179,6 @@ class User extends Authenticatable implements HasMedia, Auditable
         }
         return false;
     }
-
     /**
      * Unblock a user
      */
@@ -218,12 +190,10 @@ class User extends Authenticatable implements HasMedia, Auditable
         }
         return false;
     }
-
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new \App\Notifications\ResetPasswordNotification($token));
     }
-
     /**
      * Check if user is currently online (active within 5 minutes)
      */
@@ -234,71 +204,38 @@ class User extends Authenticatable implements HasMedia, Auditable
         }
         return $this->last_seen_at->diffInMinutes(now()) < 5;
     }
-
-    /**
-     * العضوية الحالية
-     */
     public function membership()
     {
         return $this->belongsTo(Membership::class);
     }
-
-    /**
-     * تاريخ العضويات
-     */
     public function membershipHistory()
     {
         return $this->hasMany(UserMembershipHistory::class);
     }
-
-    /**
-     * الطلبات التي أنشأها (كطالب خدمة)
-     */
     public function serviceRequests()
     {
         return $this->hasMany(ServiceRequest::class);
     }
-
-    /**
-     * الردود التي قدمها (كمقدم خدمة)
-     */
     public function serviceRequestResponses()
     {
         return $this->hasMany(ServiceRequestResponse::class);
     }
-
-    /**
-     * خدمات مزود الخدمة
-     */
     public function services()
     {
         return $this->hasMany(Service::class);
     }
-
-    /**
-     * الاعمال السابقة لمزود الخدمة
-     */
     public function works()
     {
         return $this->hasMany(ProviderWork::class);
     }
-
-    /**
-     * التقييمات التي قام بها
-     */
     public function ratingsGiven()
     {
         return $this->hasMany(Rating::class, 'rater_id');
     }
-
-    /**
-     * التقييمات التي تلقاها
-     */
     public function ratingsReceived()
     {
         return $this->hasMany(Rating::class, 'rated_id');
     }
-
     /**
      * City
      */
@@ -306,7 +243,6 @@ class User extends Authenticatable implements HasMedia, Auditable
     {
         return $this->belongsTo(City::class);
     }
-
     /**
      * Categories that user works in (multi-select)
      */
@@ -315,7 +251,6 @@ class User extends Authenticatable implements HasMedia, Auditable
         return $this->belongsToMany(Category::class, 'user_categories', 'user_id', 'category_id')
             ->withTimestamps();
     }
-
     /**
      * Check if user is company type
      */
@@ -323,7 +258,6 @@ class User extends Authenticatable implements HasMedia, Auditable
     {
         return $this->membership_type === 'company';
     }
-
     /**
      * Check if user is individual type
      */
@@ -331,7 +265,6 @@ class User extends Authenticatable implements HasMedia, Auditable
     {
         return $this->membership_type === 'individual';
     }
-
     /**
      * Register media collections
      */
@@ -340,121 +273,82 @@ class User extends Authenticatable implements HasMedia, Auditable
         // User profile image
         $this->addMediaCollection('users')
             ->singleFile();
-
         // Album photos
         $this->addMediaCollection('album_photos');
-
         // Personal photo (for individual)
         $this->addMediaCollection('personal_photo')
             ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp'])
             ->singleFile();
-
         // Identity documents (for individual)
         $this->addMediaCollection('id_front')
             ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp'])
             ->singleFile();
-            
         $this->addMediaCollection('id_back')
             ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp'])
             ->singleFile();
-
         // Certificates (for both types)
         $this->addMediaCollection('certificates')
             ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp', 'application/pdf']);
-
         // Commercial registration (for company)
         $this->addMediaCollection('commercial_registration')
             ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp', 'application/pdf'])
             ->singleFile();
-
         // Company files (for company)
         $this->addMediaCollection('company_files')
             ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp', 'application/pdf']);
     }
-
-    /**
-     * التحقق من نوع المستخدم
-     */
     public function isServiceSeeker(): bool
     {
         return $this->user_type === 'service_seeker';
     }
-
     public function isServiceProvider(): bool
     {
         return $this->user_type === 'service_provider';
     }
-
     public function isIndividualProvider(): bool
     {
         return $this->isServiceProvider() && $this->provider_type === 'individual';
     }
-
     public function isCompanyProvider(): bool
     {
         return $this->isServiceProvider() && $this->provider_type === 'company';
     }
-
     public function isSupplier(): bool
     {
         return $this->isServiceProvider() && $this->provider_type === 'supplier';
     }
-
     public function classification()
     {
         return $this->belongsTo(CompanyClassification::class);
     }
-
-    public function products()
-    {
-        return $this->hasMany(Product::class);
-    }
-
-    public function supplierOffers()
-    {
-        return $this->hasMany(SupplierOffer::class);
-    }
-
     public function deliveryCities()
     {
         return $this->belongsToMany(City::class, 'supplier_delivery_cities', 'user_id', 'city_id')->withTimestamps();
     }
-
-    /**
-     * المناقصات التي أنشأها المستخدم
-     */
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
+    public function supplierOffers()
+    {
+        return $this->hasMany(SupplierOffer::class);
+    }
     public function tenders()
     {
         return $this->hasMany(Tender::class);
     }
-
-    /**
-     * العروض التي قدمها المستخدم على المناقصات
-     */
     public function tenderApplications()
     {
         return $this->hasMany(TenderApplication::class);
     }
-
-    /**
-     * المناقصات المحفوظة
-     */
     public function savedTenders()
     {
         return $this->hasMany(SavedTender::class);
     }
-
-    /**
-     * التحقق من أن المستخدم حفظ مناقصة معينة
-     */
     public function hasSavedTender(int $tenderId): bool
     {
         return $this->savedTenders()->where('tender_id', $tenderId)->exists();
     }
-
-    /**
-     * التحقق من أن المستخدم دفع للتقديم على مناقصة معينة
-     */
     public function hasPaidForTender(int $tenderId): bool
     {
         return TenderPayPerUse::where('user_id', $this->id)
@@ -462,53 +356,41 @@ class User extends Authenticatable implements HasMedia, Auditable
             ->where('status', 'paid')
             ->exists();
     }
-
-    /**
-     * هل يمكن للمستخدم التقديم على مناقصة؟
-     * (مشترك في باقة نشطة أو دفع مرة واحدة)
-     */
+    public function hasPaidForTenderPost(): bool
+    {
+        // Check if there's any paid action for posting a tender, 
+        // Or if we require a new payment for each post, we might need a different table or logic
+        // For now, let's assume false if not subscribed and no specific table for posting
+        return false;
+    }
     public function canApplyToTender(int $tenderId): bool
     {
+        $isPaymentEnabled = \App\Models\Setting::getValue('is_payment_enabled', null, false);
+        if (!$isPaymentEnabled) return true;
         return $this->hasActiveSubscription() || $this->hasPaidForTender($tenderId);
     }
-
-    /**
-     * هل يمكن للمستخدم إنشاء مناقصة؟
-     */
     public function canPostTender(): bool
     {
-        return $this->hasActiveSubscription();
+        $isPaymentEnabled = \App\Models\Setting::getValue('is_payment_enabled', null, false);
+        if (!$isPaymentEnabled) return true;
+        // Either subscribed, or maybe they paid to post? For now, we allow them to proceed to payment.
+        // Wait, if they are not subscribed, they will hit the paywall.
+        return $this->hasActiveSubscription() || $this->hasPaidForTenderPost();
     }
-
-    /**
-     * هل يمكن للمورد إضافة منتج؟ (مع التحقق من حد الباقة)
-     */
     public function canAddProduct(): bool
     {
         if (!$this->hasActiveSubscription()) return false;
-
         $pkg = $this->subscriptionPackage;
         if (!$pkg || $pkg->max_products == 0) return true; // 0 = unlimited
-
         return $this->products()->count() < $pkg->max_products;
     }
-
-    /**
-     * هل يمكن للمورد إضافة عرض؟ (مع التحقق من حد الباقة)
-     */
     public function canAddOffer(): bool
     {
         if (!$this->hasActiveSubscription()) return false;
-
         $pkg = $this->subscriptionPackage;
         if (!$pkg || $pkg->max_offers == 0) return true; // 0 = unlimited
-
         return $this->supplierOffers()->count() < $pkg->max_offers;
     }
-
-    /**
-     * التحقق من صلاحية العضوية
-     */
     public function hasActiveMembership(): bool
     {
         if (!$this->membership_id || !$this->membership_expires_at) {
@@ -516,15 +398,10 @@ class User extends Authenticatable implements HasMedia, Auditable
         }
         return now()->isBefore($this->membership_expires_at);
     }
-
-    /**
-     * الحصول على متوسط التقييمات
-     */
     public function getAverageRatingAttribute(): float
     {
         return Rating::where('rated_id', $this->id)->avg('rating') ?? 0.0;
     }
-
     public function getTotalCompletedRequestsAttribute(): int
     {
         if ($this->isServiceProvider()) {
@@ -532,10 +409,8 @@ class User extends Authenticatable implements HasMedia, Auditable
                 ->whereIn('status', ['work_completed', 'completed'])
                 ->count();
         }
-
         return $this->serviceRequests()->whereIn('status', ['work_completed', 'completed'])->count();
     }
-
     public function getActiveRequestsCountAttribute(): int
     {
         if ($this->isServiceProvider()) {
@@ -543,36 +418,21 @@ class User extends Authenticatable implements HasMedia, Auditable
                 ->whereIn('status', ['provider_accepted', 'inspection_scheduled'])
                 ->count();
         }
-
         return $this->serviceRequests()->whereIn('status', ['pending', 'provider_accepted', 'inspection_scheduled'])->count();
     }
-
-    /**
-     * Scope لمقدمي الخدمات
-     */
     public function scopeServiceProviders($query)
     {
         return $query->where('user_type', 'service_provider');
     }
-
-    /**
-     * Scope لطالبي الخدمات
-     */
     public function scopeServiceSeekers($query)
     {
         return $query->where('user_type', 'service_seeker');
     }
-
-    /**
-     * Scope للمستخدمين مع عضوية نشطة
-     */
     public function scopeWithActiveMembership($query)
     {
         return $query->whereNotNull('membership_id')
             ->where('membership_expires_at', '>', now());
     }
-
-
     /**
      * Get user's subscription package
      */
@@ -580,7 +440,6 @@ class User extends Authenticatable implements HasMedia, Auditable
     {
         return $this->belongsTo(SubscriptionPackage::class, 'subscription_package_id');
     }
-
     /**
      * Check if user has an active subscription
      */
@@ -591,7 +450,6 @@ class User extends Authenticatable implements HasMedia, Auditable
                $this->subscription_end_at && 
                now()->between($this->subscription_start_at, $this->subscription_end_at);
     }
-
     /**
      * Check if subscription expires within 7 days
      */
@@ -600,21 +458,15 @@ class User extends Authenticatable implements HasMedia, Auditable
         if (!$this->subscription_end_at || !$this->hasActiveSubscription()) {
             return false;
         }
-
         return now()->diffInDays($this->subscription_end_at, false) <= 7 && 
                now()->diffInDays($this->subscription_end_at, false) >= 0;
     }
-
-    /**
-     * Scope للمستخدمين مع اشتراك نشط
-     */
     public function scopeWithActiveSubscription($query)
     {
         return $query->whereNotNull('subscription_package_id')
             ->where('subscription_start_at', '<=', now())
             ->where('subscription_end_at', '>=', now());
     }
-
     /**
      * Get user's notifications
      */
@@ -622,7 +474,6 @@ class User extends Authenticatable implements HasMedia, Auditable
     {
         return $this->morphMany(Notification::class, 'notifiable')->latest();
     }
-
     /**
      * Get user's unread notifications count
      */
@@ -630,7 +481,6 @@ class User extends Authenticatable implements HasMedia, Auditable
     {
         return $this->notifications()->where('is_read', false)->count();
     }
-
     public function chats()
     {
         return $this->belongsToMany(Chat::class, 'chat_participants')
@@ -638,4 +488,3 @@ class User extends Authenticatable implements HasMedia, Auditable
                     ->withTimestamps();
     }
 }
-

@@ -64,6 +64,18 @@
                             </p>
                         </div>
 
+                        @if($user->isCompany() || $user->provider_type == 'company')
+                        <div class="mb-3">
+                            <strong>Company Registration Number:</strong>
+                            <p>{{ $user->company_registration_number ?? '-' }}</p>
+                        </div>
+
+                        <div class="mb-3">
+                            <strong>Representative Name:</strong>
+                            <p>{{ $user->representative_name ?? '-' }}</p>
+                        </div>
+                        @endif
+
                         @if($user->membership)
                         <div class="mb-3">
                             <strong>Membership:</strong>

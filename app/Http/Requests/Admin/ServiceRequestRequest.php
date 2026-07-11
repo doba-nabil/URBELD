@@ -1,16 +1,12 @@
 <?php
-
 namespace App\Http\Requests\Admin;
-
 use Illuminate\Foundation\Http\FormRequest;
-
 class ServiceRequestRequest extends FormRequest
 {
     public function authorize(): bool
     {
         return true;
     }
-
     public function rules(): array
     {
         $categoryId = $this->input('category_id');
@@ -29,34 +25,25 @@ class ServiceRequestRequest extends FormRequest
             'description' => ['nullable', 'string'],
             'status' => ['nullable', 'in:under_review,pending,provider_accepted,seeker_confirmed_provider,inspection_scheduled,inspection_done,work_completed,completed,time_expired,cancelled,rejected_by_user'],
         ];
-
-        // التحقق من القسم وإضافة القواعد المناسبة
         if ($categoryId) {
             $category = \App\Models\Category::find($categoryId);
-            
             if ($category) {
-                // قسم المقاولات
                 if ($category->slug === 'contracting') {
                     $rules['blueprint_description'] = ['nullable', 'string'];
                     $rules['blueprints'] = ['nullable', 'array'];
                     $rules['blueprints.*'] = ['file', 'mimes:jpg,jpeg,png,webp,pdf', 'max:5120'];
                 }
-                
-                // قسم الاستشارات الهندسية
                 if ($category->slug === 'engineering-consulting') {
                     $rules['site_photos_description'] = ['nullable', 'string'];
                     $rules['site_photos'] = ['nullable', 'array'];
                     $rules['site_photos.*'] = ['file', 'mimes:jpg,jpeg,png,webp', 'max:5120'];
                 }
-                
-                // قسم البيئة
                 if ($category->slug === 'environment') {
                     $rules['activity_type_id'] = ['nullable', 'exists:activity_types,id'];
                     $rules['neighbors_description'] = ['nullable', 'string'];
                 }
             }
         }
-
         return $rules;
     }
 }

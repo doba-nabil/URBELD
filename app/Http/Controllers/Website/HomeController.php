@@ -16,7 +16,11 @@ class HomeController extends Controller
         $siteName = Setting::getValue('site_name', app()->getLocale(), 'أوربلد');
 
 
-        $categories = Category::whereNull('parent_id')->where('is_active', true)->get();
+        $categories = Category::whereNull('parent_id')
+            ->where('is_active', true)
+            ->where('show_in_home', true)
+            ->orderBy('sort_order', 'asc')
+            ->get();
         $successPartners = \App\Models\SuccessPartner::active()->ordered()->get();
 
         $topProviders = \App\Models\User::where('user_type', 'service_provider')

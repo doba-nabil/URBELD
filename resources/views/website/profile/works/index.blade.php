@@ -57,7 +57,7 @@
                 <h3 class="fw-bold mb-0 text-dark">{{ auth()->user()->isCompanyProvider() ? 'المشاريع' : (__('admin.works_portfolio') ?? 'الأعمال السابقة') }}</h3>
                 <div class="d-flex align-items-center gap-3">
                     <a href="{{ route('profile.edit') }}" class="text-decoration-none text-muted small fw-bold">
-                        العودة للوحة الرئيسية <i class="bi bi-arrow-left ms-1"></i>
+                        العودة للوحة التحكم <i class="bi bi-arrow-left ms-1"></i>
                     </a>
                     <a href="{{ route('provider.works.create') }}" class="btn btn-primary rounded-pill px-4 shadow-sm fw-bold">
                         <i class="fas fa-plus me-2"></i> {{ auth()->user()->isCompanyProvider() ? 'إضافة مشروع' : (__('admin.add_work') ?? 'إضافة عمل') }}

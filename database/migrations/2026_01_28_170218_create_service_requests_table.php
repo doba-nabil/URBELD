@@ -1,9 +1,7 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-
 return new class extends Migration
 {
     /**
@@ -13,47 +11,33 @@ return new class extends Migration
     {
         Schema::create('service_requests', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete(); // طالب الخدمة
-            $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete(); // القسم
-            
-            // حالة الطلب
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete();
             $table->enum('status', [
-                'new',              // جديد
-                'pending_response', // بانتظار الرد
-                'accepted',         // مقبول
-                'rejected',         // مرفوض
-                'time_expired',     // منتهي الوقت
-                'under_inspection',  // قيد المعاينة
-                'agreed',           // تم الاتفاق
-                'completed'         // مكتمل
+                'new',
+                'pending_response',
+                'accepted',
+                'rejected',
+                'time_expired',
+                'under_inspection',
+                'agreed',
+                'completed'
             ])->default('new');
-            
-            // الحقول المشتركة
-            $table->enum('property_type', ['residential', 'commercial', 'industrial', 'other'])->nullable(); // نوع العقار
-            $table->decimal('area', 10, 2)->nullable(); // المساحة
-            $table->text('location')->nullable(); // العنوان
-            $table->string('latitude')->nullable(); // خط العرض
-            $table->string('longitude')->nullable(); // خط الطول
-            $table->text('description')->nullable(); // وصف الطلب
-            
-            // حقول خاصة بقسم المقاولات
-            $table->text('blueprint_description')->nullable(); // وصف الرسم الكروكي
-            
-            // حقول خاصة بقسم الاستشارات الهندسية
-            $table->text('site_photos_description')->nullable(); // وصف صور الموقع
-            
-            // حقول خاصة بقسم البيئة
-            $table->foreignId('activity_type_id')->nullable()->constrained('activity_types')->nullOnDelete(); // نوع النشاط
-            $table->text('neighbors_description')->nullable(); // وصف الجيران من الجهات الأربعة
-            
-            // معلومات الوقت
-            $table->timestamp('response_deadline')->nullable(); // آخر موعد للرد (48 ساعة)
-            $table->timestamp('accepted_at')->nullable(); // تاريخ القبول
-            $table->timestamp('completed_at')->nullable(); // تاريخ الإكمال
-            
+            $table->enum('property_type', ['residential', 'commercial', 'industrial', 'other'])->nullable();
+            $table->decimal('area', 10, 2)->nullable();
+            $table->text('location')->nullable();
+            $table->string('latitude')->nullable();
+            $table->string('longitude')->nullable();
+            $table->text('description')->nullable();
+            $table->text('blueprint_description')->nullable();
+            $table->text('site_photos_description')->nullable();
+            $table->foreignId('activity_type_id')->nullable()->constrained('activity_types')->nullOnDelete();
+            $table->text('neighbors_description')->nullable();
+            $table->timestamp('response_deadline')->nullable();
+            $table->timestamp('accepted_at')->nullable();
+            $table->timestamp('completed_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            
             // Indexes
             $table->index('user_id');
             $table->index('category_id');
@@ -62,7 +46,6 @@ return new class extends Migration
             $table->index('activity_type_id');
         });
     }
-
     /**
      * Reverse the migrations.
      */

@@ -15,9 +15,9 @@
                                 @method('PUT')
                             @endif
                             
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <label class="form-label">{{ __('admin.country') }}</label>
-                                <select name="country_id" class="form-select" required>
+                                <select name="country_id" id="country_id" class="form-select" required>
                                     <option value="">{{ __('admin.choose_country') }}</option>
                                     @foreach($countries as $country)
                                         <option value="{{ $country->id }}" 
@@ -27,6 +27,20 @@
                                     @endforeach
                                 </select>
                                 @error('country_id')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">{{ __('admin.region') ?? 'المنطقة' }} (اختياري)</label>
+                                <select name="region_id" id="region_id" class="form-select">
+                                    <option value="">{{ __('admin.choose_region') ?? 'اختر المنطقة' }}</option>
+                                    @if(isset($model) && $model->region_id)
+                                        <option value="{{ $model->region_id }}" selected>{{ $model->region->name }}</option>
+                                    @endif
+                                    <!-- Regions will be populated via JS -->
+                                </select>
+                                @error('region_id')
                                 <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -100,27 +114,32 @@
 
                 const fv = FormValidation.formValidation(categoryForm, {
                     fields: {
-                        "name[ar]": {
+                        'name[ar]': {
                             validators: {
-                                notEmpty: {message: messages.required},
+                                notEmpty: {
+                                    message: messages.name_required
+                                },
                                 stringLength: {
-                                    min: 3,
-                                    max: 50,
+                                    min: 2,
                                     message: messages.name_length
                                 }
                             }
                         },
-                        "country_id": {
+                        country_id: {
                             validators: {
-                                notEmpty: {message: messages.required}
+                                notEmpty: {
+                                    message: messages.required
+                                }
                             }
                         }
                     },
                     plugins: {
                         trigger: new FormValidation.plugins.Trigger(),
-                        bootstrap5: new FormValidation.plugins.Bootstrap5(),
+                        bootstrap5: new FormValidation.plugins.Bootstrap5({
+                            eleValidClass: '',
+                            rowSelector: '.col-md-12'
+                        }),
                         submitButton: new FormValidation.plugins.SubmitButton(),
-                        autoFocus: new FormValidation.plugins.AutoFocus(),
                         defaultSubmit: new FormValidation.plugins.DefaultSubmit()
                     }
                 });
@@ -145,6 +164,58 @@
                         }
                     }
                 });
+                    }
+                });
+            }
+
+            // Region Fetching logic
+            const countrySelect = document.getElementById('country_id');
+            const regionSelect = document.getElementById('region_id');
+
+            if (countrySelect && regionSelect) {
+                countrySelect.addEventListener('change', function() {
+                    const countryId = this.value;
+                    regionSelect.innerHTML = '<option value="">{{ __('admin.choose_region') ?? 'اختر المنطقة' }}</option>';
+                    
+                    if (countryId) {
+                        fetch(`/admin-panel/regions/by-country/${countryId}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.status === 'success') {
+                                    data.regions.forEach(region => {
+                                        const option = document.createElement('option');
+                                        option.value = region.id;
+                                        option.textContent = region.name;
+                                        regionSelect.appendChild(option);
+                                    });
+                                }
+                            });
+                    }
+                });
+
+                // Trigger change on load if not editing (or if we need to load list but keep selected)
+                if (countrySelect.value && !regionSelect.value) {
+                    countrySelect.dispatchEvent(new Event('change'));
+                } else if (countrySelect.value && regionSelect.value) {
+                    // Fetch list but keep current selection
+                    const currentVal = regionSelect.value;
+                    fetch(`/admin-panel/regions/by-country/${countrySelect.value}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === 'success') {
+                                regionSelect.innerHTML = '<option value="">{{ __('admin.choose_region') ?? 'اختر المنطقة' }}</option>';
+                                data.regions.forEach(region => {
+                                    const option = document.createElement('option');
+                                    option.value = region.id;
+                                    option.textContent = region.name;
+                                    if (region.id == currentVal) {
+                                        option.selected = true;
+                                    }
+                                    regionSelect.appendChild(option);
+                                });
+                            }
+                        });
+                }
             }
         });
     </script>

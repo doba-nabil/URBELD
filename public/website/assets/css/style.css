@@ -1946,7 +1946,6 @@ body.sup-page .services-section h1 {
 
 .services-grid .service-card {
     text-align: start;
-    grid-row: 1 / 4;
     background: #fff;
     border-radius: 20px;
     position: relative;

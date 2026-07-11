@@ -20,11 +20,15 @@
                     @if($user->hasActiveSubscription())
                         <span class="header-badge premium"><i class="bi bi-award-fill" style="color: #fcd34d;"></i> مورد مميز</span>
                     @endif
-                    <span class="header-badge trusted"><i class="bi bi-shield-check" style="color: #93c5fd;"></i> موثوق</span>
-                    @if($user->years_of_experience)
-                        <span class="header-badge" style="border-color: #b45309; color: #fcd34d;"><i class="bi bi-box-seam" style="color: #d97706;"></i> كميات كبيرة</span>
+                    @if($user->is_trusted)
+                        <span class="header-badge trusted"><i class="bi bi-shield-check" style="color: #93c5fd;"></i> موثوق</span>
                     @endif
-                    <span class="header-badge delivery"><i class="bi bi-truck" style="color: #6ee7b7;"></i> توصيل متاح</span>
+                    @if($user->classification_id && $user->classification)
+                        <span class="header-badge" style="border-color: #b45309; color: #fcd34d;"><i class="bi bi-box-seam" style="color: #d97706;"></i> {{ $user->classification->name }}</span>
+                    @endif
+                    @if($user->deliveryCities()->exists())
+                        <span class="header-badge delivery"><i class="bi bi-truck" style="color: #6ee7b7;"></i> توصيل متاح</span>
+                    @endif
                 </div>
             </div>
         </div>
@@ -43,136 +47,112 @@
                 
                 <!-- Stats -->
                 <div class="pp-main-card">
-                    <div class="pp-card-title"><i class="bi bi-bar-chart-fill text-primary"></i> إحصائيات المورد</div>
+                    <div class="pp-card-title"><i class="bi bi-bar-chart-fill text-primary"></i> {{ __('website.supplier_statistics') ?? 'إحصائيات المورد' }}</div>
                     <div class="pp-stats-grid">
                         <div class="pp-stat-box highlight">
-                            <div class="pp-stat-val">{{ $completedProjects ?: 87 }}</div>
-                            <div class="pp-stat-label">صفقة مكتملة</div>
+                            <div class="pp-stat-val">{{ $completedProjects ?: 0 }}</div>
+                            <div class="pp-stat-label">{{ __('website.successful_supply_operation') ?? 'عملية توريد ناجحة' }}</div>
                         </div>
                         <div class="pp-stat-box">
                             <div class="pp-stat-val">{{ number_format($averageRating, 1) }}</div>
-                            <div class="pp-stat-label">متوسط التقييم</div>
+                            <div class="pp-stat-label">{{ __('website.average_rating') ?? 'متوسط التقييم' }}</div>
                         </div>
                         <div class="pp-stat-box">
-                            <div class="pp-stat-val">98%</div>
-                            <div class="pp-stat-label">نسبة الرضا</div>
+                            @php
+                                $satisfaction = $averageRating > 0 ? min(100, round(($averageRating / 5) * 100)) : 0;
+                            @endphp
+                            <div class="pp-stat-val">{{ $satisfaction }}%</div>
+                            <div class="pp-stat-label">{{ __('website.satisfaction_rate') ?? 'نسبة الرضا' }}</div>
                         </div>
                         <div class="pp-stat-box">
-                            <div class="pp-stat-val">{{ $user->years_of_experience ?? 3 }} سنوات</div>
-                            <div class="pp-stat-label">مدة العضوية</div>
+                            <div class="pp-stat-val">100%</div>
+                            <div class="pp-stat-label">{{ __('website.response_rate') ?? 'معدل الاستجابة' }}</div>
                         </div>
                     </div>
                 </div>
 
                 <!-- About -->
                 <div class="pp-main-card">
-                    <div class="pp-card-title"><i class="bi bi-building text-secondary"></i> عن الشركة</div>
+                    <div class="pp-card-title"><i class="bi bi-building text-secondary"></i> {{ __('website.about_company') ?? 'عن الشركة' }}</div>
                     <div class="text-muted" style="line-height: 1.8; font-size: 0.95rem; text-align: justify;">
                         @if($user->bio)
                             {{ $user->bio }}
                         @else
-                            {{ $user->name }} من الشركات الرائدة في توريد المواد في المملكة. متخصصون في تقديم خدمات عالية الجودة في وقت قياسي وبأسعار تنافسية تلبي احتياجات جميع المشاريع والعملاء. نتعامل مع كبرى شركات المقاولات ونفخر بكوننا الخيار الأول لأكثر من 300 عميل.
+                            {{ $user->name }} {{ __('website.default_supplier_bio') ?? 'من الشركات الرائدة في توريد المواد في المملكة. متخصصون في تقديم خدمات عالية الجودة في وقت قياسي وبأسعار تنافسية تلبي احتياجات جميع المشاريع والعملاء.' }}
                         @endif
                     </div>
                 </div>
 
                 <!-- Products -->
+                @if($user->products && $user->products->isNotEmpty())
                 <div class="pp-main-card">
-                    <div class="pp-card-title"><i class="bi bi-box-seam" style="color: #8b5cf6;"></i> المنتجات المتاحة</div>
+                    <div class="pp-card-title"><i class="bi bi-box-seam" style="color: #8b5cf6;"></i> {{ __('website.available_products') ?? 'المنتجات المتاحة' }}</div>
                     <div class="row g-3">
+                        @foreach($user->products->take(6) as $product)
                         <div class="col-md-4">
                             <div class="pp-product-card">
                                 <div class="pp-product-img-wrap" style="background-color: #fef08a;">
-                                    <i class="bi bi-box-seam" style="font-size: 3rem; color: #b45309;"></i>
+                                    @if($product->getFirstMediaUrl('products'))
+                                        <img src="{{ $product->getFirstMediaUrl('products') }}" alt="{{ $product->name }}" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">
+                                    @else
+                                        <i class="bi bi-box-seam" style="font-size: 3rem; color: #b45309;"></i>
+                                    @endif
                                 </div>
                                 <div class="pp-product-info">
-                                    <div class="pp-product-title">أسمنت بورتلاندي عادي</div>
-                                    <div class="pp-product-desc">كيس 50 كجم - مخزون وفير</div>
-                                    <div class="pp-product-price">22 ريال / كيس</div>
+                                    <div class="pp-product-title">{{ $product->name }}</div>
+                                    <div class="pp-product-desc">{{ Str::limit($product->description, 40) }}</div>
+                                    <div class="pp-product-price">{{ $product->price }} {{ __('website.currency_sar') ?? 'ريال' }}</div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="pp-product-card">
-                                <div class="pp-product-img-wrap" style="background-color: #fce7f3;">
-                                    <i class="bi bi-square-fill" style="font-size: 3rem; color: #be123c;"></i>
-                                </div>
-                                <div class="pp-product-info">
-                                    <div class="pp-product-title">طوب أحمر طيني</div>
-                                    <div class="pp-product-desc">مقاس 20x20x40 - بالألف</div>
-                                    <div class="pp-product-price">380 ريال / ألف</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="pp-product-card">
-                                <div class="pp-product-img-wrap" style="background-color: #e0f2fe;">
-                                    <i class="bi bi-square-fill" style="font-size: 3rem; color: #cbd5e1;"></i>
-                                </div>
-                                <div class="pp-product-info">
-                                    <div class="pp-product-title">بلك خرساني</div>
-                                    <div class="pp-product-desc">مقاس 20x20x40 - بالطن</div>
-                                    <div class="pp-product-price">95 ريال / م³</div>
-                                </div>
-                            </div>
-                        </div>
+                        @endforeach
                     </div>
                 </div>
+                @endif
 
                 <!-- Offers -->
+                @if($user->supplierOffers && $user->supplierOffers->isNotEmpty())
                 <div class="pp-main-card">
-                    <div class="pp-card-title"><i class="bi bi-gift-fill text-danger"></i> العروض والخصومات</div>
+                    <div class="pp-card-title"><i class="bi bi-gift-fill text-danger"></i> {{ __('website.offers_and_discounts') ?? 'العروض والخصومات' }}</div>
                     <div class="row g-3">
+                        @foreach($user->supplierOffers as $offer)
                         <div class="col-md-6">
                             <div class="pp-offer-card">
-                                <div class="pp-offer-val">15%</div>
-                                <div class="pp-offer-title">خصم الكميات الكبيرة</div>
-                                <div class="pp-offer-desc">عند طلب أكثر من 500 كيس أسمنت دفعة واحدة</div>
-                                <span class="pp-offer-badge">فعال الآن</span>
+                                <div class="pp-offer-val">{{ $offer->discount_percentage ? $offer->discount_percentage . '%' : ($offer->subtitle ?? __('website.special_offer') ?? 'عرض خاص') }}</div>
+                                <div class="pp-offer-title">{{ $offer->title }}</div>
+                                <div class="pp-offer-desc">{{ $offer->description }}</div>
+                                @if($offer->badge_text)
+                                    <span class="pp-offer-badge">{{ $offer->badge_text }}</span>
+                                @endif
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="pp-offer-card">
-                                <div class="pp-offer-val">10%</div>
-                                <div class="pp-offer-title">خصم العميل الجديد</div>
-                                <div class="pp-offer-desc">على أول طلب توريد لأي عميل مسجل في المنصة</div>
-                                <span class="pp-offer-badge">العملاء الجدد</span>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="pp-offer-card">
-                                <div class="pp-offer-val" style="font-size: 1.5rem;">مجاني</div>
-                                <div class="pp-offer-title">توصيل مجاني</div>
-                                <div class="pp-offer-desc">للطلبات التي تتجاوز 5,000 ريال داخل نطاق جدة</div>
-                                <span class="pp-offer-badge" style="background-color: #d97706;">محدود المدة</span>
-                            </div>
-                        </div>
+                        @endforeach
                     </div>
                 </div>
+                @endif
 
                 <!-- Delivery -->
+                @if($user->deliveryCities && $user->deliveryCities->isNotEmpty())
                 <div class="pp-main-card">
-                    <div class="pp-card-title"><i class="bi bi-truck" style="color: #ea580c;"></i> خدمة التوصيل</div>
+                    <div class="pp-card-title"><i class="bi bi-truck" style="color: #ea580c;"></i> {{ __('website.delivery_service') ?? 'خدمة التوصيل' }}</div>
                     <div class="p-3 mb-3 d-flex align-items-center justify-content-between" style="background-color: #ecfdf5; border: 1px solid #6ee7b7; border-radius: 8px;">
                         <div>
-                            <div class="fw-bold text-success mb-1" style="font-size: 1.1rem;">التوصيل متاح <i class="bi bi-check2"></i></div>
-                            <div class="small" style="color: #059669;">توصيل للمواقع داخل المناطق المدرجة أدناه - يشمل التفريغ للطوابق الأرضية</div>
+                            <div class="fw-bold text-success mb-1" style="font-size: 1.1rem;">{{ __('website.delivery_available') ?? 'التوصيل متاح' }} <i class="bi bi-check2"></i></div>
+                            <div class="small" style="color: #059669;">{{ __('website.delivery_desc') ?? 'توصيل للمواقع داخل المناطق المدرجة أدناه - يشمل التفريغ للطوابق الأرضية' }}</div>
                         </div>
                         <i class="bi bi-truck text-dark fs-2"></i>
                     </div>
-                    <div class="small mb-2 fw-bold" style="color: #1f2937;">المدن والمناطق المشمولة بالتوصيل:</div>
+                    <div class="small mb-2 fw-bold" style="color: #1f2937;">{{ __('website.covered_cities') ?? 'المدن والمناطق المشمولة بالتوصيل:' }}</div>
                     <div class="d-flex flex-wrap gap-2 mb-3">
-                        <span class="badge" style="background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; font-size: 0.85rem; padding: 6px 12px; border-radius: 20px;">جدة 🚀 (توصيل خلال 24 ساعة)</span>
-                        <span class="badge" style="background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; font-size: 0.85rem; padding: 6px 12px; border-radius: 20px;">مكة المكرمة</span>
-                        <span class="badge" style="background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; font-size: 0.85rem; padding: 6px 12px; border-radius: 20px;">الطائف</span>
-                        <span class="badge" style="background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; font-size: 0.85rem; padding: 6px 12px; border-radius: 20px;">رابغ</span>
-                        <span class="badge" style="background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; font-size: 0.85rem; padding: 6px 12px; border-radius: 20px;">ينبع</span>
-                        <span class="badge" style="background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; font-size: 0.85rem; padding: 6px 12px; border-radius: 20px;">المدينة المنورة</span>
+                        @foreach($user->deliveryCities as $city)
+                        <span class="badge" style="background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; font-size: 0.85rem; padding: 6px 12px; border-radius: 20px;">{{ $city->name }}</span>
+                        @endforeach
                     </div>
                     <div class="p-2 bg-warning bg-opacity-25 text-dark rounded small text-center">
-                        <i class="bi bi-exclamation-triangle-fill text-warning me-1"></i> التوصيل خارج هذه المدن يتطلب التواصل المسبق لتحديد التكلفة والجدول الزمني
+                        <i class="bi bi-exclamation-triangle-fill text-warning me-1"></i> {{ __('website.delivery_outside_desc') ?? 'التوصيل خارج هذه المدن يتطلب التواصل المسبق لتحديد التكلفة والجدول الزمني' }}
                     </div>
                 </div>
+                @endif
 
                 <!-- Reviews -->
                 <div class="pp-main-card">
@@ -239,6 +219,30 @@
                             <span class="pp-quick-info-label">الموقع</span>
                             <span class="pp-quick-info-val">{{ $user->city->name ?? 'غير محدد' }}</span>
                         </div>
+                        @if($user->email)
+                        <div class="pp-quick-info-row">
+                            <span class="pp-quick-info-label">البريد الإلكتروني</span>
+                            <span class="pp-quick-info-val" style="word-break: break-all;">{{ $user->email }}</span>
+                        </div>
+                        @endif
+                        @if($user->phone)
+                        <div class="pp-quick-info-row">
+                            <span class="pp-quick-info-label">رقم الجوال</span>
+                            <span class="pp-quick-info-val">{{ $user->phone }}</span>
+                        </div>
+                        @endif
+                        @if($user->id_number)
+                        <div class="pp-quick-info-row">
+                            <span class="pp-quick-info-label">السجل / الهوية</span>
+                            <span class="pp-quick-info-val">{{ $user->id_number }}</span>
+                        </div>
+                        @endif
+                        @if($user->representative_name)
+                        <div class="pp-quick-info-row">
+                            <span class="pp-quick-info-label">الممثل</span>
+                            <span class="pp-quick-info-val">{{ $user->representative_name }}</span>
+                        </div>
+                        @endif
                         <div class="pp-quick-info-row">
                             <span class="pp-quick-info-label">حجم التوريد</span>
                             <span class="pp-quick-info-val"><i class="bi bi-box text-warning"></i> كميات كبيرة</span>

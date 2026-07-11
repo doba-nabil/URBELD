@@ -37,6 +37,24 @@
                                 @enderror
                             </div>
 
+                            @if($user->isCompany() || $user->provider_type == 'company')
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Company Registration Number</label>
+                                <input type="text" name="company_registration_number" value="{{ old('company_registration_number', $user->company_registration_number) }}" class="form-control">
+                                @error('company_registration_number')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Representative Name</label>
+                                <input type="text" name="representative_name" value="{{ old('representative_name', $user->representative_name) }}" class="form-control">
+                                @error('representative_name')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            @endif
+
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">{{ __('admin.password') }} <small class="text-muted">({{ __('admin.leave_blank_keep_password') }})</small></label>
                                 <input type="password" name="password" class="form-control">

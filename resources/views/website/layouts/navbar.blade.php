@@ -24,7 +24,13 @@
                 <a href="{{ route('home') }}" class="nav-item nav-link fw-bold {{ request()->routeIs('home') ? 'active' : '' }}">{{ __('website.nav_home') }}</a>
                 <a href="{{ route('about') }}" class="nav-item nav-link fw-bold {{ request()->routeIs('about') ? 'active' : '' }}">{{ __('website.nav_about') }}</a>
                 <a href="{{ route('website.categories.index') }}" class="nav-item nav-link fw-bold {{ request()->routeIs('website.categories.*') || request()->routeIs('website.category.*') ? 'active' : '' }}">{{ __('website.nav_services') }}</a>
-                <a href="{{ route('website.tenders.index') }}" class="nav-item nav-link fw-bold {{ request()->routeIs('website.tenders.*') ? 'active' : '' }}">{{ __('website.nav_tenders') ?? 'المناقصات' }}</a>
+                <div class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle fw-bold {{ request()->routeIs('website.tenders.*') ? 'active' : '' }}" data-bs-toggle="dropdown">{{ __('website.nav_tenders') ?? 'المناقصات' }}</a>
+                    <div class="dropdown-menu m-0 border-0 shadow-sm">
+                        <a href="{{ route('website.tenders.index') }}" class="dropdown-item">{{ __('website.nav_tenders') ?? 'المناقصات' }}</a>
+                        <a href="{{ route('website.supply-requests.index') }}" class="dropdown-item">طلبات التوريد</a>
+                    </div>
+                </div>
                 @if(Auth::check() && Auth::user()->isServiceProvider() && Auth::user()->provider_type === 'company')
                     <a href="{{ route('website.subscription-packages.index') }}" class="nav-item nav-link fw-bold {{ request()->routeIs('website.subscription-packages.*') ? 'active' : '' }}">{{ __('website.nav_subscription_packages') }}</a>
                 @endif

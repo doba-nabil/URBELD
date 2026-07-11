@@ -96,6 +96,7 @@
 
     <!-- JavaScript Libraries -->
     @include('website.layouts.scripts')
+    @include('website.layouts.subscription_popup')
 </body>
 
 </html>

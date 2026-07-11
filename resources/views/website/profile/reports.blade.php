@@ -141,7 +141,7 @@
                     {{ __('website.account_report') ?? 'تقرير الحساب' }}
                 </h3>
                 <a href="{{ route('profile.edit') }}" class="text-decoration-none text-muted small fw-bold">
-                    {{ __('website.back_to_profile') ?? 'العودة للوحة الرئيسية' }} <i class="bi bi-arrow-left ms-1"></i>
+                    {{ __('website.back_to_profile') ?? 'العودة للوحة التحكم' }} <i class="bi bi-arrow-left ms-1"></i>
                 </a>
             </div>
 

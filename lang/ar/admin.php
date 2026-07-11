@@ -44,6 +44,11 @@ return [
     'faq' => 'سؤال شائع',
     'locations' => ' الموقع',
     'countries' => ' الدول',
+    'regions' => ' المناطق',
+    'region' => ' المنطقة',
+    'create_region' => 'إضافة منطقة',
+    'add_region' => 'إضافة منطقة',
+    'choose_region' => 'اختر المنطقة',
     'states' => ' الولايات',
     'cities' => ' المدن',
     'currencies' => ' العملات',
@@ -140,6 +145,12 @@ return [
     'error' => 'خطأ',
     'accepted' => 'مقبول',
     'status_pending' => 'بانتظار المراجعة',
+    
+    // Bulk Request
+    'bulk_request_title' => 'عنوان الطلب الجماعي',
+    'bulk_request_subtitle' => 'النص الفرعي للطلب الجماعي',
+    'bulk_request_button_text' => 'نص زر الطلب الجماعي',
+    'color' => 'اللون',
 
     // Middleware Messages
     'provider_under_review' => 'عضويتك حاليا قيد المراجعة. لا يمكنك استقبال طلبات خدمة بعد، ولكن يمكنك طلب خدمات كمستخدم.',
@@ -1472,6 +1483,10 @@ return [
     'total_suppliers' => 'إجمالي الموردين',
     'total_products' => 'إجمالي المنتجات',
     'total_supplier_offers' => 'إجمالي عروض الموردين',
+    'supports_tenders' => 'دعم المناقصات؟',
+    'supports_supply_requests' => 'دعم التوريدات؟',
+    'show_in_home' => 'الظهور في الرئيسية (للتصنيف الرئيسي)',
+    'is_full_width' => 'عرض كامل بالرئيسية؟ (Full Width)',
+    'sort_order' => 'ترتيب الظهور بالرئيسية',
+    'supply_requests' => 'طلبات التوريد',
 ];
-
-

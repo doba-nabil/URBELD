@@ -108,7 +108,7 @@
 <div class="container mt-4 mb-5 profile-container" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
     <div class="mb-4 text-start">
         <a href="{{ route('profile.edit') }}" class="text-muted text-decoration-none small fw-bold">
-            <i class="bi bi-arrow-right me-1"></i> العودة للوحة الرئيسية
+            <i class="bi bi-arrow-right me-1"></i> العودة للوحة التحكم
         </a>
     </div>
 
@@ -171,14 +171,31 @@
 
                 <div class="col-md-6">
                     <div class="">
+                        <label class="pd-label"><i class="bi bi-geo-alt me-1"></i> المنطقة</label>
+                        @if($isLocked)
+                            <div class="pd-readonly-box justify-content-{{ app()->getLocale() == 'ar' ? 'end' : 'start' }}">{{ $user->city->region->name ?? __('website.not_specified') }}</div>
+                        @else
+                            @php $regions = \App\Models\Region::all(); @endphp
+                            <select id="region_id" class="pd-input-box text-{{ app()->getLocale() == 'ar' ? 'end' : 'start' }}" name="region_id" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
+                                <option value="">{{ __('website.choose_region') ?? 'اختر المنطقة' }}</option>
+                                @foreach ($regions as $region)
+                                    <option value="{{ $region->id }}" {{ ($user->city && $user->city->region_id == $region->id) ? 'selected' : '' }}>{{ $region->name }}</option>
+                                @endforeach
+                            </select>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="">
                         <label class="pd-label"><i class="bi bi-geo-alt me-1"></i> المدينة</label>
                         @if($isLocked)
                             <div class="pd-readonly-box justify-content-{{ app()->getLocale() == 'ar' ? 'end' : 'start' }}">{{ $user->city->name ?? __('website.not_specified') }}</div>
                         @else
-                            <select class="pd-input-box text-{{ app()->getLocale() == 'ar' ? 'end' : 'start' }}" name="city_id" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
+                            <select id="city_id" class="pd-input-box text-{{ app()->getLocale() == 'ar' ? 'end' : 'start' }}" name="city_id" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
                                 <option value="">{{ __('website.choose_city') }}</option>
                                 @foreach ($cities as $city)
-                                    <option value="{{ $city->id }}" {{ $user->city_id == $city->id ? 'selected' : '' }}>{{ $city->name }}</option>
+                                    <option value="{{ $city->id }}" data-region="{{ $city->region_id }}" {{ $user->city_id == $city->id ? 'selected' : '' }}>{{ $city->name }}</option>
                                 @endforeach
                             </select>
                         @endif
@@ -240,6 +257,33 @@
                 </div>
 
             </div>
+
+            <!-- Row 4 (For Companies) -->
+            @if($user->membership_type == 'company')
+            <div class="row g-4 flex-row-reverse mt-2">
+                <div class="col-md-6">
+                    <div class="">
+                        <label class="pd-label">رقم السجل التجاري</label>
+                        @if($isLocked)
+                            <div class="pd-readonly-box justify-content-end font-monospace">{{ $user->company_registration_number ?? 'غير متوفر' }}</div>
+                        @else
+                            <input type="text" class="pd-input-box font-monospace text-end" name="company_registration_number" value="{{ $user->company_registration_number }}">
+                        @endif
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="">
+                        <label class="pd-label">اسم المفوض</label>
+                        @if($isLocked)
+                            <div class="pd-readonly-box justify-content-end">{{ $user->representative_name ?? 'غير متوفر' }}</div>
+                        @else
+                            <input type="text" class="pd-input-box text-end" name="representative_name" value="{{ $user->representative_name }}">
+                        @endif
+                    </div>
+                </div>
+            </div>
+            @endif
 
             <!-- Official Documents -->
             <div class="mb-5 border-top pt-4 ">
@@ -427,6 +471,47 @@
                 $(document).on('click', '.remove-certificate-btn', function() {
                     $(this).closest('.certificate-group').remove();
                 });
+
+                // Region to City filtering
+                const regionSelect = $('#region_id');
+                const citySelect = $('#city_id');
+                if (regionSelect.length && citySelect.length) {
+                    const originalCities = citySelect.find('option').clone();
+                    
+                    regionSelect.on('change', function() {
+                        const regionId = $(this).val();
+                        const currentCityVal = citySelect.val();
+                        
+                        citySelect.empty();
+                        citySelect.append('<option value="">{{ __('website.choose_city') }}</option>');
+                        
+                        if (regionId) {
+                            originalCities.each(function() {
+                                if ($(this).val() && $(this).data('region') == regionId) {
+                                    citySelect.append($(this).clone());
+                                }
+                            });
+                        } else {
+                            originalCities.each(function() {
+                                if ($(this).val()) {
+                                    citySelect.append($(this).clone());
+                                }
+                            });
+                        }
+                        
+                        // Try to keep selection if valid
+                        if (citySelect.find(`option[value="${currentCityVal}"]`).length) {
+                            citySelect.val(currentCityVal);
+                        }
+                        
+                        citySelect.trigger('change');
+                    });
+                    
+                    // Initial trigger if a region is selected
+                    if (regionSelect.val()) {
+                        regionSelect.trigger('change');
+                    }
+                }
             });
         </script>
         <style>

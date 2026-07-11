@@ -34,17 +34,29 @@
                   @if($isTrusted)
                   <span class="badge b-verified"><i class="bi bi-check-circle-fill"></i> موثوق</span>
                   @endif
-                  <span class="badge b-exp"><i class="bi bi-mortarboard-fill"></i> +{{ $provider->years_of_experience ?? rand(1,10) }} سنة خبرة</span>
-                  <span class="badge b-avail"><i class="bi bi-circle-fill" style="font-size: 8px;"></i> متاح</span>
+                  
+                  @if($provider->provider_type === 'supplier')
+                      @if($provider->classification_id && $provider->classification)
+                          <span class="badge" style="background: rgba(217,119,6,0.1); color: #d97706; border: 1px solid #b45309;"><i class="bi bi-box-seam"></i> {{ $provider->classification->name }}</span>
+                      @endif
+                      @if($provider->deliveryCities()->exists())
+                          <span class="badge" style="background: rgba(16,185,129,0.1); color: #10b981; border: 1px solid #059669;"><i class="bi bi-truck"></i> {{ __('website.delivery_available') ?? 'توصيل متاح' }}</span>
+                      @endif
+                  @else
+                      @if($provider->years_of_experience)
+                          <span class="badge b-exp"><i class="bi bi-mortarboard-fill"></i> +{{ $provider->years_of_experience }} {{ __('website.years_of_experience') ?? 'سنة خبرة' }}</span>
+                      @endif
+                  @endif
+                  <span class="badge b-avail"><i class="bi bi-circle-fill" style="font-size: 8px;"></i> {{ __('website.available') ?? 'متاح' }}</span>
                 </div>
                 <div class="co-stats">
-                  <div class="co-stat"><i class="bi bi-trophy-fill text-warning"></i> <strong>{{ $provider->completed_projects_count ?? 0 }}</strong> مشروع</div>
-                  <div class="co-stat"><i class="bi bi-clipboard-data text-secondary"></i> تصنيف <strong>A</strong></div>
+                  <div class="co-stat"><i class="bi bi-trophy-fill text-warning"></i> <strong>{{ $provider->completed_projects_count ?? 0 }}</strong> {{ __('website.project') ?? 'مشروع' }}</div>
+                  <div class="co-stat"><i class="bi bi-clipboard-data text-secondary"></i> {{ __('website.classification') ?? 'تصنيف' }} <strong>{{ $provider->classification ? $provider->classification->name : __('website.unspecified') ?? 'غير محدد' }}</strong></div>
                 </div>
               </div>
               <hr class="co-divider">
               <div class="co-footer">
-                <div class="rating-chip"><i class="bi bi-star-fill text-warning"></i> {{ number_format($provider->average_rating, 1) }} <span style="color:#9ca3af;font-weight:400;font-size:11px;">({{ $provider->ratings_count ?? rand(10, 150) }} تقييم)</span></div>
+                <div class="rating-chip"><i class="bi bi-star-fill text-warning"></i> {{ number_format($provider->average_rating, 1) }} <span style="color:#9ca3af;font-weight:400;font-size:11px;">({{ $provider->ratings_count ?? 0 }} تقييم)</span></div>
                 
                 @auth
                     <a href="{{ route('requests.create', array_filter(['provider_id' => $provider->id, 'category' => $category->id ?? null])) }}" class="btn-quote {{ $isPremium ? 'featured-btn' : '' }}">طلب عرض سعر</a>

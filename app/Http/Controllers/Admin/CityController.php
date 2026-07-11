@@ -21,7 +21,8 @@ class CityController extends Controller
     public function create()
     {
         $countries = Country::all();
-        return view('dashboard.cities.create_edit', compact('countries'));
+        $regions = \App\Models\Region::all();
+        return view('dashboard.cities.create_edit', compact('countries', 'regions'));
     }
 
     public function store(CityRequest $request)
@@ -34,7 +35,8 @@ class CityController extends Controller
     {
         $model = $this->cityService->getById($id);
         $countries = Country::all();
-        return view('dashboard.cities.create_edit', compact('model', 'countries'));
+        $regions = \App\Models\Region::all();
+        return view('dashboard.cities.create_edit', compact('model', 'countries', 'regions'));
     }
 
     public function update(CityRequest $request, $id)

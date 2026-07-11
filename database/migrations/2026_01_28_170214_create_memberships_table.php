@@ -1,9 +1,7 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-
 return new class extends Migration
 {
     /**
@@ -13,18 +11,17 @@ return new class extends Migration
     {
         Schema::create('memberships', function (Blueprint $table) {
             $table->id();
-            $table->json('name'); // ترجمة
+            $table->json('name');
             $table->text('description')->nullable();
             $table->decimal('price', 10, 2)->default(0);
-            $table->integer('duration_days')->default(30); // مدة العضوية بالأيام
-            $table->json('features')->nullable(); // قائمة المميزات
+            $table->integer('duration_days')->default(30);
+            $table->json('features')->nullable();
             $table->boolean('is_active')->default(true);
             $table->integer('sort_order')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });
     }
-
     /**
      * Reverse the migrations.
      */

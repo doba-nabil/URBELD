@@ -17,7 +17,7 @@
             <div class="container">
                 <div class="row g-5">
                     <!-- Logo & Description -->
-                    <div class="col-lg-4 col-md-6">
+                    <div class="col-lg-3 col-md-6">
                         <div class="footer-logo-section">
                             <a href="{{ route('home') }}">
                                 @if (isset($settings['logo']) && $settings['logo'])
@@ -61,6 +61,7 @@
                                 @endif
                                 <li><a href="{{ route('contact') }}">{{ __('website.footer_contact') }}</a></li>
                             @endif
+                            <li><a href="{{ route('website.suppliers.index') }}">{{ __('website.suppliers_hub') ?? 'دليل الموردين' }}</a></li>
                         </ul>
                     </div>
 
@@ -82,9 +83,31 @@
                             @endif
                         </ul>
                     </div>
+                    
+                    <!-- Supply Types -->
+                    @php
+                        $footerSupplyCategories = \App\Models\Category::whereNull('parent_id')
+                            ->where('supports_supply_requests', true)
+                            ->where('is_active', true)
+                            ->get();
+                    @endphp
+                    @if($footerSupplyCategories->count() > 0)
+                    <div class="col-lg-2 col-md-3 col-6">
+                        <h5 class="footer-title">{{ __('website.supply_types') ?? 'أنواع التوريد' }}</h5>
+                        <ul class="footer-links">
+                            @foreach ($footerSupplyCategories as $supplyCat)
+                                <li>
+                                    <a href="{{ route('website.suppliers.index', ['category_id' => $supplyCat->id]) }}">
+                                        {{ $supplyCat->name }}
+                                    </a>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    @endif
 
                     <!-- Contact Info -->
-                    <div class="col-lg-4 col-md-6">
+                    <div class="col-lg-3 col-md-6">
                         <h5 class="footer-title">{{ __('website.footer_contact_info') }}</h5>
                         <div class="footer-contact">
                             <p class="footer-phone">

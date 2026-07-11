@@ -1,7 +1,5 @@
 <?php
-
 namespace Database\Seeders;
-
 use App\Models\User;
 use App\Models\Category;
 use App\Models\ServiceRequest;
@@ -10,7 +8,6 @@ use App\Models\ServiceRequestInspection;
 use App\Models\Rating;
 use Illuminate\Database\Seeder;
 use Carbon\Carbon;
-
 class ServiceRequestSeeder extends Seeder
 {
     public function run(): void
@@ -19,7 +16,6 @@ class ServiceRequestSeeder extends Seeder
         $contractingCategory = Category::where('slug', 'contracting')->first();
         $engineeringCategory = Category::where('slug', 'engineering-consulting')->first();
         $environmentCategory = Category::where('slug', 'environment')->first();
-
         // Get or create service seekers
         $serviceSeekers = [];
         for ($i = 1; $i <= 5; $i++) {
@@ -35,7 +31,6 @@ class ServiceRequestSeeder extends Seeder
                 ]
             );
         }
-
         // Get or create service providers
         $serviceProviders = [];
         for ($i = 1; $i <= 10; $i++) {
@@ -53,11 +48,8 @@ class ServiceRequestSeeder extends Seeder
                 ]
             );
         }
-
         // Create requests with different statuses
         $requests = [];
-
-        // 1. New Request (جديدة)
         $requests[] = ServiceRequest::create([
             'user_id' => $serviceSeekers[0]->id,
             'category_id' => $contractingCategory->id,
@@ -71,8 +63,6 @@ class ServiceRequestSeeder extends Seeder
             'blueprint_description' => 'رسم كروكي للمنزل',
             'response_deadline' => Carbon::now()->addHours(48),
         ]);
-
-        // 2. Pending Response (في انتظار الرد)
         $pendingRequest = ServiceRequest::create([
             'user_id' => $serviceSeekers[1]->id,
             'category_id' => $engineeringCategory->id,
@@ -86,7 +76,6 @@ class ServiceRequestSeeder extends Seeder
             'site_photos_description' => 'صور الموقع',
             'response_deadline' => Carbon::now()->addHours(24),
         ]);
-
         // Add responses to pending request
         ServiceRequestResponse::create([
             'service_request_id' => $pendingRequest->id,
@@ -97,7 +86,6 @@ class ServiceRequestSeeder extends Seeder
             'proposed_timeline' => '3 أشهر',
             'responded_at' => Carbon::now()->subHours(5),
         ]);
-
         ServiceRequestResponse::create([
             'service_request_id' => $pendingRequest->id,
             'user_id' => $serviceProviders[1]->id,
@@ -107,8 +95,6 @@ class ServiceRequestSeeder extends Seeder
             'proposed_timeline' => '2.5 شهر',
             'responded_at' => Carbon::now()->subHours(3),
         ]);
-
-        // 3. Accepted Request (مقبولة)
         $acceptedRequest = ServiceRequest::create([
             'user_id' => $serviceSeekers[2]->id,
             'category_id' => $contractingCategory->id,
@@ -123,7 +109,6 @@ class ServiceRequestSeeder extends Seeder
             'response_deadline' => Carbon::now()->subHours(10),
             'accepted_at' => Carbon::now()->subHours(2),
         ]);
-
         $acceptedResponse = ServiceRequestResponse::create([
             'service_request_id' => $acceptedRequest->id,
             'user_id' => $serviceProviders[2]->id,
@@ -133,8 +118,6 @@ class ServiceRequestSeeder extends Seeder
             'proposed_timeline' => 'شهر واحد',
             'responded_at' => Carbon::now()->subHours(5),
         ]);
-
-        // 4. Under Inspection (قيد المعاينة)
         $inspectionRequest = ServiceRequest::create([
             'user_id' => $serviceSeekers[3]->id,
             'category_id' => $engineeringCategory->id,
@@ -149,7 +132,6 @@ class ServiceRequestSeeder extends Seeder
             'response_deadline' => Carbon::now()->subDays(1),
             'accepted_at' => Carbon::now()->subDays(2),
         ]);
-
         $inspectionResponse = ServiceRequestResponse::create([
             'service_request_id' => $inspectionRequest->id,
             'user_id' => $serviceProviders[3]->id,
@@ -159,7 +141,6 @@ class ServiceRequestSeeder extends Seeder
             'proposed_timeline' => '4 أشهر',
             'responded_at' => Carbon::now()->subDays(2),
         ]);
-
         ServiceRequestInspection::create([
             'service_request_id' => $inspectionRequest->id,
             'response_id' => $inspectionResponse->id,
@@ -167,8 +148,6 @@ class ServiceRequestSeeder extends Seeder
             'status' => ServiceRequestInspection::STATUS_SCHEDULED,
             'notes' => 'معاينة الموقع المقررة',
         ]);
-
-        // 5. Agreed Request (متفق عليها)
         $agreedRequest = ServiceRequest::create([
             'user_id' => $serviceSeekers[4]->id,
             'category_id' => $contractingCategory->id,
@@ -183,7 +162,6 @@ class ServiceRequestSeeder extends Seeder
             'response_deadline' => Carbon::now()->subDays(5),
             'accepted_at' => Carbon::now()->subDays(4),
         ]);
-
         $agreedResponse = ServiceRequestResponse::create([
             'service_request_id' => $agreedRequest->id,
             'user_id' => $serviceProviders[4]->id,
@@ -193,7 +171,6 @@ class ServiceRequestSeeder extends Seeder
             'proposed_timeline' => '3 أسابيع',
             'responded_at' => Carbon::now()->subDays(4),
         ]);
-
         ServiceRequestInspection::create([
             'service_request_id' => $agreedRequest->id,
             'response_id' => $agreedResponse->id,
@@ -202,8 +179,6 @@ class ServiceRequestSeeder extends Seeder
             'status' => ServiceRequestInspection::STATUS_COMPLETED,
             'notes' => 'تمت المعاينة بنجاح',
         ]);
-
-        // 6. Completed Request (مكتملة)
         $completedRequest = ServiceRequest::create([
             'user_id' => $serviceSeekers[0]->id,
             'category_id' => $engineeringCategory->id,
@@ -219,7 +194,6 @@ class ServiceRequestSeeder extends Seeder
             'accepted_at' => Carbon::now()->subDays(28),
             'completed_at' => Carbon::now()->subDays(1),
         ]);
-
         $completedResponse = ServiceRequestResponse::create([
             'service_request_id' => $completedRequest->id,
             'user_id' => $serviceProviders[5]->id,
@@ -229,7 +203,6 @@ class ServiceRequestSeeder extends Seeder
             'proposed_timeline' => 'شهرين',
             'responded_at' => Carbon::now()->subDays(28),
         ]);
-
         ServiceRequestInspection::create([
             'service_request_id' => $completedRequest->id,
             'response_id' => $completedResponse->id,
@@ -238,7 +211,6 @@ class ServiceRequestSeeder extends Seeder
             'status' => ServiceRequestInspection::STATUS_COMPLETED,
             'notes' => 'تمت المعاينة والموافقة',
         ]);
-
         // Add ratings for completed request
         Rating::create([
             'service_request_id' => $completedRequest->id,
@@ -247,7 +219,6 @@ class ServiceRequestSeeder extends Seeder
             'rating' => 5,
             'comment' => 'عمل ممتاز ومهني',
         ]);
-
         Rating::create([
             'service_request_id' => $completedRequest->id,
             'rater_id' => $serviceProviders[5]->id,
@@ -255,8 +226,6 @@ class ServiceRequestSeeder extends Seeder
             'rating' => 4,
             'comment' => 'عميل محترم ومتعاون',
         ]);
-
-        // 7. Rejected Request (مرفوضة)
         $rejectedRequest = ServiceRequest::create([
             'user_id' => $serviceSeekers[1]->id,
             'category_id' => $contractingCategory->id,
@@ -270,7 +239,6 @@ class ServiceRequestSeeder extends Seeder
             'blueprint_description' => 'رسم كروكي للدهانات',
             'response_deadline' => Carbon::now()->subDays(3),
         ]);
-
         ServiceRequestResponse::create([
             'service_request_id' => $rejectedRequest->id,
             'user_id' => $serviceProviders[6]->id,
@@ -280,8 +248,6 @@ class ServiceRequestSeeder extends Seeder
             'proposed_timeline' => null,
             'responded_at' => Carbon::now()->subDays(2),
         ]);
-
-        // 8. Time Expired Request (منتهية)
         $expiredRequest = ServiceRequest::create([
             'user_id' => $serviceSeekers[2]->id,
             'category_id' => $environmentCategory->id,
@@ -295,7 +261,6 @@ class ServiceRequestSeeder extends Seeder
             'neighbors_description' => 'وصف الجيران',
             'response_deadline' => Carbon::now()->subDays(3),
         ]);
-
         // 9. More requests for statistics
         for ($i = 0; $i < 5; $i++) {
             ServiceRequest::create([
@@ -312,7 +277,6 @@ class ServiceRequestSeeder extends Seeder
                 'response_deadline' => Carbon::now()->addHours(rand(12, 48)),
             ]);
         }
-
         for ($i = 0; $i < 3; $i++) {
             $req = ServiceRequest::create([
                 'user_id' => $serviceSeekers[array_rand($serviceSeekers)]->id,
@@ -327,7 +291,6 @@ class ServiceRequestSeeder extends Seeder
                 'site_photos_description' => 'صور الموقع ' . ($i + 1),
                 'response_deadline' => Carbon::now()->addHours(rand(12, 36)),
             ]);
-
             // Add some responses
             ServiceRequestResponse::create([
                 'service_request_id' => $req->id,

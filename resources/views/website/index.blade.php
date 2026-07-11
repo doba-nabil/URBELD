@@ -203,7 +203,7 @@
             <div class="services-grid">
                 @foreach ($categories as $category)
                     <!-- Service Card -->
-                    <div class="service-card wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="service-card wow fadeInUp {{ $category->is_full_width ? 'text-center' : '' }}" data-wow-delay="0.1s" style="{{ $category->is_full_width ? 'grid-column: 1 / -1;' : '' }}">
                         <a href="{{ route('website.category.show', $category->id) }}" class="service-link">
                             <div class="service-image-wrapper">
                                 <img src="{{ $category->getFirstMediaUrl('categories') }}" alt="{{ $category->name }}"
@@ -212,7 +212,7 @@
                                     <i class="bi bi-arrow-up-left"></i>
                                 </div>
                             </div>
-                            <div class="service-content">
+                            <div class="service-content {{ $category->is_full_width ? 'text-center' : '' }}">
                                 <h5>{{ $category->name }}</h5>
                                 <p>{{ $category->description }}</p>
                             </div>

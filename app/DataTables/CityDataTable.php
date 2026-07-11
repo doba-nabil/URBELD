@@ -26,6 +26,9 @@ class CityDataTable extends DataTable
             ->addColumn('country', function ($q) {
                 return '<span>' . e($q->country->name ?? __('admin.not_specified')) . '</span>';
             })
+            ->addColumn('region', function ($q) {
+                return '<span>' . e($q->region->name ?? '-') . '</span>';
+            })
             ->addColumn('action', function ($q) {
                 $editUrl = url('/admin-panel/cities/' . $q->id.'/edit');
                 $deleteUrl = url('/admin-panel/cities/' . $q->id);
@@ -53,7 +56,7 @@ class CityDataTable extends DataTable
             </ul>
         </div>';
             })
-            ->rawColumns(['action', 'name', 'country'])
+            ->rawColumns(['action', 'name', 'country', 'region'])
             ->setRowId('id')
             ->filterColumn('name', function($query, $keyword) {
                 $query->where('name', 'like', "%{$keyword}%");
@@ -67,7 +70,7 @@ class CityDataTable extends DataTable
      */
     public function query(City $model): QueryBuilder
     {
-        return $model->newQuery()->with('country');
+        return $model->newQuery()->with(['country', 'region']);
     }
 
     /**
@@ -101,6 +104,7 @@ class CityDataTable extends DataTable
         return [
             Column::make('name')->title(__('admin.name'))->addClass('text-start'),
             Column::make('country')->title(__('admin.country'))->addClass('text-start'),
+            Column::make('region')->title(__('admin.region') ?? 'المنطقة')->addClass('text-start'),
             Column::computed('action')->title(__('admin.action'))
                 ->exportable(false)
                 ->printable(false)

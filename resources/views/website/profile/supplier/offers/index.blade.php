@@ -57,7 +57,7 @@
                 <h3 class="fw-bold mb-0 text-dark">العروض والخصومات</h3>
                 <div class="d-flex align-items-center gap-3">
                     <a href="{{ route('profile.edit') }}" class="text-decoration-none text-muted small fw-bold">
-                        العودة للوحة الرئيسية <i class="bi bi-arrow-left ms-1"></i>
+                        العودة للوحة التحكم <i class="bi bi-arrow-left ms-1"></i>
                     </a>
                     @if(auth()->user()->hasActiveSubscription())
                         <a href="{{ route('supplier.offers.create') }}" class="btn btn-primary rounded-pill px-4 shadow-sm fw-bold">

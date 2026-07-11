@@ -78,7 +78,7 @@ class SettingController extends Controller
         foreach ($translatableKeys as $key) {
             Setting::setValue($key, $request->input($key), true);
         }
-        foreach (['contact_email','contact_phone', 'longitude', 'latitude', 'main_background_type', 'footer_background_type', 'is_subscription_enabled'] as $key) {
+        foreach (['contact_email','contact_phone', 'longitude', 'latitude', 'main_background_type', 'footer_background_type', 'is_subscription_enabled', 'is_payment_enabled', 'tender_apply_fee', 'tender_add_fee'] as $key) {
             Setting::setValue($key, $request->input($key));
         }
 

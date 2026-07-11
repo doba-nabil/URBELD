@@ -120,6 +120,29 @@
                                         </div>
 
                                         <div class="col-md-12 mb-3">
+                                            <div class="form-check form-switch pt-2">
+                                                <input class="form-check-input" type="checkbox" name="is_payment_enabled" value="1" id="is_payment_enabled"
+                                                    {{ \App\Models\Setting::getValue('is_payment_enabled') ? 'checked' : '' }}>
+                                                <label class="form-check-label" for="is_payment_enabled">
+                                                    <strong>تفعيل نظام الدفع للمناقصات</strong>
+                                                </label>
+                                            </div>
+                                            <small class="text-muted">إذا تم الإيقاف، جميع خدمات المناقصات ستكون مجانية.</small>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">رسوم التقديم على مناقصة (للشركات غير المشتركة)</label>
+                                            <input type="number" step="0.01" name="tender_apply_fee" class="form-control"
+                                                value="{{ old('tender_apply_fee', \App\Models\Setting::getValue('tender_apply_fee', null, '0')) }}">
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">رسوم إضافة مناقصة جديدة (للشركات غير المشتركة)</label>
+                                            <input type="number" step="0.01" name="tender_add_fee" class="form-control"
+                                                value="{{ old('tender_add_fee', \App\Models\Setting::getValue('tender_add_fee', null, '0')) }}">
+                                        </div>
+
+                                        <div class="col-md-12 mb-3">
                                             <label class="form-label">{{ __('admin.footer_text') }}</label>
                                             <textarea name="footer_text" class="form-control" rows="3">{{ old('footer_text', \App\Models\Setting::getValue('footer_text')) }}</textarea>
                                         </div>

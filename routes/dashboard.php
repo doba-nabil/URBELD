@@ -68,6 +68,10 @@ Route::group(['prefix' => 'admin-panel', 'middleware' => [IsAdminMiddleware::cla
     Route::resource('admins', AdminController::class);
 
     Route::resource('countries', CountryController::class);
+    
+    Route::get('regions/by-country/{countryId}', [\App\Http\Controllers\Admin\RegionController::class, 'getByCountry'])->name('regions.by-country');
+    Route::resource('regions', \App\Http\Controllers\Admin\RegionController::class);
+    
     Route::get('cities/by-country/{countryId}', [CityController::class, 'getByCountry'])->name('cities.by-country');
     Route::resource('cities', CityController::class);
 

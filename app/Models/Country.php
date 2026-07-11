@@ -31,6 +31,11 @@ class Country extends Model implements HasMedia, Auditable
         return $this->hasMany(City::class);
     }
 
+    public function regions()
+    {
+        return $this->hasMany(Region::class);
+    }
+
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('countries')

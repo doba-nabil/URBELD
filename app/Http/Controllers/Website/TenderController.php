@@ -47,6 +47,10 @@ class TenderController extends Controller
         $hasApplied = $user ? $tender->applications()->where('user_id', $user->id)->exists() : false;
         $isSaved = $user ? $user->hasSavedTender($tender->id) : false;
 
+        if ($user && $user->id === $tender->user_id) {
+            $tender->load(['applications.user.city', 'applications.user.media']);
+        }
+
         return view('website.tenders.show', compact('tender', 'hasApplied', 'isSaved'));
     }
 
@@ -145,5 +149,51 @@ class TenderController extends Controller
         $result['message'] = $result['status'] === 'saved' ? __('tenders.saved_success') : __('tenders.removed_success');
         
         return response()->json($result);
+    }
+
+    /**
+     * Accept a specific application/offer for the tender.
+     */
+    public function acceptApplication(Request $request, $id, $applicationId)
+    {
+        $tender = Tender::findOrFail($id);
+        
+        if ($tender->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
+
+        $application = $tender->applications()->findOrFail($applicationId);
+
+        $tender->update([
+            'awarded_provider_id' => $application->user_id,
+            'status' => Tender::STATUS_IN_PROGRESS,
+            'accepted_at' => now(),
+        ]);
+
+        return back()->with('success', __('website.offer_accepted_successfully') ?? 'تم قبول العرض بنجاح وتحويل المناقصة إلى قيد التنفيذ');
+    }
+
+    /**
+     * Mark the tender as completed.
+     */
+    public function completeWork(Request $request, $id)
+    {
+        $tender = Tender::findOrFail($id);
+        
+        // Owner marks as complete
+        if ($tender->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
+
+        if ($tender->status !== Tender::STATUS_IN_PROGRESS) {
+            return back()->with('error', 'المناقصة ليست قيد التنفيذ');
+        }
+
+        $tender->update([
+            'status' => Tender::STATUS_COMPLETED,
+            'completed_at' => now(),
+        ]);
+
+        return back()->with('success', __('website.work_completed_successfully') ?? 'تم تأكيد الانتهاء بنجاح. يرجى تقييم المورد.');
     }
 }

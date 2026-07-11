@@ -1,14 +1,11 @@
 <?php
-
 namespace App\Providers;
-
 use Illuminate\Support\ServiceProvider;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Gate;
-
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -18,7 +15,6 @@ class AppServiceProvider extends ServiceProvider
     {
         //
     }
-
     /**
      * Bootstrap any application services.
      */
@@ -31,7 +27,6 @@ class AppServiceProvider extends ServiceProvider
                 $socialsModel = Setting::where('key', 'socials')->first();
                 $latSetting = Setting::where('key', 'latitude')->first();
                 $longSetting = Setting::where('key', 'longitude')->first();
-
                 $locale = app()->getLocale();
                 return [
                     'logo' => $settingModel?->getFirstMediaUrl("logo_$locale") ?: $settingModel?->getFirstMediaUrl('logo'),
@@ -45,7 +40,6 @@ class AppServiceProvider extends ServiceProvider
                     'footer_text' => Setting::getValue('footer_text', $locale, 'تقدم منصة اوربلد حلولاً متكاملة للعثور على المسكن المثالي أو مزود الخدمة المناسب بكل سهولة وموثوقية.'),
                 ];
             });
-            
             $mainCategories = Cache::remember('main_categories', 3600, function () {
                 try {
                     return \App\Models\Category::whereNull('parent_id')
@@ -55,15 +49,12 @@ class AppServiceProvider extends ServiceProvider
                     return collect();
                 }
             });
-
             $footerPagesContent = Cache::rememberForever('footer_pages_content', function() {
                 return \App\Models\Page::where('type', 'content')->get();
             });
-
             $footerPagesLinks = Cache::rememberForever('footer_pages_links', function() {
                 return \App\Models\Page::where('type', 'link')->get();
             });
-
             $view->with([
                 'settings' => $settings,
                 'mainCategories' => $mainCategories,
@@ -73,12 +64,9 @@ class AppServiceProvider extends ServiceProvider
         });
          $storagePath = storage_path('app/public');
     $publicPath = public_path('storage');
-
     if (!File::exists($publicPath)) {
         File::makeDirectory($publicPath, 0755, true);
     }
-
-    // فقط انسخ المجلدات الجديدة أو الملفات غير الموجودة
     $files = File::allFiles($storagePath);
     foreach ($files as $file) {
         $target = $publicPath . '/' . $file->getRelativePathname();
@@ -90,13 +78,11 @@ class AppServiceProvider extends ServiceProvider
             File::copy($file->getRealPath(), $target);
         }
     }
-
     // 2. Grant all permissions to super-admin
     Gate::before(function ($user, $ability) {
         return $user->hasRole('super-admin', 'admin') ? true : null;
     });
     }
-    
      private function getRelativePath(string $url): string
     {
         // If URL contains storage path, extract it
@@ -106,12 +92,10 @@ class AppServiceProvider extends ServiceProvider
                 return '/storage/' . $parts[1];
             }
         }
-        
         // If it's already a relative path, return as is
         if (strpos($url, 'http') !== 0) {
             return $url;
         }
-        
         // Try to extract path from URL
         $parsed = parse_url($url);
         return $parsed['path'] ?? $url;

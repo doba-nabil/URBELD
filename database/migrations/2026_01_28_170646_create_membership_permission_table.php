@@ -1,9 +1,7 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-
 return new class extends Migration
 {
     /**
@@ -16,18 +14,13 @@ return new class extends Migration
             $table->foreignId('membership_id')->constrained('memberships')->cascadeOnDelete();
             $table->unsignedBigInteger('permission_id');
             $table->timestamps();
-            
-            // Foreign key للـ permission من Spatie
             $table->foreign('permission_id')
                 ->references('id')
                 ->on('permissions')
                 ->cascadeOnDelete();
-            
-            // منع التكرار
             $table->unique(['membership_id', 'permission_id']);
         });
     }
-
     /**
      * Reverse the migrations.
      */

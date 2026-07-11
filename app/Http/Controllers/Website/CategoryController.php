@@ -14,6 +14,7 @@ class CategoryController extends Controller
     {
         $categories = Category::whereNull('parent_id')
                               ->where('is_active', true)
+                              ->where('supports_supply_requests', false)
                               ->get();
                               
         return view('website.categories.index', compact('categories'));
@@ -22,7 +23,11 @@ class CategoryController extends Controller
     public function show(Request $request, $id)
     {
         $category = Category::with(['children' => function($q) {
-            $q->where('is_active', true);
+            $q->where('is_active', true)
+              ->withCount(['users as providers_count' => function ($query) {
+                  $query->whereIn('provider_type', ['company', 'individual'])
+                        ->where('active', 'active');
+              }]);
         }])->findOrFail($id);
 
         // Fetch providers who work in this category (or any of its children)
@@ -37,9 +42,13 @@ class CategoryController extends Controller
                 $q->whereIn('categories.id', $categoryIds);
             });
 
-        // Filter by city if provided in query string
+        // Filter by Region or City if provided in query string
         if ($request->filled('city_id')) {
             $providersQuery->where('city_id', $request->city_id);
+        } elseif ($request->filled('region_id')) {
+            $providersQuery->whereHas('city', function($q) use ($request) {
+                $q->where('region_id', $request->region_id);
+            });
         }
 
         // Filter by subcategory if provided
@@ -52,16 +61,27 @@ class CategoryController extends Controller
         $allProviders = $providersQuery
             ->select('users.*')
             ->leftJoin('subscription_packages', 'users.subscription_package_id', '=', 'subscription_packages.id')
-            ->orderByRaw('COALESCE(subscription_packages.is_featured, 0) DESC')
-            ->orderByRaw('COALESCE(subscription_packages.sort_order, 0) DESC')
-            ->orderByDesc('users.id')
             ->withCount(['serviceRequestResponses as completed_projects_count' => function ($q) {
                 $q->where('status', 'accepted')
                   ->whereHas('serviceRequest', function ($sq) {
                       $sq->whereIn('status', ['completed', 'work_completed']);
                   });
-            }])
-            ->get();
+            }]);
+
+        // Handle Sorting
+        $sort = $request->get('sort', 'premium');
+        if ($sort === 'rating') {
+            $allProviders = $allProviders->withAvg('ratingsReceived', 'rating')
+                                         ->orderByDesc('ratings_received_avg_rating');
+        } elseif ($sort === 'newest') {
+            $allProviders = $allProviders->orderByDesc('users.created_at');
+        } else {
+            // Default to premium
+            $allProviders = $allProviders->orderByRaw('COALESCE(subscription_packages.is_featured, 0) DESC')
+                                         ->orderByRaw('COALESCE(subscription_packages.sort_order, 0) DESC');
+        }
+        
+        $allProviders = $allProviders->orderByDesc('users.id')->get();
 
         $companyProviders = $allProviders->where('provider_type', 'company');
         $individualProviders = $allProviders->where('provider_type', 'individual');
@@ -108,6 +128,7 @@ class CategoryController extends Controller
             'companyProviders' => $companyProviders,
             'individualProviders' => $individualProviders,
             'cities' => $cities,
+            'regions' => $regions,
             'subCategories' => $subCategories,
             'stats' => $stats
         ]);

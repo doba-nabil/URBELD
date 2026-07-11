@@ -28,6 +28,8 @@ class UserRequest extends FormRequest
             'email' => "required|email|unique:users,email,{$userId}",
             'phone' => 'nullable|string|max:20',
             'points' => 'numeric',
+            'company_registration_number' => 'nullable|string|max:255',
+            'representative_name' => 'nullable|string|max:255',
             'active' => 'required',
             'password' => $this->isMethod('POST') ? 'required|string|min:6|confirmed' : 'nullable|string|min:6|confirmed',
         ];

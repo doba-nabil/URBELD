@@ -132,8 +132,8 @@
         @endif
 
 
-        @if(auth('admin')->user()->can('countries.index') || auth('admin')->user()->can('cities.index'))
-            <li class="menu-item {{ request()->is('*countries*') || request()->is('*cities*') ? 'active open' : '' }}">
+        @if(auth('admin')->user()->can('countries.index') || auth('admin')->user()->can('cities.index') || auth('admin')->user()->can('regions.index'))
+            <li class="menu-item {{ request()->is('*countries*') || request()->is('*cities*') || request()->is('*regions*') ? 'active open' : '' }}">
                 <a href="javascript:void(0)" class="menu-link menu-toggle">
                     <i class="menu-icon icon-base ti tabler-forms"></i>
                     <div>{{ __('admin.location') }}</div>
@@ -143,6 +143,14 @@
                         <li class="menu-item {{ request()->is('*countries*') ? 'active' : '' }}">
                             <a href="{{ url('admin-panel/countries') }}" class="menu-link">
                                 <div>{{ __('admin.countries') }}</div>
+                            </a>
+                        </li>
+                    @endif
+
+                    @if(auth('admin')->user()->can('regions.index'))
+                        <li class="menu-item {{ request()->is('*regions*') ? 'active' : '' }}">
+                            <a href="{{ url('admin-panel/regions') }}" class="menu-link">
+                                <div>{{ __('admin.regions') ?? 'المناطق' }}</div>
                             </a>
                         </li>
                     @endif
@@ -251,23 +259,25 @@
         @endif
 
         @if(auth('admin')->user()->can('service-requests.index'))
-            <li class="menu-item {{ request()->is('*service-requests*') ? 'active open' : '' }}">
-                <a href="javascript:void(0)" class="menu-link menu-toggle">
+            <li class="menu-item {{ request()->is('*service-requests*') ? 'active' : '' }}">
+                <a href="{{ route('service-requests.index', ['is_consultation' => 0]) }}" class="menu-link">
                     <i class="menu-icon icon-base ti tabler-file-text"></i>
-                    <div>{{ __('admin.service_requests') }}</div>
+                    <div>{{ __('admin.service_requests') ?? 'طلبات الخدمات' }}</div>
                 </a>
-                <ul class="menu-sub">
-                    <li class="menu-item {{ request()->is('*service-requests*') && request()->get('is_consultation') == '0' ? 'active' : '' }}">
-                        <a href="{{ route('service-requests.index', ['is_consultation' => 0]) }}" class="menu-link">
-                            <div>{{ __('admin.service_requests_companies') }}</div>
-                        </a>
-                    </li>
-                    <li class="menu-item {{ request()->is('*tenders*') ? 'active' : '' }}">
-                        <a href="{{ route('tenders.index') }}" class="menu-link">
-                            <div>{{ __('admin.tenders') }}</div>
-                        </a>
-                    </li>
-                </ul>
+            </li>
+
+            <li class="menu-item {{ request()->is('*tenders*') ? 'active' : '' }}">
+                <a href="{{ route('tenders.index') }}" class="menu-link">
+                    <i class="menu-icon icon-base ti tabler-gavel"></i>
+                    <div>{{ __('admin.tenders') ?? 'طلبات المناقصات' }}</div>
+                </a>
+            </li>
+
+            <li class="menu-item {{ request()->is('*supply-requests*') ? 'active' : '' }}">
+                <a href="{{ Route::has('supply-requests.index') ? route('supply-requests.index') : '#' }}" class="menu-link">
+                    <i class="menu-icon icon-base ti tabler-box-seam"></i>
+                    <div>{{ __('admin.supply_requests') ?? 'طلبات التوريد' }}</div>
+                </a>
             </li>
         @endif
 

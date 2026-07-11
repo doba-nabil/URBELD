@@ -1,7 +1,5 @@
 @extends('dashboard.layout.master')
-
 @section('title', __('admin.view_service_request'))
-
 @section('dashboard-main')
     <div class="container-xxl flex-grow-1 container-p-y">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -15,7 +13,6 @@
                 </a>
             </div>
         </div>
-
         <div class="row">
             <div class="col-md-8">
                 @if ($serviceRequest->status === 'under_review')
@@ -34,7 +31,6 @@
                         </div>
                     </div>
                 @endif
-
                 <div class="card mb-4">
                     <div class="card-header">
                         <h5>معلومات الطلب</h5>
@@ -54,7 +50,6 @@
                                 <p>{{ $serviceRequest->subCategory->name ?? '-' }}</p>
                             </div>
                         </div>
-
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <strong>الحالة:</strong>
@@ -86,14 +81,12 @@
                                 <p>{{ $serviceRequest->city->name ?? '-' }}</p>
                             </div>
                         </div>
-
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <strong>الحي:</strong>
                                 <p>{{ $serviceRequest->neighborhood ?? '-' }}</p>
                             </div>
                         </div>
-
                         @if ($serviceRequest->location)
                             <div class="row mb-3">
                                 <div class="col-md-12">
@@ -102,7 +95,6 @@
                                 </div>
                             </div>
                         @endif
-
                         @if ($serviceRequest->voice_record)
                             <div class="row mb-4 bg-light p-3 rounded">
                                 <div class="col-md-12">
@@ -120,7 +112,6 @@
                                 </div>
                             </div>
                         @endif
-
                         @if ($serviceRequest->latitude && $serviceRequest->longitude)
                             <div class="row mb-4">
                                 <div class="col-md-12">
@@ -136,7 +127,6 @@
                                 </div>
                             </div>
                         @endif
-
                         @if ($serviceRequest->description)
                             <div class="row mb-3 border-top pt-3">
                                 <div class="col-md-12">
@@ -145,7 +135,6 @@
                                 </div>
                             </div>
                         @endif
-
                         @if ($serviceRequest->response_deadline)
                             <div class="row mb-3">
                                 <div class="col-md-6">
@@ -157,13 +146,11 @@
                                 </div>
                             </div>
                         @endif
-
                         <!-- Attachments Section -->
                         @if ($serviceRequest->hasMedia('blueprints') || $serviceRequest->hasMedia('site_photos'))
                             <div class="row mb-3 border-top pt-3">
                                 <div class="col-md-12">
                                     <h5 class="mb-3">الملفات المرفقة</h5>
-                                    
                                     @if ($serviceRequest->hasMedia('blueprints'))
                                         <div class="mb-3">
                                             <strong>الرسوم الكروكية / المخططات:</strong>
@@ -177,7 +164,6 @@
                                             </div>
                                         </div>
                                     @endif
-
                                     @if ($serviceRequest->hasMedia('site_photos'))
                                         <div class="mb-3">
                                             <strong>صور الموقع:</strong>
@@ -197,7 +183,6 @@
                         @endif
                     </div>
                 </div>
-
                 @if ($serviceRequest->status === 'work_completed' || $serviceRequest->status === 'completed')
                     <div class="card mb-4">
                         <div class="card-header border-bottom">
@@ -238,7 +223,6 @@
                     </div>
                 @endif
             </div>
-
             <div class="col-md-4">
                 <div class="card mb-4">
                     <div class="card-header">
@@ -283,7 +267,6 @@
                                         <i class="ti tabler-edit"></i>
                                     </button>
                                 </div>
-
                                 @if ($response->status === 'pending' && $serviceRequest->status === 'pending_response')
                                     <div class="mt-2">
                                         <button class="btn btn-sm btn-success accept-response-btn"
@@ -293,7 +276,6 @@
                                         </button>
                                     </div>
                                 @endif
-
                                 @if ($response->status === 'accepted' && $serviceRequest->status === 'accepted')
                                     <div class="mt-2">
                                         <button class="btn btn-sm btn-primary schedule-inspection-btn"
@@ -310,7 +292,6 @@
                         @endforelse
                     </div>
                 </div>
-
                 @if ($serviceRequest->inspections->count() > 0)
                     <div class="card mb-4">
                         <div class="card-header">
@@ -344,7 +325,6 @@
                                         <span
                                             class="{{ $inspectionStatus['class'] }}">{{ $inspectionStatus['label'] }}</span>
                                     </div>
-
                                     @if ($inspection->status === 'scheduled' && $serviceRequest->status === 'under_inspection')
                                         <div class="mt-2">
                                             <button class="btn btn-sm btn-success complete-inspection-btn"
@@ -360,7 +340,6 @@
                         </div>
                     </div>
                 @endif
-
                 @if ($serviceRequest->status === 'under_inspection')
                     <div class="card mb-4">
                         <div class="card-body">
@@ -370,7 +349,6 @@
                         </div>
                     </div>
                 @endif
-
                 @if ($serviceRequest->status === 'agreed')
                     <div class="card mb-4">
                         <div class="card-body">
@@ -385,8 +363,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Modal: جدولة معاينة -->
     <div class="modal fade" id="scheduleInspectionModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -415,8 +391,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Modal: إتمام المعاينة -->
     <div class="modal fade" id="completeInspectionModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -440,8 +414,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Modal: إتمام الطلب -->
     <div class="modal fade" id="completeRequestModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -487,8 +459,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Modal: تعديل الرد -->
     <div class="modal fade" id="editResponseModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -521,16 +491,13 @@
         </div>
     </div>
 @endsection
-
 @section('dashboard-footer')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         $(document).ready(function() {
-            // قبول رد
             $(document).on('click', '.accept-response-btn', function() {
                 const requestId = $(this).data('request-id');
                 const responseId = $(this).data('response-id');
-
                 Swal.fire({
                     title: 'هل أنت متأكد؟',
                     text: 'سيتم قبول هذا الرد وتفعيل المحادثة',
@@ -572,20 +539,16 @@
                     }
                 });
             });
-
-            // جدولة معاينة
             $(document).on('click', '.schedule-inspection-btn', function() {
                 const requestId = $(this).data('request-id');
                 const responseId = $(this).data('response-id');
                 $('#schedule_service_request_id').val(requestId);
                 $('#schedule_response_id').val(responseId);
             });
-
             $('#scheduleInspectionForm').on('submit', function(e) {
                 e.preventDefault();
                 const requestId = $('#schedule_service_request_id').val();
                 const formData = $(this).serialize();
-
                 $.ajax({
                     url: '{{ route('service-requests.schedule-inspection', ':id') }}'.replace(
                         ':id', requestId),
@@ -613,19 +576,15 @@
                     }
                 });
             });
-
-            // إتمام المعاينة
             $(document).on('click', '.complete-inspection-btn', function() {
                 const inspectionId = $(this).data('inspection-id');
                 $('#complete_inspection_id').val(inspectionId);
             });
-
             $('#completeInspectionForm').on('submit', function(e) {
                 e.preventDefault();
                 const requestId = {{ $serviceRequest->id }};
                 const inspectionId = $('#complete_inspection_id').val();
                 const formData = $(this).serialize();
-
                 $.ajax({
                     url: '{{ route('service-requests.complete-inspection', [':id', ':inspectionId']) }}'
                         .replace(':id', requestId).replace(':inspectionId', inspectionId),
@@ -653,11 +612,8 @@
                     }
                 });
             });
-
-            // الاتفاق
             $(document).on('click', '.agree-btn', function() {
                 const requestId = $(this).data('request-id');
-
                 Swal.fire({
                     title: 'هل أنت متأكد؟',
                     text: 'سيتم تغيير حالة الطلب إلى "تم الاتفاق"',
@@ -698,17 +654,12 @@
                     }
                 });
             });
-
-            // إتمام الطلب
             $(document).on('click', '.complete-request-btn', function() {
                 const requestId = $(this).data('request-id');
                 $('#complete_request_id').val(requestId);
             });
-
-            // اعتماد الطلب (Moderation)
             $(document).on('click', '.approve-request-btn', function() {
                 const requestId = $(this).data('id');
-
                 Swal.fire({
                     title: '{{ __('admin.approve_request') }}',
                     text: '{{ __('admin.approve_confirm_text') }}',
@@ -751,12 +702,10 @@
                     }
                 });
             });
-
             $('#completeRequestForm').on('submit', function(e) {
                 e.preventDefault();
                 const requestId = $('#complete_request_id').val();
                 const formData = $(this).serialize();
-
                 $.ajax({
                     url: '{{ route('service-requests.complete', ':id') }}'.replace(':id',
                         requestId),
@@ -784,26 +733,21 @@
                     }
                 });
             });
-
-            // تعديل رد
             $(document).on('click', '.edit-response-btn', function() {
                 const id = $(this).data('id');
                 const price = $(this).data('price');
                 const timeline = $(this).data('timeline');
                 const message = $(this).data('message');
-
                 $('#edit_response_id').val(id);
                 $('#edit_proposed_price').val(price);
                 $('#edit_proposed_timeline').val(timeline);
                 $('#edit_response_message').val(message);
             });
-
             $('#editResponseForm').on('submit', function(e) {
                 e.preventDefault();
                 const responseId = $('#edit_response_id').val();
                 const requestId = '{{ $serviceRequest->id }}';
                 const formData = $(this).serialize();
-
                 $.ajax({
                     url: '{{ route('service-requests.update-response', [':id', ':responseId']) }}'
                         .replace(':id', requestId).replace(':responseId', responseId),

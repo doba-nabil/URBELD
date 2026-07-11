@@ -1,29 +1,34 @@
 @extends('layouts.website')
 
 @section('content')
-    <!-- Header Start -->
-    <div class="category-header-section text-center services-header-section without-search">
-        <h1 class="fw-bold mb-3 wow fadeInUp" data-wow-delay="0.1s">{{ $category->name }}</h1>
-        <p class="mb-0 wow fadeInUp" data-wow-delay="0.2s">{{ $category->description ?? __('website.browse_best_providers_and_send_request') }}</p>
+    <div class="category-header-section services-header-section without-search">
+        <div class="container">
+            <div class="row align-items-center mb-5">
+                <div class="col-md-10">
+                    <h1 class="fw-bold mb-3 text-white wow fadeInUp" data-wow-delay="0.1s">{{ $category->name }}</h1>
+                    <p class="mb-0 text-white-50 wow fadeInUp" data-wow-delay="0.2s">{{ $category->description ?? __('website.browse_best_providers_and_send_request') }}</p>
+                </div>
+            </div>
 
-        <!-- Stats Bar -->
-        <div class="category-stats-bar mt-4 wow fadeInUp" data-wow-delay="0.3s">
-            <div class="d-inline-flex gap-4 p-3 rounded-pill bg-white shadow-sm flex-wrap justify-content-center">
-                <div class="stat-item px-3 border-end">
-                    <span class="text-primary fw-bold fs-5">{{ $stats['companies'] ?? 0 }}</span>
-                    <span class="text-muted ms-1 small">شركة</span>
-                </div>
-                <div class="stat-item px-3 border-end">
-                    <span class="text-primary fw-bold fs-5">{{ $stats['suppliers'] ?? 0 }}</span>
-                    <span class="text-muted ms-1 small">مورد</span>
-                </div>
-                <div class="stat-item px-3 border-end">
-                    <span class="text-warning fw-bold fs-5">{{ $stats['premium'] ?? 0 }}</span>
-                    <span class="text-muted ms-1 small">مميّز</span>
-                </div>
-                <div class="stat-item px-3">
-                    <span class="text-success fw-bold fs-5">{{ $stats['verified'] ?? 0 }}</span>
-                    <span class="text-muted ms-1 small">موثوق</span>
+            <!-- Stats Bar -->
+            <div class="category-stats-bar wow fadeInUp" data-wow-delay="0.3s">
+                <div class="d-flex justify-content-between text-center" style="max-width: 800px;">
+                    <div class="stat-item">
+                        <div class="text-white fw-bold fs-2 mb-1">{{ $stats['companies'] ?? 0 }}</div>
+                        <div class="text-white-50 small">{{ __('website.registered_company') ?? 'شركة مسجلة' }}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="text-white fw-bold fs-2 mb-1">{{ $stats['premium'] ?? 0 }}</div>
+                        <div class="text-white-50 small">{{ __('website.premium_company') ?? 'شركة مميزة' }}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="text-white fw-bold fs-2 mb-1">{{ $category->children->count() ?? 0 }}</div>
+                        <div class="text-white-50 small">{{ __('website.subcategories') ?? 'أقسام فرعية' }}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="text-white fw-bold fs-2 mb-1">94%</div>
+                        <div class="text-white-50 small">{{ __('website.customer_satisfaction') ?? 'نسبة رضا العملاء' }}</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -36,11 +41,11 @@
         <div class="bc-left">
           <div class="bc-icon-wrap"><i class="bi bi-megaphone-fill text-white"></i></div>
           <div>
-            <div class="bc-title">{{ __('website.send_request_to_all_providers_at_once') }}</div>
-            <div class="bc-sub">{{ __('website.choose_section_and_receive_quotes') }}</div>
+            <div class="bc-title">{{ $category->bulk_request_title ?: __('website.send_request_to_all_providers_at_once') }}</div>
+            <div class="bc-sub">{{ $category->bulk_request_subtitle ?: __('website.choose_section_and_receive_quotes') }}</div>
           </div>
         </div>
-        <a href="{{ route('requests.create', ['category' => $category->id]) }}" class="btn-bc" style="text-decoration: none;"><i class="bi bi-send-fill me-1"></i> {{ __('website.send_bulk_request') }}</a>
+        <a href="{{ route('requests.create', ['category' => $category->id]) }}" class="btn-bc" style="text-decoration: none;"><i class="bi bi-send-fill me-1"></i> {{ $category->bulk_request_button_text ?: __('website.send_bulk_request') }}</a>
       </div>
     </div>
 
@@ -52,11 +57,16 @@
         </div>
         <form action="{{ route('providers.search') }}" method="GET">
             <input type="hidden" name="category_id" value="{{ $category->id }}">
-            <div class="filter-grid">
+            <div class="filter-grid" style="grid-template-columns: repeat(3, 1fr);">
               <div class="fg">
                 <label>{{ __('website.region') }}</label>
                 <select name="region_id" class="select2">
-                  <option value="">{{ __('website.makkah_region') }}</option>
+                  <option value="">{{ __('website.all') }}</option>
+                  @if (isset($regions))
+                      @foreach ($regions as $region)
+                          <option value="{{ $region->id }}" {{ request('region_id') == $region->id ? 'selected' : '' }}>{{ $region->name }}</option>
+                      @endforeach
+                  @endif
                 </select>
               </div>
               <div class="fg">
@@ -71,7 +81,7 @@
                 </select>
               </div>
               <div class="fg">
-                <label>{{ __('website.supply_section') }}</label>
+                <label>{{ __('website.sub_category') ?? 'القسم الفرعي' }}</label>
                 <select name="sub_category_id" id="subFilter" class="select2">
                   <option value="">{{ __('website.all_sections') }}</option>
                   @if (isset($subCategories))
@@ -79,12 +89,6 @@
                           <option value="{{ $sub->id }}" {{ request('sub_category_id') == $sub->id ? 'selected' : '' }}>{{ $sub->name }}</option>
                       @endforeach
                   @endif
-                </select>
-              </div>
-              <div class="fg">
-                <label>{{ __('website.supply_volume') }}</label>
-                <select name="volume" class="select2">
-                  <option value="">{{ __('website.all') }}</option>
                 </select>
               </div>
             </div>
@@ -115,7 +119,7 @@
              @endif
           </div>
           <div class="sub-label">{{ $sub->name }}</div>
-          <div class="sub-count">{{ $sub->providers_count ?? rand(10, 50) }} شركة</div>
+          <div class="sub-count">{{ $sub->providers_count ?? 0 }} {{ __('website.company') ?? 'شركة' }}</div>
         </a>
         @endforeach
       </div>
@@ -128,18 +132,11 @@
           <h2 id="providers-title">شركات <span id="activeSubLabel">{{ $category->name }}</span></h2>
           <p id="countLabel">{{ $allProviders->count() ?? 0 }} شركة مسجّلة في هذا القسم</p>
         </div>
-        <select class="sort-sel">
-          <option>المميّزون أولاً</option>
-          <option>الأعلى تقييماً</option>
-          <option>الأحدث تسجيلاً</option>
+        <select class="sort-sel" id="sort-select">
+          <option value="premium">{{ __('website.sort_premium') ?? 'المميّزون أولاً' }}</option>
+          <option value="rating">{{ __('website.sort_rating') ?? 'الأعلى تقييماً' }}</option>
+          <option value="newest">{{ __('website.sort_newest') ?? 'الأحدث تسجيلاً' }}</option>
         </select>
-      </div>
-
-      <div class="tabs">
-        <a href="#" class="tab active" onclick="setTab(this)">الكل ({{ $allProviders->count() ?? 0 }})</a>
-        <a href="#" class="tab" onclick="setTab(this)">المميّزون</a>
-        <a href="#" class="tab" onclick="setTab(this)">موثوق</a>
-        <a href="#" class="tab" onclick="setTab(this)">متاح الآن</a>
       </div>
 
       <div class="wow fadeIn" id="providerTabsContent" data-wow-delay="0.2s">
@@ -212,7 +209,12 @@
                     const providersTitle = document.getElementById('providers-title');
                     providersTabsContent.style.opacity = '0.5';
                     
-                    fetch(`{{ route('website.category.show', $category->id) }}`, {
+                    const sortSelect = document.getElementById('sort-select');
+                    const sortValue = sortSelect ? sortSelect.value : '';
+                    let fetchUrl = `{{ route('website.category.show', $category->id) }}`;
+                    if (sortValue) fetchUrl += `?sort=${sortValue}`;
+                    
+                    fetch(fetchUrl, {
                         headers: {
                             'X-Requested-With': 'XMLHttpRequest'
                         }
@@ -221,8 +223,7 @@
                     .then(html => {
                         providersTabsContent.innerHTML = html;
                         providersTabsContent.style.opacity = '1';
-                        // Re-activate current tab logic if needed, but here we just update content
-                        providersTitle.textContent = `شركات ${title}`;
+                        providersTitle.innerHTML = `شركات <span id="activeSubLabel">${title}</span>`;
                     });
                 });
             }
@@ -315,7 +316,12 @@
                         // Show loading state
                         providersTabsContent.style.opacity = '0.5';
                         
-                        fetch(`{{ route('website.category.show', $category->id) }}?sub_category_id=${selectedSubCategoryId}`, {
+                        const sortSelect = document.getElementById('sort-select');
+                        const sortValue = sortSelect ? sortSelect.value : '';
+                        let fetchUrl = `{{ route('website.category.show', $category->id) }}?sub_category_id=${selectedSubCategoryId}`;
+                        if (sortValue) fetchUrl += `&sort=${sortValue}`;
+                        
+                        fetch(fetchUrl, {
                             headers: {
                                 'X-Requested-With': 'XMLHttpRequest'
                             }
@@ -324,7 +330,7 @@
                         .then(html => {
                             providersTabsContent.innerHTML = html;
                             providersTabsContent.style.opacity = '1';
-                            providersTitle.textContent = `{{ __('website.companies_and_institutions') }} {{ __('website.for') }} ${title}`;
+                            providersTitle.innerHTML = `شركات <span id="activeSubLabel">${title}</span>`;
                         })
                         .catch(error => {
                             console.error('Error fetching providers:', error);
@@ -353,6 +359,33 @@
                 featuredBg.style.transition = 'opacity 0.3s ease';
             }
 
+            // Handle Sorting Dropdown Change (Using jQuery to support select2/nice-select if used)
+            $('#sort-select').on('change', function() {
+                const sortValue = $(this).val();
+                let fetchUrl = `{{ route('website.category.show', $category->id) }}?sort=${sortValue}`;
+                if(selectedSubCategoryId) {
+                    fetchUrl += `&sub_category_id=${selectedSubCategoryId}`;
+                }
+
+                const providersTabsContent = document.getElementById('providerTabsContent');
+                providersTabsContent.style.opacity = '0.5';
+                    
+                    fetch(fetchUrl, {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.text())
+                    .then(html => {
+                        providersTabsContent.innerHTML = html;
+                        providersTabsContent.style.opacity = '1';
+                    })
+                    .catch(error => {
+                        console.error('Error fetching providers:', error);
+                        providersTabsContent.style.opacity = '1';
+                    });
+                });
+            });
 
         });
     </script>

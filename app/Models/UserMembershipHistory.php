@@ -1,18 +1,13 @@
 <?php
-
 namespace App\Models;
-
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Auditable as AuditableTrait;
 use OwenIt\Auditing\Contracts\Auditable;
-
 class UserMembershipHistory extends Model implements Auditable
 {
     use HasFactory, AuditableTrait;
-
     protected $table = 'user_membership_history';
-
     protected $fillable = [
         'user_id',
         'membership_id',
@@ -22,54 +17,31 @@ class UserMembershipHistory extends Model implements Auditable
         'status',
         'notes',
     ];
-
     protected $casts = [
         'started_at' => 'datetime',
         'expires_at' => 'datetime',
         'price_paid' => 'decimal:2',
     ];
-
-    // حالات العضوية
     const STATUS_ACTIVE = 'active';
     const STATUS_EXPIRED = 'expired';
     const STATUS_CANCELLED = 'cancelled';
-
-    /**
-     * المستخدم
-     */
     public function user()
     {
         return $this->belongsTo(User::class);
     }
-
-    /**
-     * العضوية
-     */
     public function membership()
     {
         return $this->belongsTo(Membership::class);
     }
-
-    /**
-     * التحقق من انتهاء العضوية
-     */
     public function isExpired(): bool
     {
         return now()->isAfter($this->expires_at);
     }
-
-    /**
-     * Scope للعضويات النشطة
-     */
     public function scopeActive($query)
     {
         return $query->where('status', self::STATUS_ACTIVE)
             ->where('expires_at', '>', now());
     }
-
-    /**
-     * Scope للعضويات المنتهية
-     */
     public function scopeExpired($query)
     {
         return $query->where(function ($q) {

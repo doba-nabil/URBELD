@@ -11,6 +11,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use App\Models\Category;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\NewMemberNotification;
+use App\Models\CompanyClassification;
 
 class RegisteredUserController extends Controller
 {
@@ -19,8 +23,8 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        $companyClassifications = \App\Models\CompanyClassification::where('type', 'company')->get();
-        $supplierVolumes = \App\Models\CompanyClassification::where('type', 'supplier')->get();
+        $companyClassifications = CompanyClassification::where('type', 'company')->get();
+        $supplierVolumes = CompanyClassification::where('type', 'supplier')->get();
         return view('website.auth.register', compact('companyClassifications', 'supplierVolumes'));
     }
 
@@ -88,7 +92,7 @@ class RegisteredUserController extends Controller
         // Notify Admins about new registration
         $admins = User::where('is_admin', true)->get();
         if ($admins->count() > 0) {
-            \Illuminate\Support\Facades\Notification::send($admins, new \App\Notifications\NewMemberNotification($user));
+            Notification::send($admins, new NewMemberNotification($user));
         }
 
         // Store email in session for OTP verification

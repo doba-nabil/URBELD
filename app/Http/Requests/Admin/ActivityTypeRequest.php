@@ -1,16 +1,12 @@
 <?php
-
 namespace App\Http\Requests\Admin;
-
 use Illuminate\Foundation\Http\FormRequest;
-
 class ActivityTypeRequest extends FormRequest
 {
     public function authorize(): bool
     {
         return true;
     }
-
     public function rules(): array
     {
         $rules = [
@@ -20,12 +16,9 @@ class ActivityTypeRequest extends FormRequest
             'is_active' => ['nullable', 'boolean'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
         ];
-
-        // إضافة قواعد اللغة الإنجليزية فقط إذا كانت مفعلة
         if (count(\LaravelLocalization::getSupportedLocales()) > 1 && isset(\LaravelLocalization::getSupportedLocales()['en'])) {
             $rules['name.en'] = ['nullable', 'string', 'max:255'];
         }
-
         return $rules;
     }
 }

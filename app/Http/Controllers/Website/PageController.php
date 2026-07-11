@@ -28,6 +28,7 @@ class PageController extends Controller
     public function storeContact(Request $request)
     {
         $request->validate([
+            'type' => 'required|in:inquiry,help,other',
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'phone' => 'nullable|string|max:20',

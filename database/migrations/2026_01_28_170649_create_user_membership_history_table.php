@@ -1,9 +1,7 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-
 return new class extends Migration
 {
     /**
@@ -15,13 +13,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('membership_id')->constrained('memberships')->cascadeOnDelete();
-            $table->timestamp('started_at'); // تاريخ بداية العضوية
-            $table->timestamp('expires_at'); // تاريخ انتهاء العضوية
-            $table->decimal('price_paid', 10, 2)->default(0); // السعر المدفوع
+            $table->timestamp('started_at');
+            $table->timestamp('expires_at');
+            $table->decimal('price_paid', 10, 2)->default(0);
             $table->enum('status', ['active', 'expired', 'cancelled'])->default('active');
-            $table->text('notes')->nullable(); // ملاحظات
+            $table->text('notes')->nullable();
             $table->timestamps();
-            
             // Indexes
             $table->index('user_id');
             $table->index('membership_id');
@@ -29,7 +26,6 @@ return new class extends Migration
             $table->index('expires_at');
         });
     }
-
     /**
      * Reverse the migrations.
      */

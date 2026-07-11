@@ -9,7 +9,6 @@
                 <div class="swiper-container swiper-container-horizontal swiper swiper-card-advance-bg"
                     id="swiper-with-pagination-cards">
                     <div class="swiper-wrapper">
-                        <!-- إحصائيات الطلبات -->
                         <div class="swiper-slide">
                             <div class="row">
                                 <div class="col-12">
@@ -54,8 +53,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- إحصائيات المستخدمين -->
                         <div class="swiper-slide">
                             <div class="row">
                                 <div class="col-12">
@@ -100,8 +97,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- إحصائيات الموردين -->
                         <div class="swiper-slide">
                             <div class="row">
                                 <div class="col-12">
@@ -141,7 +136,6 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- إحصائيات المناقصات -->
                         <div class="swiper-slide">
                             <div class="row">
                                 <div class="col-12">
@@ -186,8 +180,6 @@
                 </div>
             </div>
             <!--/ Website Analytics -->
-
-            <!-- عمليات الطلبات الشهرية -->
             <div class="col-xl-3 col-sm-6">
                 <div class="card h-100">
                     <div class="card-header pb-0">
@@ -207,9 +199,6 @@
                     </div>
                 </div>
             </div>
-            <!--/ عمليات الطلبات الشهرية -->
-
-            <!-- الطلبات والردود -->
             <div class="col-xl-3 col-sm-6">
                 <div class="card h-100">
                     <div class="card-header">
@@ -261,11 +250,8 @@
                     </div>
                 </div>
             </div>
-            <!--/ الطلبات والردود -->
-
             <div class="col-12">
                 <div class="row">
-                    <!-- إحصائيات الطلبات -->
                     <div class="col-xl-4 col-sm-12">
                         <div class="card h-100 px-3">
                             <div class="card-header pb-0">
@@ -291,9 +277,6 @@
                             </div>
                         </div>
                     </div>
-                    <!--/ إحصائيات الطلبات -->
-
-                    <!-- إحصائيات المستخدمين -->
                     <div class="col-xl-4 col-sm-12">
                         <div class="card h-100 px-3">
                             <div class="card-header pb-0">
@@ -324,9 +307,6 @@
                             </div>
                         </div>
                     </div>
-                    <!--/ إحصائيات المستخدمين -->
-
-                    <!-- إحصائيات الزوار -->
                     <div class="col-xl-4 col-sm-12">
                         <div class="card h-100 px-3">
                             <div class="card-header pb-0">
@@ -349,14 +329,10 @@
                             </div>
                         </div>
                     </div>
-                    <!--/ إحصائيات الزوار -->
-
                 </div>
             </div>
-
             <div class="col-12">
                 <div class="row">
-                    <!-- إحصائيات الردود -->
                     <div class="col-xl-6 col-sm-6">
                         <div class="card h-100 px-3">
                             <div class="card-header pb-0">
@@ -383,9 +359,6 @@
                             </div>
                         </div>
                     </div>
-                    <!--/ إحصائيات الردود -->
-
-                    <!-- إحصائيات الإيرادات -->
                     <div class="col-xl-6 col-sm-6">
                         <div class="card h-100 px-3">
                             <div class="card-header pb-0">
@@ -408,11 +381,8 @@
                             </div>
                         </div>
                     </div>
-                    <!--/ إحصائيات الإيرادات -->
                 </div>
             </div>
-
-            <!-- تقارير الطلبات -->
             <div class="col-md-6">
                 <div class="card h-100">
                     <div class="card-header pb-0 d-flex justify-content-between">
@@ -479,14 +449,9 @@
                     </div>
                 </div>
             </div>
-            <!--/ تقارير الطلبات -->
-
-            <!-- سجل النشاطات الحديثة -->
             <div class="col-12 col-md-6">
                 @include('dashboard.partials.activity_timeline')
             </div>
-            <!--/ سجل النشاطات الحديثة -->
-
             <!-- Recent Requests & Top Providers -->
             <div class="col-xl-6">
                 <div class="card">
@@ -598,7 +563,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- Charts Section -->
             <div class="row g-4 mb-4">
                 <!-- Requests by Category Chart -->
@@ -624,7 +588,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- Users Distribution Chart -->
             <div class="row g-4 mb-4">
                 <div class="col-xl-6">
@@ -649,7 +612,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- Requests Status Timeline Chart -->
             <div class="row g-4">
                 <div class="col-12">
@@ -679,7 +641,6 @@
         window.totalRequests = {{ $totalRequests }};
         window.completedRequests = {{ $completedRequests }};
         window.completedRequestsLabel = '{{ __('admin.completed') }}';
-        
         document.addEventListener('DOMContentLoaded', function() {
             // Color Variables
             const primaryColor = '#014D40',
@@ -690,7 +651,6 @@
                 infoColor = '#00CFE8',
                 purpleColor = '#836AF9',
                 cyanColor = '#28dac6';
-
             // Get CSS Variables
             let cardColor, headingColor, labelColor, borderColor, legendColor;
             if (typeof isDarkStyle !== 'undefined' && isDarkStyle) {
@@ -706,7 +666,6 @@
                 legendColor = '#6f6b7d';
                 borderColor = '#e7e7e7';
             }
-
             // Requests by Category Chart (Doughnut)
             const categoryChartEl = document.getElementById('requestsByCategoryChart');
             if (categoryChartEl) {
@@ -724,7 +683,6 @@
                     return '-';
                 });
                 const categoryValues = categoryData.map(item => item.total);
-                
                 new Chart(categoryChartEl, {
                     type: 'doughnut',
                     data: {
@@ -759,7 +717,6 @@
                     }
                 });
             }
-
             // Requests by Status Chart (Bar)
             const statusChartEl = document.getElementById('requestsByStatusChart');
             if (statusChartEl) {
@@ -778,7 +735,6 @@
                     return statusMap[item.status] || item.status;
                 });
                 const statusValues = statusData.map(item => item.total);
-                
                 new Chart(statusChartEl, {
                     type: 'bar',
                     data: {
@@ -835,7 +791,6 @@
                     }
                 });
             }
-
             // Users Distribution Chart (Pie)
             const usersChartEl = document.getElementById('usersDistributionChart');
             if (usersChartEl) {
@@ -876,7 +831,6 @@
                     }
                 });
             }
-
             // Providers Chart (Doughnut)
             const providersChartEl = document.getElementById('providersChart');
             if (providersChartEl) {
@@ -917,7 +871,6 @@
                     }
                 });
             }
-
             // Requests Status Chart (Line)
             const requestsStatusChartEl = document.getElementById('requestsStatusChart');
             if (requestsStatusChartEl) {
@@ -1006,7 +959,6 @@
                 const trendData = window.last30DaysRequestsData;
                 const trendLabels = trendData.map(item => item.date);
                 const trendValues = trendData.map(item => item.count);
-
                 new Chart(requests30DaysChartEl, {
                     type: 'line',
                     data: {

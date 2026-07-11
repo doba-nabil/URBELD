@@ -21,10 +21,17 @@ class CityRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'name' => ['required', 'array'],
             'name.ar' => ['required', 'string', 'max:255'],
-            'country_id' => ['required', 'exists:countries,id'],
+            'country_id' => ['nullable', 'exists:countries,id'],
+            'region_id' => ['nullable', 'exists:regions,id'],
         ];
+
+        if (count(\LaravelLocalization::getSupportedLocales()) > 1 && isset(\LaravelLocalization::getSupportedLocales()['en'])) {
+            $rules['name.en'] = ['nullable', 'string', 'max:255'];
+        }
+
+        return $rules;
     }
 }

@@ -1,9 +1,7 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-
 return new class extends Migration
 {
     /**
@@ -14,22 +12,18 @@ return new class extends Migration
         Schema::create('ratings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('service_request_id')->constrained('service_requests')->cascadeOnDelete();
-            $table->foreignId('rater_id')->constrained('users')->cascadeOnDelete(); // من قام بالتقييم
-            $table->foreignId('rated_id')->constrained('users')->cascadeOnDelete(); // من تم تقييمه
-            $table->tinyInteger('rating')->unsigned(); // من 1 إلى 5
-            $table->text('comment')->nullable(); // نص التقييم
+            $table->foreignId('rater_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('rated_id')->constrained('users')->cascadeOnDelete();
+            $table->tinyInteger('rating')->unsigned();
+            $table->text('comment')->nullable();
             $table->timestamps();
-            
             // Indexes
             $table->index('service_request_id');
             $table->index('rater_id');
             $table->index('rated_id');
-            
-            // منع التقييم المتكرر من نفس المستخدم لنفس الطلب
             $table->unique(['service_request_id', 'rater_id', 'rated_id']);
         });
     }
-
     /**
      * Reverse the migrations.
      */

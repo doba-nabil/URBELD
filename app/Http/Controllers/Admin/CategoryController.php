@@ -48,13 +48,18 @@ class CategoryController extends Controller
     public function update(CategoryRequest $request, $id)
     {
         $category = $this->categoryService->getById($id);
-        $this->categoryService->update($category, $request->validated(), $request->file('image'));
+        $data = $request->validated();
+        $imageFile = $request->file('image');
+        $this->categoryService->update($category, $data, $imageFile);
         return redirect()->route('categories.index')->with('success', __('admin.update_success'));
     }
 
     public function destroy($id)
     {
         try {
+            $category = $this->categoryService->getById($id);
+
+
             $this->categoryService->delete($id);
 
             return response()->json([

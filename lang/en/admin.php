@@ -29,6 +29,11 @@ return [
     'pages' => ' Site Pages',
     'locations' => ' Location',
     'countries' => ' Countries',
+    'regions' => ' Regions',
+    'region' => ' Region',
+    'create_region' => 'Add Region',
+    'add_region' => 'Add Region',
+    'choose_region' => 'Choose Region',
     'states' => ' States',
     'cities' => ' Cities',
     'currencies' => ' Currencies',
@@ -124,6 +129,11 @@ return [
     'request_completed_ratings_added' => 'Request completed and ratings added',
     'success' => 'Success',
     'error' => 'Error',
+
+    // Bulk Request
+    'bulk_request_title' => 'Bulk Request Title',
+    'bulk_request_subtitle' => 'Bulk Request Subtitle',
+    'bulk_request_button_text' => 'Bulk Request Button Text',
 
     // Middleware Messages
     'provider_under_review' => 'Your membership is currently under review. You cannot receive service requests yet, but you can request services as a user.',
@@ -1137,6 +1147,10 @@ return [
     'total_suppliers' => 'Total Suppliers',
     'total_products' => 'Total Products',
     'total_supplier_offers' => 'Total Supplier Offers',
+    'supports_tenders' => 'Supports Tenders?',
+    'supports_supply_requests' => 'Supports Supply Requests?',
+    'show_in_home' => 'Show in Home (Main Category)',
+    'is_full_width' => 'Full Width in Home?',
+    'sort_order' => 'Display Order',
+    'supply_requests' => 'Supply Requests',
 ];
-
-

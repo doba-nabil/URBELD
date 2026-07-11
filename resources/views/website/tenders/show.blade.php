@@ -124,6 +124,78 @@
       @endif
 
     </div>
+
+      <!-- APPLICATIONS (FOR OWNER ONLY) -->
+      @if(auth()->check() && auth()->id() === $tender->user_id)
+      <div class="section mt-4">
+        <div class="section-title"><i class="bi bi-people-fill text-primary"></i> {{ __('website.applications') ?? 'عروض الموردين' }}</div>
+        
+        @if($tender->applications && $tender->applications->count() > 0)
+            <div class="row">
+                @foreach($tender->applications as $app)
+                    @php
+                        $isAwarded = ($tender->awarded_provider_id === $app->user_id);
+                        $isHidden = ($tender->awarded_provider_id && !$isAwarded);
+                    @endphp
+                    @if(!$isHidden)
+                    <div class="col-md-6 mb-3">
+                        <div class="card shadow-sm border-{{ $isAwarded ? 'success' : 'light' }}">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="me-3">
+                                        @if($app->user && $app->user->hasMedia('profile_image'))
+                                            <img src="{{ $app->user->getFirstMediaUrl('profile_image') }}" alt="" style="width:50px;height:50px;border-radius:50%;object-fit:cover;">
+                                        @else
+                                            <div style="width:50px;height:50px;border-radius:50%;background:#e5e7eb;display:flex;align-items:center;justify-content:center;font-weight:bold;color:#6b7280;">
+                                                {{ mb_substr($app->user->name ?? 'م', 0, 1) }}
+                                            </div>
+                                        @endif
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0 fw-bold"><a href="{{ route('member.public', $app->user->id) }}" class="text-dark text-decoration-none">{{ $app->user->name }}</a></h6>
+                                        <small class="text-muted"><i class="bi bi-geo-alt-fill"></i> {{ $app->user->city ? $app->user->city->name : __('tenders.not_specified') }}</small>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <strong>{{ __('website.proposed_price') ?? 'السعر المقترح:' }}</strong> <span class="text-success fw-bold">{{ number_format($app->proposed_price) }} {{ __('tenders.sar') }}</span><br>
+                                    <strong>{{ __('website.execution_time') ?? 'مدة التنفيذ:' }}</strong> {{ $app->execution_time }} {{ __('website.days') ?? 'أيام' }}
+                                </div>
+                                @if($app->notes)
+                                    <p class="text-muted small border p-2 rounded bg-light">{{ $app->notes }}</p>
+                                @endif
+                                
+                                @if($tender->status === \App\Models\Tender::STATUS_PENDING_REVIEW || $tender->status === \App\Models\Tender::STATUS_ACTIVE)
+                                    <form action="{{ route('website.tenders.acceptApplication', ['id' => $tender->id, 'applicationId' => $app->id]) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="btn btn-success w-100 mt-2"><i class="bi bi-check-circle"></i> {{ __('website.accept_offer') ?? 'قبول العرض' }}</button>
+                                    </form>
+                                @elseif($isAwarded)
+                                    <div class="alert alert-success p-2 text-center mb-0 mt-2">
+                                        <i class="bi bi-star-fill text-warning"></i> {{ __('website.offer_accepted') ?? 'العرض المقبول' }}
+                                    </div>
+                                    @if($tender->status === \App\Models\Tender::STATUS_IN_PROGRESS)
+                                        <form action="{{ route('website.tenders.completeWork', $tender->id) }}" method="POST" class="mt-2">
+                                            @csrf
+                                            <button type="submit" class="btn btn-primary w-100"><i class="bi bi-flag-fill"></i> {{ __('website.mark_as_completed') ?? 'تأكيد إنتهاء العمل' }}</button>
+                                        </form>
+                                    @elseif($tender->status === \App\Models\Tender::STATUS_COMPLETED)
+                                        <button type="button" class="btn btn-warning w-100 mt-2" data-bs-toggle="modal" data-bs-target="#ratingModal">
+                                            <i class="bi bi-star"></i> {{ __('website.rate_provider') ?? 'تقييم المورد' }}
+                                        </button>
+                                    @endif
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+                @endforeach
+            </div>
+        @else
+            <p class="text-muted">{{ __('website.no_applications_yet') ?? 'لا يوجد عروض حتى الآن.' }}</p>
+        @endif
+      </div>
+      @endif
+
   </div>
 
   <!-- SIDEBAR -->
@@ -222,7 +294,46 @@
     </div>
 
   </div>
+    </div>
+  </div>
 </div>
+
+<!-- Rating Modal -->
+@if($tender->status === \App\Models\Tender::STATUS_COMPLETED && auth()->check() && auth()->id() === $tender->user_id)
+<div class="modal fade" id="ratingModal" tabindex="-1" aria-labelledby="ratingModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <form action="{{ route('website.tenders.rate', $tender->id) }}" method="POST">
+        @csrf
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold" id="ratingModalLabel"><i class="bi bi-star-fill text-warning"></i> {{ __('website.rate_provider') ?? 'تقييم المورد' }}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="mb-3 text-center">
+                <label class="form-label d-block fw-bold">{{ __('website.select_rating') ?? 'اختر التقييم (من 1 إلى 5):' }}</label>
+                <div class="d-flex justify-content-center gap-3 rating-stars" style="direction:ltr;">
+                    <input type="radio" name="score" value="1" id="star1" required> <label for="star1" class="text-warning fs-3"><i class="bi bi-star-fill"></i></label>
+                    <input type="radio" name="score" value="2" id="star2"> <label for="star2" class="text-warning fs-3"><i class="bi bi-star-fill"></i></label>
+                    <input type="radio" name="score" value="3" id="star3"> <label for="star3" class="text-warning fs-3"><i class="bi bi-star-fill"></i></label>
+                    <input type="radio" name="score" value="4" id="star4"> <label for="star4" class="text-warning fs-3"><i class="bi bi-star-fill"></i></label>
+                    <input type="radio" name="score" value="5" id="star5"> <label for="star5" class="text-warning fs-3"><i class="bi bi-star-fill"></i></label>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="comment" class="form-label fw-bold">{{ __('website.rating_comment') ?? 'تعليق (اختياري):' }}</label>
+                <textarea class="form-control" name="comment" id="comment" rows="3"></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('website.cancel') ?? 'إلغاء' }}</button>
+          <button type="submit" class="btn btn-primary">{{ __('website.submit_rating') ?? 'إرسال التقييم' }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+@endif
 
 @endsection
 

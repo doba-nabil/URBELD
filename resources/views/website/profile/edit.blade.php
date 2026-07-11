@@ -127,6 +127,14 @@
                             <input type="text" class="form-control" id="phone" name="phone" value="{{ auth()->user()->phone }}">
                         </div>
                         <div class="mb-3">
+                            <label for="contact_type" class="form-label">{{ __('website.contact_type') ?? 'نوع الرسالة' }}</label>
+                            <select class="form-select" id="contact_type" name="type" required>
+                                <option value="inquiry">{{ __('website.inquiry') ?? 'استفسار' }}</option>
+                                <option value="help">{{ __('website.help') ?? 'مساعدة' }}</option>
+                                <option value="other">{{ __('website.other') ?? 'أخرى' }}</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
                             <label for="message" class="form-label">{{ __('website.message_or_inquiry') ?? 'الرسالة أو الاستفسار' }} <span class="text-danger">*</span></label>
                             <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
                         </div>

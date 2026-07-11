@@ -57,7 +57,7 @@
                 <h3 class="fw-bold mb-0 text-dark">المنتجات</h3>
                 <div>
                     <a href="{{ route('profile.edit') }}" class="text-decoration-none text-muted small fw-bold me-3">
-                        العودة للوحة الرئيسية <i class="bi bi-arrow-left ms-1"></i>
+                        العودة للوحة التحكم <i class="bi bi-arrow-left ms-1"></i>
                     </a>
                     <a href="{{ route('supplier.products.create') }}" class="btn btn-primary rounded-pill px-4 shadow-sm fw-bold">
                         <i class="fas fa-plus me-2"></i> إضافة منتج
