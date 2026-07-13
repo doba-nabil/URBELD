@@ -102,7 +102,13 @@ class MembershipController extends Controller
         if (!$provider && !$membership) {
             abort(404);
         }
-        $categories = \App\Models\Category::whereNull('parent_id')->get();
+        $categoriesQuery = \App\Models\Category::whereNull('parent_id');
+        if ($provider->provider_type === 'supplier') {
+            $categoriesQuery->where('supports_supply_requests', true);
+        } else {
+            $categoriesQuery->where('supports_supply_requests', false);
+        }
+        $categories = $categoriesQuery->get();
         $countries = \App\Models\Country::all();
         $cities = $provider->city ? \App\Models\City::where('country_id', $provider->city->country_id)->get() : [];
         $packages = \App\Models\SubscriptionPackage::active()->ordered()->get();

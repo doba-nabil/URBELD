@@ -173,14 +173,14 @@
             <small class="text-muted d-block mt-1">عند التفعيل، سيظهر هذا التصنيف للموردين فقط في الموقع والتطبيق.</small>
         </div>
 
-        <div class="form-check form-switch">
+        <div class="form-check form-switch" id="full-width-container">
             <input class="form-check-input" type="checkbox" name="is_full_width" value="1"
                    id="is_full_width"
                 {{ old('is_full_width', $isEdit ? $category->is_full_width : 0) ? 'checked' : '' }}>
             <label class="form-check-label" for="is_full_width">{{ __('admin.is_full_width') }}</label>
         </div>
 
-        <div>
+        <div id="sort-order-container">
             <label class="form-label">{{ __('admin.sort_order') }}</label>
             <input type="number" name="sort_order" class="form-control"
                    value="{{ old('sort_order', $isEdit ? $category->sort_order : 0) }}">
@@ -194,6 +194,10 @@
         const homeSettingsContainer = document.getElementById('home-settings-container');
         const subSettingsContainer = document.getElementById('sub-settings-container');
         const bulkRequestFields = document.querySelectorAll('.bulk-request-field');
+        
+        const supportsSupplyRequestsCheckbox = document.getElementById('supports_supply_requests');
+        const fullWidthContainer = document.getElementById('full-width-container');
+        const sortOrderContainer = document.getElementById('sort-order-container');
         
         function toggleCategorySettings() {
             if(parentSelectElement) {
@@ -227,9 +231,26 @@
             }
         }
         
+        function toggleSupplyRequestSettings() {
+            if(supportsSupplyRequestsCheckbox) {
+                if(supportsSupplyRequestsCheckbox.checked) {
+                    if(fullWidthContainer) fullWidthContainer.classList.add('d-none');
+                    if(sortOrderContainer) sortOrderContainer.classList.add('d-none');
+                } else {
+                    if(fullWidthContainer) fullWidthContainer.classList.remove('d-none');
+                    if(sortOrderContainer) sortOrderContainer.classList.remove('d-none');
+                }
+            }
+        }
+        
         if(parentSelectElement) {
             parentSelectElement.addEventListener('change', toggleCategorySettings);
             toggleCategorySettings();
+        }
+        
+        if(supportsSupplyRequestsCheckbox) {
+            supportsSupplyRequestsCheckbox.addEventListener('change', toggleSupplyRequestSettings);
+            toggleSupplyRequestSettings();
         }
     });
 </script>
