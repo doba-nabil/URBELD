@@ -2,6 +2,8 @@
 
 return [
     'home' => 'الصفحة الرئيسية',
+    'suppliers_card_section' => 'قسم بطاقة شركات التوريد',
+    'show_section' => 'إظهار القسم',
     'English' => 'الانجليزية',
     'Arabic' => 'العربية',
     'name' => 'الاسم',

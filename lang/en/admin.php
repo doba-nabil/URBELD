@@ -2,6 +2,8 @@
 
 return [
     'home' => 'HomePage',
+    'suppliers_card_section' => 'Suppliers Card Section',
+    'show_section' => 'Show Section',
 
     'English' => 'English',
     'Arabic' => 'Arabic',

@@ -291,9 +291,12 @@
             </li>
         @endif
 
-
-
-
+        <li class="menu-item {{ request()->is('*landing-page*') ? 'active open' : '' }}">
+            <a href="{{ url('admin-panel/landing-page') }}" class="menu-link">
+                <i class="menu-icon icon-base ti tabler-layout-board"></i>
+                <div>{{ __('admin.landing_page') ?? 'صفحة الهبوط' }}</div>
+            </a>
+        </li>
         @if(auth('admin')->user()->can('faqs.index'))
             <li class="menu-item {{ request()->is('*faqs*') ? 'active open' : '' }}">
                 <a href="{{ route('faqs.index') }}" class="menu-link">

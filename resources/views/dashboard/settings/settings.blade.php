@@ -344,181 +344,19 @@
                                             <textarea name="home_hero_desc[en]" class="form-control" rows="2">{{ \App\Models\Setting::getValue('home_hero_desc', 'en') }}</textarea>
                                         </div>
                                         <div class="col-md-6">
-                                            <label class="form-label">{{ __('admin.hero_image') }}</label>
-                                            <input type="file" name="home_hero_image" class="form-control" accept="image/*" onchange="previewBgFile(this, 'home-hero-preview')">
+                                            <label class="form-label">{{ __('admin.hero_image') }} أو فيديو</label>
+                                            <input type="file" name="home_hero_image" class="form-control" accept="image/*,video/*" onchange="previewBgFile(this, 'home-hero-preview')">
+                                            <small class="text-muted d-block mt-1">يمكنك رفع صورة أو فيديو. في حال رفع فيديو سيتم إخفاء الصورة وعرض الفيديو.</small>
                                             @if(!empty($homeHeroImageUrl))
                                                 <div id="home-hero-preview" class="mt-2">
-                                                    <img src="{{ $homeHeroImageUrl }}" alt="Hero Image" style="max-height:100px;border-radius:4px;object-fit:contain;">
+                                                    @if (Str::endsWith($homeHeroImageUrl, ['.mp4', '.mov', '.ogg', '.qt', '.webm']))
+                                                        <video src="{{ $homeHeroImageUrl }}" controls style="max-height:100px;border-radius:4px;"></video>
+                                                    @else
+                                                        <img src="{{ $homeHeroImageUrl }}" alt="Hero Image" style="max-height:100px;border-radius:4px;object-fit:contain;">
+                                                    @endif
                                                 </div>
                                             @else
                                                 <div id="home-hero-preview" class="mt-2" style="display:none;"></div>
-                                            @endif
-                                        </div>
-                                    </div>
-
-                                    <!-- Slider Section (About) -->
-                                    <h5 class="mb-3 text-primary">{{ __('admin.slider_section') }}</h5>
-                                    <div class="row">
-                                        <div class="col-12 mt-3">
-                                            <label class="form-label">{{ __('admin.slides') }}</label>
-                                            <div id="aboutSlidesWrapper">
-                                                @php
-                                                    $aboutList = json_decode(
-                                                        \App\Models\Setting::getValue('home_about_list', 'ar', '[]'),
-                                                        true,
-                                                    );
-                                                    if (empty($aboutList)) {
-                                                        $aboutList = [
-                                                            [
-                                                                'title' => 'المكان الأول للعثور على العقار المثالي',
-                                                                'description' =>
-                                                                    'نحن نساعدك في العثور على منزل أحلامك من خلال خدماتنا المتميزة. نوفر لك مجموعة واسعة من الخيارات العقارية التي تناسب احتياجاتك وميزانيتك. نلتزم بتقديم أفضل تجربة عقارية لعملائنا',
-                                                                'points' =>
-                                                                    "خدمات عقارية متكاملة\nفريق محترف وخبير\nأفضل الأسعار والعروض",
-                                                                'image' => '',
-                                                            ],
-                                                        ];
-                                                    }
-                                                @endphp
-                                                @foreach ($aboutList as $index => $item)
-                                                    <div class="p-3 border rounded mb-3 bg-light position-relative about-slide-row">
-                                                        <button type="button"
-                                                            class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2 remove-about-slide"
-                                                            style="width: auto;">X</button>
-                                                        <h6 class="slide-title-label">{{ __('admin.slide') }}</h6>
-                                                        <div class="row g-3">
-                                                            <div class="col-md-6 mb-2">
-                                                                <label class="form-label">{{ __('admin.slide_title_ar') }}</label>
-                                                                <input type="text"
-                                                                    name="home_about_list[{{ $index }}][title][ar]"
-                                                                    class="form-control" placeholder="{{ __('admin.slide_title_placeholder') }}"
-                                                                    value="{{ is_string($item['title']['ar'] ?? null) ? $item['title']['ar'] : (is_string($item['title'] ?? null) ? $item['title'] : '') }}" required>
-                                                            </div>
-                                                            <div class="col-md-6 mb-2">
-                                                                <label class="form-label">{{ __('admin.slide_title_en') }}</label>
-                                                                <input type="text"
-                                                                    name="home_about_list[{{ $index }}][title][en]"
-                                                                    class="form-control" placeholder="Slide Title"
-                                                                    value="{{ is_string($item['title']['en'] ?? null) ? $item['title']['en'] : '' }}" required>
-                                                            </div>
-                                                            <div class="col-md-12 mb-2">
-                                                                <label class="form-label">{{ __('admin.slide_image') }}</label>
-                                                                <input type="file" name="home_about_list[{{ $index }}][image]" class="form-control" accept="image/*" onchange="previewBgFile(this, 'about-preview-{{ $index }}')">
-                                                                @php
-                                                                    $slideImage = $item['image'] ?? (\App\Models\Setting::getMediaUrl('home_about_image_' . $index) ? \App\Models\Setting::getMediaUrl('home_about_image_' . $index) : '');
-                                                                @endphp
-                                                                @if(!empty($slideImage))
-                                                                    <div id="about-preview-{{ $index }}" class="mt-2">
-                                                                        <img src="{{ $slideImage }}" alt="Slide Image" style="max-height:80px;border-radius:4px;object-fit:contain;">
-                                                                    </div>
-                                                                @else
-                                                                    <div id="about-preview-{{ $index }}" class="mt-2" style="display:none;"></div>
-                                                                @endif
-                                                                <input type="hidden" name="home_about_list[{{ $index }}][old_image]" value="{{ $item['image'] ?? '' }}">
-                                                            </div>
-                                                            <div class="col-md-6 mb-2">
-                                                                <label class="form-label">{{ __('admin.slide_desc_ar') }}</label>
-                                                                <input type="text"
-                                                                    name="home_about_list[{{ $index }}][description][ar]"
-                                                                    class="form-control" placeholder="{{ __('admin.slide_desc_placeholder') }}"
-                                                                    value="{{ is_string($item['description']['ar'] ?? null) ? $item['description']['ar'] : (is_string($item['description'] ?? null) ? $item['description'] : '') }}" required>
-                                                            </div>
-                                                            <div class="col-md-6 mb-2">
-                                                                <label class="form-label">{{ __('admin.slide_desc_en') }}</label>
-                                                                <input type="text"
-                                                                    name="home_about_list[{{ $index }}][description][en]"
-                                                                    class="form-control" placeholder="Slide Description"
-                                                                    value="{{ is_string($item['description']['en'] ?? null) ? $item['description']['en'] : '' }}" required>
-                                                            </div>
-                                                            <div class="col-md-6 mb-2">
-                                                                <label class="form-label">{{ __('admin.btn_text_ar') }}</label>
-                                                                <input type="text"
-                                                                    name="home_about_list[{{ $index }}][btn_text][ar]"
-                                                                    class="form-control" placeholder="اعرض الخدمات"
-                                                                    value="{{ is_string($item['btn_text']['ar'] ?? null) ? $item['btn_text']['ar'] : (is_string($item['btn_text'] ?? null) ? $item['btn_text'] : '') }}">
-                                                            </div>
-                                                            <div class="col-md-6 mb-2">
-                                                                <label class="form-label">{{ __('admin.btn_text_en') }}</label>
-                                                                <input type="text"
-                                                                    name="home_about_list[{{ $index }}][btn_text][en]"
-                                                                    class="form-control" placeholder="View Services"
-                                                                    value="{{ is_string($item['btn_text']['en'] ?? null) ? $item['btn_text']['en'] : '' }}">
-                                                            </div>
-                                                            <div class="col-md-6 mb-2">
-                                                                <label class="form-label">{{ __('admin.btn_link') }}</label>
-                                                                <input type="text"
-                                                                    name="home_about_list[{{ $index }}][btn_link]"
-                                                                    class="form-control" placeholder="رابط الزر"
-                                                                    value="{{ $item['btn_link'] ?? '' }}">
-                                                            </div>
-                                                            <div class="col-md-6 mb-2">
-                                                                <label class="form-label text-muted small">{{ __('admin.points_hint_ar') }}</label>
-                                                                <textarea name="home_about_list[{{ $index }}][points][ar]" class="form-control" rows="3"
-                                                                    placeholder="{{ __('admin.points_placeholder_ar') }}" required>{{ is_string($item['points']['ar'] ?? null) ? $item['points']['ar'] : (is_string($item['points'] ?? null) ? $item['points'] : '') }}</textarea>
-                                                            </div>
-                                                            <div class="col-md-12 mb-2">
-                                                                <label class="form-label text-muted small">{{ __('admin.points_hint_en') }}</label>
-                                                                <textarea name="home_about_list[{{ $index }}][points][en]" class="form-control" rows="3"
-                                                                    placeholder="{{ __('admin.points_placeholder_en') }}" required>{{ is_string($item['points']['en'] ?? null) ? $item['points']['en'] : '' }}</textarea>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                @endforeach
-
-                                            </div>
-                                            <button type="button" class="btn btn-secondary mt-2"
-                                                id="addAboutSlide">{{ __('admin.add_new_slide') }}</button>
-                                        </div>
-                                    </div>
-
-                                    <!-- Video Section -->
-                                    <h6 class="text-primary mt-3 border-bottom pb-2">{{ __('admin.video_section') }}</h6>
-                                    <div class="row g-3 mb-4">
-                                        <div class="col-md-6">
-                                            <label class="form-label">{{ __('admin.small_title_ar') }}</label>
-                                            <input type="text" name="home_video_label[ar]" class="form-control"
-                                                value="{{ \App\Models\Setting::getValue('home_video_label', 'ar') }}">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label">{{ __('admin.small_title_en') }}</label>
-                                            <input type="text" name="home_video_label[en]" class="form-control"
-                                                value="{{ \App\Models\Setting::getValue('home_video_label', 'en') }}">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label">{{ __('admin.main_title_ar') }}</label>
-                                            <input type="text" name="home_video_title[ar]" class="form-control"
-                                                value="{{ \App\Models\Setting::getValue('home_video_title', 'ar') }}">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label">{{ __('admin.main_title_en') }}</label>
-                                            <input type="text" name="home_video_title[en]" class="form-control"
-                                                value="{{ \App\Models\Setting::getValue('home_video_title', 'en') }}">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label">{{ __('admin.video_url') }}</label>
-                                            <input type="url" name="home_video_url" class="form-control"
-                                                value="{{ \App\Models\Setting::getValue('home_video_url') }}">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label">{{ __('admin.or_upload_video') }}</label>
-                                            <input type="file" name="home_video" class="form-control" accept="video/*" onchange="previewBgFile(this, 'home-video-preview')">
-                                            @if(!empty($homeVideoUrl))
-                                                <div id="home-video-preview" class="mt-2">
-                                                    <video src="{{ $homeVideoUrl }}" controls style="max-height:100px;border-radius:4px;"></video>
-                                                </div>
-                                            @else
-                                                <div id="home-video-preview" class="mt-2" style="display:none;"></div>
-                                            @endif
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label">{{ __('admin.cover_image') }}</label>
-                                            <input type="file" name="home_video_cover" class="form-control" accept="image/*" onchange="previewBgFile(this, 'home-video-cover-preview')">
-                                            @if(!empty($homeVideoCoverUrl))
-                                                <div id="home-video-cover-preview" class="mt-2">
-                                                    <img src="{{ $homeVideoCoverUrl }}" alt="Video Cover" style="max-height:100px;border-radius:4px;object-fit:contain;">
-                                                </div>
-                                            @else
-                                                <div id="home-video-cover-preview" class="mt-2" style="display:none;"></div>
                                             @endif
                                         </div>
                                     </div>
