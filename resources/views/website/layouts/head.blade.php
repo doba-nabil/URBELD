@@ -46,6 +46,26 @@
             right: 20px;
             z-index: 9999;
         }
+        .custom-toast {
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            background: #fff;
+            overflow: hidden;
+        }
+        .custom-toast .toast-icon-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        .toast-success .toast-icon-wrap { background: #dcfce7; color: #22c55e; }
+        .toast-error .toast-icon-wrap { background: #fee2e2; color: #ef4444; }
+        .toast-warning .toast-icon-wrap { background: #fef3c7; color: #f59e0b; }
         .card-ribbon {
             position: absolute;
             top: 0;

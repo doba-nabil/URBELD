@@ -45,38 +45,41 @@
             <!-- Flash Messages -->
             <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 10000; margin-top: 70px;">
                 @if (session('success'))
-                    <div class="toast align-items-center text-white border-0 show mb-2 shadow-lg" role="alert"
-                        style="background-color: var(--primary, #28a745); border-radius: 10px;">
-                        <div class="d-flex justify-content-between">
-                            <div class="toast-body fw-bold">
-                                <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
+                    <div class="toast custom-toast toast-success show mb-3" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="toast-body d-flex align-items-center py-3 pe-3 ps-2">
+                            <div class="toast-icon-wrap">
+                                <i class="bi bi-check-lg"></i>
                             </div>
-                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-                                onclick="this.closest('.toast').remove()"></button>
+                            <div class="flex-grow-1 fw-bold" style="font-size: 0.95rem;">
+                                {{ session('success') }}
+                            </div>
+                            <button type="button" class="btn-close ms-2 me-auto" data-bs-dismiss="toast" aria-label="Close" onclick="this.closest('.toast').remove()"></button>
                         </div>
                     </div>
                 @endif
                 @if (session('error'))
-                    <div class="toast align-items-center text-white border-0 show mb-2 shadow-lg" role="alert"
-                        style="background-color: #dc3545; border-radius: 10px;">
-                        <div class="d-flex">
-                            <div class="toast-body fw-bold">
-                                <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ session('error') }}
+                    <div class="toast custom-toast toast-error show mb-3" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="toast-body d-flex align-items-center py-3 pe-3 ps-2">
+                            <div class="toast-icon-wrap">
+                                <i class="bi bi-exclamation-triangle"></i>
                             </div>
-                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-                                onclick="this.closest('.toast').remove()"></button>
+                            <div class="flex-grow-1 fw-bold" style="font-size: 0.95rem;">
+                                {{ session('error') }}
+                            </div>
+                            <button type="button" class="btn-close ms-2 me-auto" data-bs-dismiss="toast" aria-label="Close" onclick="this.closest('.toast').remove()"></button>
                         </div>
                     </div>
                 @endif
                 @if (session('warning'))
-                    <div class="toast align-items-center text-dark border-0 show mb-2 shadow-lg" role="alert"
-                        style="background-color: #ffc107; border-radius: 10px;">
-                        <div class="d-flex">
-                            <div class="toast-body fw-bold">
-                                <i class="bi bi-exclamation-circle-fill me-2"></i> {{ session('warning') }}
+                    <div class="toast custom-toast toast-warning show mb-3" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="toast-body d-flex align-items-center py-3 pe-3 ps-2">
+                            <div class="toast-icon-wrap">
+                                <i class="bi bi-exclamation-circle"></i>
                             </div>
-                            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"
-                                onclick="this.closest('.toast').remove()"></button>
+                            <div class="flex-grow-1 fw-bold" style="font-size: 0.95rem; color: #854d0e;">
+                                {{ session('warning') }}
+                            </div>
+                            <button type="button" class="btn-close ms-2 me-auto" data-bs-dismiss="toast" aria-label="Close" onclick="this.closest('.toast').remove()"></button>
                         </div>
                     </div>
                 @endif

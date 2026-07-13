@@ -368,12 +368,11 @@
             <div class="mb-4 border-top pt-4 ">
                 <label class="pd-label">نبذة عن المكتب/الشركة</label>
                 @if($isLocked)
-                    <div class="pd-readonly-box justify-content-end " style="min-height: 60px; font-weight: normal;">
+                    <div class="pd-readonly-box justify-content-end align-items-start" style="min-height: 80px; padding-top: 16px; font-weight: normal;">
                         {{ auth()->user()->bio ?? 'لا توجد نبذة حالياً.' }}
                     </div>
-</div>
                 @else
-                    <textarea class="pd-input-box " name="bio" rows="4" dir="rtl" style="resize: vertical;">{{ auth()->user()->bio }}</textarea>
+                    <textarea class="pd-input-box " name="bio" rows="4" dir="rtl" style="resize: vertical; min-height: 100px; padding-top: 16px; display: block;">{{ auth()->user()->bio }}</textarea>
                 @endif
             </div>
 

@@ -218,6 +218,7 @@ return [
     'premium_company' => 'Premium Company',
     'subcategories' => 'Subcategories',
     'customer_satisfaction' => 'Customer Satisfaction',
+    'default_supplier_bio' => 'Certified supplier on the platform, providing the best services and products with high quality.',
     'suppliers_hub' => 'Suppliers Hub',
     'browse_suppliers' => 'Browse the best suppliers and request quotes for your supplies with ease',
     'send_request_to_all_providers_at_once' => 'Send your request to all suppliers at once!',

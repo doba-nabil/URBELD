@@ -231,6 +231,7 @@ return [
     'premium_company' => 'شركة مميزة',
     'subcategories' => 'أقسام فرعية',
     'customer_satisfaction' => 'نسبة رضا العملاء',
+    'default_supplier_bio' => 'مورد معتمد في المنصة، نقدم أفضل الخدمات والمنتجات بجودة عالية.',
     'suppliers_hub' => 'دليل الموردين',
     'browse_suppliers' => 'تصفح أفضل الموردين واطلب تسعيرة لتوريداتك بكل سهولة',
     'send_request_to_all_providers_at_once' => 'أرسل طلبك لجميع الموردين دفعة واحدة!',

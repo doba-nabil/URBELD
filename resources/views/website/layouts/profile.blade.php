@@ -51,14 +51,6 @@
                             @if($pUser->is_trusted)
                                 <i class="bi bi-patch-check-fill text-primary ms-2" title="{{ __('admin.is_trusted') ?? 'موثوق' }}"></i>
                             @endif
-                            <!-- Edit button could be link to settings or modal trigger -->
-                            @if (Route::is('profile.edit') && auth()->id() == $pUser->id)
-                                <button class="btn-edit-profile" type="button" id="btn-toggle-edit" title="{{ __('website.edit_data') }}"
-                                    style="border: none; background: transparent;">
-                                    <i class="bi bi-pencil shadow-sm bg-white text-primary rounded-circle p-2"
-                                        id="edit-icon-toggle"></i>
-                                </button>
-                            @endif
                         </h1>
                         <div class="profile-details">
                             @if (auth()->check() && (auth()->id() == $pUser->id || auth()->user()->is_admin))
