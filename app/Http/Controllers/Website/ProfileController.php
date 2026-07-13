@@ -222,8 +222,14 @@ class ProfileController extends Controller
                 });
             // Provider Tender Reports
             $totalTenderResponses = $user->tenderApplications()->count();
-            $completedTenderProjects = $user->tenderApplications()->where('status', \App\Models\TenderApplication::STATUS_ACCEPTED)->count();
-            $totalTenderRevenue = $user->tenderApplications()->where('status', \App\Models\TenderApplication::STATUS_ACCEPTED)->sum('price');
+            $completedTenderProjects = $user->tenderApplications()->where('status', \App\Models\TenderApplication::STATUS_ACCEPTED)
+                ->whereHas('tender', function($q) {
+                    $q->where('status', \App\Models\Tender::STATUS_COMPLETED);
+                })->count();
+            $totalTenderRevenue = $user->tenderApplications()->where('status', \App\Models\TenderApplication::STATUS_ACCEPTED)
+                ->whereHas('tender', function($q) {
+                    $q->where('status', \App\Models\Tender::STATUS_COMPLETED);
+                })->sum('price');
             $avgTenderRating = \App\Models\Rating::where('rated_id', $user->id)->whereNotNull('tender_id')->avg('rating') ?? 0.0;
             
             $tenderKpis = [
@@ -286,8 +292,8 @@ class ProfileController extends Controller
                 });
             // Seeker Tender Reports
             $totalTenders = $user->tenders()->count();
-            $completedTenders = $user->tenders()->where('status', \App\Models\Tender::STATUS_CLOSED)->count();
-            $totalTenderSpent = $user->tenders()->where('status', \App\Models\Tender::STATUS_CLOSED)
+            $completedTenders = $user->tenders()->where('status', \App\Models\Tender::STATUS_COMPLETED)->count();
+            $totalTenderSpent = $user->tenders()->where('status', \App\Models\Tender::STATUS_COMPLETED)
                 ->with('applications')
                 ->get()
                 ->sum(function($tender) {
@@ -340,7 +346,10 @@ class ProfileController extends Controller
                     })->sum('proposed_price');
                     
                 $tenderChartData[] = $user->tenderApplications()->where('status', \App\Models\TenderApplication::STATUS_ACCEPTED)
-                    ->whereBetween('updated_at', [$monthStart, $monthEnd])->sum('price');
+                    ->whereHas('tender', function($q) use ($monthStart, $monthEnd) {
+                        $q->where('status', \App\Models\Tender::STATUS_COMPLETED)
+                          ->whereBetween('updated_at', [$monthStart, $monthEnd]);
+                    })->sum('price');
             } else {
                 $serviceChartData[] = $user->serviceRequests()
                     ->whereIn('status', [\App\Models\ServiceRequest::STATUS_COMPLETED, 'work_completed'])
@@ -351,7 +360,7 @@ class ProfileController extends Controller
                         return $req->acceptedResponse ? $req->acceptedResponse->proposed_price : 0;
                     });
                     
-                $tenderChartData[] = $user->tenders()->where('status', \App\Models\Tender::STATUS_CLOSED)
+                $tenderChartData[] = $user->tenders()->where('status', \App\Models\Tender::STATUS_COMPLETED)
                     ->whereBetween('updated_at', [$monthStart, $monthEnd])
                     ->with('applications')
                     ->get()

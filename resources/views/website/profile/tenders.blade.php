@@ -118,6 +118,7 @@
                     @endforelse
                 </div>
             </div>
+            @endif
 
             <!-- Saved Tenders Tab -->
             @if($tab == 'saved')
