@@ -99,6 +99,10 @@ class CategoryController extends Controller
                     $q->whereIn('categories.id', $categoryIds);
                 });
             
+            $userIds = (clone $baseQuery)->pluck('users.id');
+            $avgRating = \App\Models\Rating::whereIn('rated_id', $userIds)->avg('rating');
+            $satisfactionRate = $avgRating ? round(($avgRating / 5) * 100) : 100;
+
             return [
                 'companies' => (clone $baseQuery)->where('provider_type', 'company')->count(),
                 'suppliers' => (clone $baseQuery)->where('provider_type', 'supplier')->count(),
@@ -106,6 +110,7 @@ class CategoryController extends Controller
                                 ->where('subscription_start_at', '<=', now())
                                 ->where('subscription_end_at', '>=', now())->count(),
                 'verified' => (clone $baseQuery)->where('is_trusted', 1)->count(),
+                'satisfaction_rate' => $satisfactionRate,
             ];
         };
 

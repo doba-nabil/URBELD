@@ -28,7 +28,7 @@ class TenderController extends Controller
         $tenders = $this->tenderService->getFilteredTenders($request);
         $stats = $this->tenderService->getStats();
         
-        $categories = Category::active()->whereNull('parent_id')->get();
+        $categories = Category::active()->whereNull('parent_id')->where('supports_tenders', true)->get();
         $cities = City::orderBy('name')->get();
         $tab = $request->get('tab', 'all');
         $sort = $request->get('sort', 'latest');

@@ -148,12 +148,7 @@
         </div>
 
         <div id="sub-settings-container" class="d-flex flex-column gap-3" style="display: none;">
-            <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" name="supports_tenders" value="1"
-                       id="supports_tenders"
-                    {{ old('supports_tenders', $isEdit ? $category->supports_tenders : 0) ? 'checked' : '' }}>
-                <label class="form-check-label" for="supports_tenders">{{ __('admin.supports_tenders') }}</label>
-            </div>
+            <!-- Subcategory specific settings will go here -->
         </div>
     </div>
     
@@ -163,6 +158,13 @@
                    id="show_in_home"
                 {{ old('show_in_home', $isEdit ? $category->show_in_home : 1) ? 'checked' : '' }}>
             <label class="form-check-label" for="show_in_home">{{ __('admin.show_in_home') }}</label>
+        </div>
+
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" name="supports_tenders" value="1"
+                   id="supports_tenders"
+                {{ old('supports_tenders', $isEdit ? $category->supports_tenders : 0) ? 'checked' : '' }}>
+            <label class="form-check-label" for="supports_tenders">{{ __('admin.supports_tenders') }}</label>
         </div>
 
         <div class="form-check form-switch">

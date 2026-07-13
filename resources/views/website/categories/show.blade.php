@@ -26,7 +26,7 @@
                         <div class="text-white-50 small">{{ __('website.subcategories') ?? 'أقسام فرعية' }}</div>
                     </div>
                     <div class="stat-item">
-                        <div class="text-white fw-bold fs-2 mb-1">94%</div>
+                        <div class="text-white fw-bold fs-2 mb-1">{{ $stats['satisfaction_rate'] ?? 100 }}%</div>
                         <div class="text-white-50 small">{{ __('website.customer_satisfaction') ?? 'نسبة رضا العملاء' }}</div>
                     </div>
                 </div>

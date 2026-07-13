@@ -240,7 +240,7 @@ return [
     'send_request_to_all_providers_at_once' => 'أرسل طلبك لجميع الموردين دفعة واحدة!',
     'choose_section_and_receive_quotes' => 'اختر القسم الذي تحتاجه وسيصلك عرض سعر من كل مورد مسجل في ذلك القسم',
     'send_bulk_request' => 'طلب توريد عام',
-    'search_for_provider' => 'ابحث عن مورد',
+    'search_for_provider' => 'البحث عن مقدمي خدمات',
     'region' => 'المنطقة',
     'makkah_region' => 'منطقة مكة المكرمة',
     'city' => 'المدينة',
@@ -248,7 +248,7 @@ return [
     'supply_section' => 'قسم التوريد',
     'all_sections' => 'كل الأقسام',
     'supply_volume' => 'حجم التوريد',
-    'search_providers' => 'بحث عن موردين',
+    'search_providers' => 'البحث عن مقدمي خدمات',
     'browse_by_section' => 'تصفّح حسب القسم',
 
     'sort_premium' => 'المميّزون أولاً',

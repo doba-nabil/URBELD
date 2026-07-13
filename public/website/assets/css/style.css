@@ -2013,7 +2013,7 @@ body.sup-page .services-section h1 {
     overflow: visible;
     background: #f8f9fa;
     transition: all 0.5s ease;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    /* box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); */
 }
 
 .service-image {
