@@ -54,7 +54,7 @@
                         <div class="row g-4">
                             <div class="col-md-6">
                                 <label class="form-label fw-bold">{{ __('tenders.financial_offer') }} <span class="text-danger">*</span></label>
-                                <input type="number" name="price" class="form-control @error('price') is-invalid @enderror" value="{{ old('price') }}" min="0" step="100" placeholder="{{ __('tenders.price_ph') }}" required>
+                                <input type="number" name="price" class="form-control @error('price') is-invalid @enderror" value="{{ old('price') }}" min="0" step="any" placeholder="{{ __('tenders.price_ph') }}" required>
                                 @error('price')<div class="invalid-feedback">{{ $message }}</div>@enderror
                             </div>
                             <div class="col-md-6">

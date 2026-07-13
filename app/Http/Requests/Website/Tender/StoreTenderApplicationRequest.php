@@ -26,8 +26,8 @@ class StoreTenderApplicationRequest extends FormRequest
     public function rules()
     {
         return [
-            'price' => 'nullable|numeric|min:0',
-            'delivery_days' => 'nullable|integer|min:1',
+            'price' => 'nullable|numeric|min:0|max:9999999999',
+            'delivery_days' => 'nullable|integer|min:1|max:3650',
             'notes' => 'required|string',
             'files.*' => 'nullable|file|mimes:pdf,jpeg,png,jpg,zip,doc,docx|max:10240',
             'file_titles.*' => 'nullable|string|max:255',

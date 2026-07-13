@@ -133,4 +133,7 @@ return [
     // Whatsapp
     'wa_share' => 'Check out this tender on URBELD: ',
     'latest_tenders' => 'Latest Tenders',
+    'view_all_tenders' => 'View All Tenders',
+    'new_offer_title' => 'New Offer for Your Tender',
+    'new_offer_desc' => ':user has submitted an offer for your tender: :tender',
 ];

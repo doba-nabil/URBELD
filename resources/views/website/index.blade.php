@@ -45,6 +45,20 @@
                         .hero-pill-btn .icon-circle {
                             transition: all 0.3s ease-in-out;
                         }
+                        .btn-tenders-all {
+                            background-color: #ffffff !important;
+                            color: #064B3B !important;
+                            border: 2px solid #064B3B !important;
+                            border-radius: 20px !important;
+                            font-weight: bold !important;
+                            transition: all 0.3s ease !important;
+                        }
+                        .btn-tenders-all:hover {
+                            background-color: #064B3B !important;
+                            color: #ffffff !important;
+                            box-shadow: 0 4px 15px rgba(6, 75, 59, 0.4) !important;
+                            transform: translateY(-2px) !important;
+                        }
                     </style>
                     <div class="content d-flex gap-3 justify-content-center flex-wrap">
                         @php
@@ -285,7 +299,7 @@
             
             @if(isset($activeTenders) && $activeTenders->count() > 0)
             <div class="text-center mt-4 wow fadeInUp" data-wow-delay="0.3s">
-                <a href="{{ route('website.tenders.index') }}" class="btn btn-outline-success px-4" style="border-radius: 20px; font-weight: bold; border-color: #064B3B; color: #064B3B;">{{ __('tenders.view_all_tenders') ?? 'عرض كل المناقصات' }}</a>
+                <a href="{{ route('website.tenders.index') }}" class="btn px-4 btn-tenders-all">{{ __('tenders.view_all_tenders') }}</a>
             </div>
             @endif
         </div>

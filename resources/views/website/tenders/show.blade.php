@@ -157,17 +157,21 @@
                                     </div>
                                 </div>
                                 <div class="mb-3">
-                                    <strong>{{ __('website.proposed_price') ?? 'السعر المقترح:' }}</strong> <span class="text-success fw-bold">{{ number_format($app->proposed_price) }} {{ __('tenders.sar') }}</span><br>
-                                    <strong>{{ __('website.execution_time') ?? 'مدة التنفيذ:' }}</strong> {{ $app->execution_time }} {{ __('website.days') ?? 'أيام' }}
+                                    <strong>{{ __('website.proposed_price') ?? 'السعر المقترح:' }}</strong> <span class="text-success fw-bold">{{ number_format($app->price) }} {{ __('tenders.sar') }}</span><br>
+                                    <strong>{{ __('website.execution_time') ?? 'مدة التنفيذ:' }}</strong> {{ $app->delivery_days }} {{ __('website.days') ?? 'أيام' }}
                                 </div>
                                 @if($app->notes)
-                                    <p class="text-muted small border p-2 rounded bg-light">{{ $app->notes }}</p>
+                                    <p class="text-muted small border p-2 rounded bg-light text-truncate" style="max-height: 60px;">{{ $app->notes }}</p>
                                 @endif
+                                
+                                <button type="button" class="btn btn-outline-primary btn-sm w-100 mb-2" data-bs-toggle="modal" data-bs-target="#appModal{{ $app->id }}">
+                                    <i class="bi bi-eye"></i> {{ __('website.view_details') ?? 'عرض التفاصيل' }}
+                                </button>
                                 
                                 @if($tender->status === \App\Models\Tender::STATUS_PENDING_REVIEW || $tender->status === \App\Models\Tender::STATUS_ACTIVE)
                                     <form action="{{ route('website.tenders.acceptApplication', ['id' => $tender->id, 'applicationId' => $app->id]) }}" method="POST">
                                         @csrf
-                                        <button type="submit" class="btn btn-success w-100 mt-2"><i class="bi bi-check-circle"></i> {{ __('website.accept_offer') ?? 'قبول العرض' }}</button>
+                                        <button type="submit" class="btn btn-success w-100"><i class="bi bi-check-circle"></i> {{ __('website.accept_offer') ?? 'قبول العرض' }}</button>
                                     </form>
                                 @elseif($isAwarded)
                                     <div class="alert alert-success p-2 text-center mb-0 mt-2">
@@ -184,6 +188,45 @@
                                         </button>
                                     @endif
                                 @endif
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Application Modal -->
+                    <div class="modal fade" id="appModal{{ $app->id }}" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title fw-bold">{{ __('website.view_details') ?? 'عرض التفاصيل' }} - {{ $app->user->name }}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <strong>{{ __('website.proposed_price') ?? 'السعر المقترح:' }}</strong> <span class="text-success fw-bold">{{ number_format($app->price) }} {{ __('tenders.sar') }}</span>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <strong>{{ __('website.execution_time') ?? 'مدة التنفيذ:' }}</strong> {{ $app->delivery_days }} {{ __('website.days') ?? 'أيام' }}
+                                        </div>
+                                    </div>
+                                    <h6 class="fw-bold">{{ __('tenders.technical_offer') }}</h6>
+                                    <p class="text-muted border p-3 rounded bg-light" style="white-space: pre-wrap;">{{ $app->notes }}</p>
+                                    
+                                    @if($app->hasMedia('application_files'))
+                                    <h6 class="fw-bold mt-4">{{ __('website.files') ?? 'الملفات المرفقة' }}</h6>
+                                    <ul class="list-group">
+                                        @foreach($app->getMedia('application_files') as $media)
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            {{ $media->getCustomProperty('title', $media->file_name) }}
+                                            <a href="{{ $media->getUrl() }}" download class="btn btn-sm btn-outline-primary"><i class="bi bi-download"></i> {{ __('tenders.download') ?? 'تحميل' }}</a>
+                                        </li>
+                                        @endforeach
+                                    </ul>
+                                    @endif
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+                                </div>
                             </div>
                         </div>
                     </div>

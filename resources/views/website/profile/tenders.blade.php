@@ -121,17 +121,17 @@
             <!-- Saved Tenders Tab -->
             <div class="tab-pane fade" id="saved-tenders" role="tabpanel">
                 <div class="row">
-                    @forelse($savedTenders as $tender)
+                    @forelse($savedTenders as $savedTender)
                         <div class="col-md-12 mb-3">
                             <div class="card border-0 shadow-sm rounded-3">
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between">
                                         <h5 class="card-title fw-bold">
-                                            <a href="{{ route('website.tenders.show', $tender->id) }}" class="text-dark text-decoration-none">{{ $tender->title }}</a>
+                                            <a href="{{ route('website.tenders.show', $savedTender->tender->id) }}" class="text-dark text-decoration-none">{{ $savedTender->tender->title }}</a>
                                         </h5>
-                                        <button class="btn btn-sm text-danger" onclick="toggleSaveTender({{ $tender->id }}, this)"><i class="bi bi-bookmark-fill"></i> إزالة</button>
+                                        <button class="btn btn-sm text-danger" onclick="toggleSaveTender({{ $savedTender->tender->id }}, this)"><i class="bi bi-bookmark-fill"></i> إزالة</button>
                                     </div>
-                                    <p class="text-muted small mb-0"><i class="bi bi-folder"></i> {{ $tender->category->name ?? '' }} | <i class="bi bi-geo-alt"></i> {{ $tender->city->name ?? '' }}</p>
+                                    <p class="text-muted small mb-0"><i class="bi bi-folder"></i> {{ $savedTender->tender->category->name ?? '' }} | <i class="bi bi-geo-alt"></i> {{ $savedTender->tender->city->name ?? '' }}</p>
                                 </div>
                             </div>
                         </div>

@@ -641,5 +641,10 @@ return [
     'available_products' => 'المنتجات المتاحة',
     'currency_sar' => 'ر.س',
     'offers_and_discounts' => 'العروض والخصومات',
+    'applications' => 'العروض المقدمة',
+    'no_applications_yet' => 'لا يوجد عروض حتى الآن',
+    'proposed_price' => 'السعر المقترح',
+    'execution_time' => 'مدة التنفيذ',
+    'view_details' => 'عرض التفاصيل',
+    'files' => 'الملفات',
 ];
-

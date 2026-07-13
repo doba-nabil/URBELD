@@ -332,7 +332,7 @@ class ProfileController extends Controller
             ->latest()
             ->get();
         $savedTenders = $user->savedTenders()
-            ->with(['category', 'city'])
+            ->with(['tender.category', 'tender.city'])
             ->latest()
             ->get();
         return view('website.profile.tenders', compact('user', 'incomingTenders', 'myTenders', 'myApplications', 'savedTenders'));

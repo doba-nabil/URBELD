@@ -136,6 +136,17 @@ class TenderService
             }
 
             DB::commit();
+            
+            // Notify tender owner
+            if ($tender->user) {
+                $tender->user->notify(new \App\Notifications\GenericNotification(
+                    __('tenders.new_offer_title'),
+                    __('tenders.new_offer_desc', ['user' => $user->name, 'tender' => $tender->title]),
+                    route('website.tenders.show', $tender->id),
+                    ['tender_id' => $tender->id, 'application_id' => $application->id]
+                ));
+            }
+
             return $application;
         } catch (\Exception $e) {
             DB::rollBack();

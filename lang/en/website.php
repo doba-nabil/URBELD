@@ -607,5 +607,11 @@ return [
 
     'watch_how_platform_works' => 'Watch how the platform works',
     'search_service_provider' => 'Search for a provider',
+    'applications' => 'Submitted Offers',
+    'no_applications_yet' => 'No offers submitted yet',
+    'proposed_price' => 'Proposed Price',
+    'execution_time' => 'Execution Time',
+    'view_details' => 'View Details',
+    'files' => 'Files',
 ];
 
