@@ -15,7 +15,7 @@
         </div>
 
         <!-- Tabs Section -->
-        <div class="d-flex justify-content-start mb-4 border-bottom flex-wrap gap-2">
+        <div class="nav nav-pills d-flex justify-content-start mb-4 border-bottom flex-wrap gap-2" role="tablist">
             @if(auth()->user()->isServiceProvider() || auth()->user()->isSupplier() || auth()->user()->isCompanyProvider())
             <button class="btn border fw-bold px-4 py-2 ir-tab-active bg-white" id="incoming-tab" data-bs-toggle="pill" data-bs-target="#incoming-tenders" type="button" role="tab" aria-selected="true" style="border-bottom: none !important; border-bottom-left-radius: 0; border-bottom-right-radius: 0; color: #1f2937;">
                 المناقصات الواردة ({{ $incomingTenders->total() }})

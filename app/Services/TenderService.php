@@ -16,7 +16,24 @@ class TenderService
      */
     public function getFilteredTenders(Request $request)
     {
-        $query = Tender::active()->with(['category', 'city']);
+        $tab = $request->get('tab', 'all');
+        $query = Tender::with(['category', 'city']);
+
+        if ($tab === 'closed') {
+            $query->where(function($q) {
+                $q->whereIn('status', [Tender::STATUS_CLOSED, Tender::STATUS_COMPLETED])
+                  ->orWhere(function($subq) {
+                      $subq->where('status', Tender::STATUS_ACTIVE)
+                           ->whereNotNull('ends_at')
+                           ->where('ends_at', '<=', now());
+                  });
+            });
+        } else {
+            $query->active();
+            if ($tab === 'urgent') {
+                $query->where('is_urgent', true);
+            }
+        }
 
         if ($request->filled('category_id')) {
             $query->where('category_id', $request->category_id);
@@ -32,11 +49,6 @@ class TenderService
                 $q->where('title', 'like', "%{$keyword}%")
                   ->orWhere('description', 'like', "%{$keyword}%");
             });
-        }
-
-        $tab = $request->get('tab', 'all');
-        if ($tab === 'urgent') {
-            $query->where('is_urgent', true);
         }
 
         $sort = $request->get('sort', 'latest');
@@ -59,7 +71,12 @@ class TenderService
         return [
             'all' => Tender::active()->count(),
             'urgent' => Tender::active()->where('is_urgent', true)->count(),
-            'closed' => Tender::where('status', Tender::STATUS_CLOSED)->orWhere('ends_at', '<', now())->count(),
+            'closed' => Tender::whereIn('status', [Tender::STATUS_CLOSED, Tender::STATUS_COMPLETED])
+                              ->orWhere(function($q) {
+                                  $q->where('status', Tender::STATUS_ACTIVE)
+                                    ->whereNotNull('ends_at')
+                                    ->where('ends_at', '<=', now());
+                              })->count(),
         ];
     }
 

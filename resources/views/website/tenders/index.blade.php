@@ -94,7 +94,7 @@
   <div class="tabs-row">
     <button class="tab-pill {{ $tab == 'all' ? 'active' : '' }}" onclick="changeTab('all')">{{ __('tenders.tab_all') }} ({{ $stats['all'] }})</button>
     <button class="tab-pill {{ $tab == 'urgent' ? 'active' : '' }}" onclick="changeTab('urgent')">{{ __('tenders.tab_urgent') }} ({{ $stats['urgent'] }})</button>
-    <button class="tab-pill" disabled style="opacity:0.6;cursor:not-allowed">{{ __('tenders.tab_closed') }} ({{ $stats['closed'] }})</button>
+    <button class="tab-pill {{ $tab == 'closed' ? 'active' : '' }}" onclick="changeTab('closed')">{{ __('tenders.tab_closed') }} ({{ $stats['closed'] }})</button>
   </div>
 
   <div class="stats-bar">
@@ -105,15 +105,17 @@
     @foreach($tenders as $tender)
       <div class="t-card-v2 {{ $tender->is_urgent ? 'border-urgent' : '' }}" {!! $tender->is_urgent ? 'style="border-right: 4px solid #f59e0b;"' : '' !!}>
         <div class="t-card-left">
-          @if($tender->is_urgent)
+          @if($tender->status === \App\Models\Tender::STATUS_COMPLETED)
+            <span class="status-badge status-closed" style="background:#10b981;color:#fff;border:none;"><i class="bi bi-check2-circle"></i> مكتملة</span>
+          @elseif($tender->is_urgent)
             <span class="status-badge status-urgent"><i class="bi bi-lightning-charge-fill"></i> {{ __('tenders.status_urgent') }}</span>
-          @elseif($tender->isExpired())
+          @elseif($tender->isExpired() || $tender->status === \App\Models\Tender::STATUS_CLOSED)
             <span class="status-badge status-closed">{{ __('tenders.status_closed') }}</span>
           @else
             <span class="status-badge status-open">{{ __('tenders.status_open') }}</span>
           @endif
           
-          @if(!$tender->isExpired())
+          @if(!$tender->isExpired() && $tender->status === \App\Models\Tender::STATUS_ACTIVE)
             <a href="{{ route('website.tenders.show', $tender->id) }}" class="btn-offer-v2" {!! $tender->is_urgent ? 'style="background:#d97706;"' : '' !!}>
               <i class="bi bi-plus-lg me-1"></i> {{ __('tenders.apply_offer') }}
             </a>

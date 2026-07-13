@@ -192,44 +192,7 @@
                         </div>
                     </div>
                     
-                    <!-- Application Modal -->
-                    <div class="modal fade" id="appModal{{ $app->id }}" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog modal-lg">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title fw-bold">{{ __('website.view_details') ?? 'عرض التفاصيل' }} - {{ $app->user->name }}</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <strong>{{ __('website.proposed_price') ?? 'السعر المقترح:' }}</strong> <span class="text-success fw-bold">{{ number_format($app->price) }} {{ __('tenders.sar') }}</span>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <strong>{{ __('website.execution_time') ?? 'مدة التنفيذ:' }}</strong> {{ $app->delivery_days }} {{ __('website.days') ?? 'أيام' }}
-                                        </div>
-                                    </div>
-                                    <h6 class="fw-bold">{{ __('tenders.technical_offer') }}</h6>
-                                    <p class="text-muted border p-3 rounded bg-light" style="white-space: pre-wrap;">{{ $app->notes }}</p>
-                                    
-                                    @if($app->hasMedia('application_files'))
-                                    <h6 class="fw-bold mt-4">{{ __('website.files') ?? 'الملفات المرفقة' }}</h6>
-                                    <ul class="list-group">
-                                        @foreach($app->getMedia('application_files') as $media)
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            {{ $media->getCustomProperty('title', $media->file_name) }}
-                                            <a href="{{ $media->getUrl() }}" download class="btn btn-sm btn-outline-primary"><i class="bi bi-download"></i> {{ __('tenders.download') ?? 'تحميل' }}</a>
-                                        </li>
-                                        @endforeach
-                                    </ul>
-                                    @endif
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
                     @endif
                 @endforeach
             </div>
@@ -355,12 +318,36 @@
         <div class="modal-body">
             <div class="mb-3 text-center">
                 <label class="form-label d-block fw-bold">{{ __('website.select_rating') ?? 'اختر التقييم (من 1 إلى 5):' }}</label>
-                <div class="d-flex justify-content-center gap-3 rating-stars" style="direction:ltr;">
-                    <input type="radio" name="score" value="1" id="star1" required> <label for="star1" class="text-warning fs-3"><i class="bi bi-star-fill"></i></label>
-                    <input type="radio" name="score" value="2" id="star2"> <label for="star2" class="text-warning fs-3"><i class="bi bi-star-fill"></i></label>
-                    <input type="radio" name="score" value="3" id="star3"> <label for="star3" class="text-warning fs-3"><i class="bi bi-star-fill"></i></label>
-                    <input type="radio" name="score" value="4" id="star4"> <label for="star4" class="text-warning fs-3"><i class="bi bi-star-fill"></i></label>
-                    <input type="radio" name="score" value="5" id="star5"> <label for="star5" class="text-warning fs-3"><i class="bi bi-star-fill"></i></label>
+                
+                <style>
+                .star-rating {
+                  display: flex;
+                  flex-direction: row-reverse;
+                  justify-content: center;
+                  gap: 10px;
+                }
+                .star-rating input {
+                  display: none;
+                }
+                .star-rating label {
+                  font-size: 2.5rem;
+                  color: #d1d5db;
+                  cursor: pointer;
+                  transition: color 0.2s;
+                }
+                .star-rating input:checked ~ label,
+                .star-rating label:hover,
+                .star-rating label:hover ~ label {
+                  color: #ffc107;
+                }
+                </style>
+                
+                <div class="star-rating" style="direction:ltr;">
+                    <input type="radio" name="score" value="5" id="star5" required> <label for="star5"><i class="bi bi-star-fill"></i></label>
+                    <input type="radio" name="score" value="4" id="star4"> <label for="star4"><i class="bi bi-star-fill"></i></label>
+                    <input type="radio" name="score" value="3" id="star3"> <label for="star3"><i class="bi bi-star-fill"></i></label>
+                    <input type="radio" name="score" value="2" id="star2"> <label for="star2"><i class="bi bi-star-fill"></i></label>
+                    <input type="radio" name="score" value="1" id="star1"> <label for="star1"><i class="bi bi-star-fill"></i></label>
                 </div>
             </div>
             <div class="mb-3">
@@ -376,6 +363,55 @@
     </div>
   </div>
 </div>
+@endif
+
+@if(auth()->check() && auth()->id() === $tender->user_id && $tender->applications)
+    @foreach($tender->applications as $app)
+        @php
+            $isAwarded = ($tender->awarded_provider_id === $app->user_id);
+            $isHidden = ($tender->awarded_provider_id && !$isAwarded);
+        @endphp
+        @if(!$isHidden)
+        <!-- Application Modal -->
+        <div class="modal fade" id="appModal{{ $app->id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title fw-bold">{{ __('website.view_details') ?? 'عرض التفاصيل' }} - {{ $app->user->name }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <strong>{{ __('website.proposed_price') ?? 'السعر المقترح:' }}</strong> <span class="text-success fw-bold">{{ number_format($app->price) }} {{ __('tenders.sar') }}</span>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>{{ __('website.execution_time') ?? 'مدة التنفيذ:' }}</strong> {{ $app->delivery_days }} {{ __('website.days') ?? 'أيام' }}
+                            </div>
+                        </div>
+                        <h6 class="fw-bold">{{ __('tenders.technical_offer') }}</h6>
+                        <p class="text-muted border p-3 rounded bg-light" style="white-space: pre-wrap;">{{ $app->notes }}</p>
+                        
+                        @if($app->hasMedia('application_files'))
+                        <h6 class="fw-bold mt-4">{{ __('website.files') ?? 'الملفات المرفقة' }}</h6>
+                        <ul class="list-group">
+                            @foreach($app->getMedia('application_files') as $media)
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ $media->getCustomProperty('title', $media->file_name) }}
+                                <a href="{{ $media->getUrl() }}" download class="btn btn-sm btn-outline-primary"><i class="bi bi-download"></i> {{ __('tenders.download') ?? 'تحميل' }}</a>
+                            </li>
+                            @endforeach
+                        </ul>
+                        @endif
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+    @endforeach
 @endif
 
 @endsection
