@@ -77,28 +77,32 @@
         <!-- Video Modal -->
         @if($homeVideoUrl)
         <div class="modal fade" id="videoModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-dialog modal-xl modal-dialog-centered">
                 <div class="modal-content bg-transparent border-0">
-                    <div class="modal-header border-0 justify-content-end p-0 mb-2">
-                        <button type="button" class="btn-close btn-close-white fs-4" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body p-0 rounded-4 overflow-hidden shadow-lg bg-black">
-                        @if(Str::contains($homeVideoUrl, ['youtube.com', 'youtu.be']))
-                            @php
-                                preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i', $homeVideoUrl, $match);
-                                $youtubeId = $match[1] ?? null;
-                            @endphp
-                            @if($youtubeId)
-                                <div class="ratio ratio-16x9">
-                                    <iframe src="https://www.youtube.com/embed/{{ $youtubeId }}?autoplay=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                                </div>
+                    <div class="modal-body p-0 position-relative">
+                        <!-- Floating Close Button -->
+                        <button type="button" class="btn-close btn-close-white position-absolute m-3 shadow-none bg-dark rounded-circle p-2" 
+                                data-bs-dismiss="modal" aria-label="Close" 
+                                style="z-index: 1055; opacity: 0.9; top: -15px; right: -15px; border: 2px solid #fff;"></button>
+                        
+                        <div class="rounded-4 overflow-hidden bg-black border border-white border-opacity-10" style="box-shadow: 0 25px 50px -12px rgba(0,0,0,0.6) !important;">
+                            @if(Str::contains($homeVideoUrl, ['youtube.com', 'youtu.be']))
+                                @php
+                                    preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i', $homeVideoUrl, $match);
+                                    $youtubeId = $match[1] ?? null;
+                                @endphp
+                                @if($youtubeId)
+                                    <div class="ratio ratio-16x9">
+                                        <iframe src="https://www.youtube.com/embed/{{ $youtubeId }}?autoplay=1" allow="autoplay; encrypted-media" allowfullscreen style="border: 0;"></iframe>
+                                    </div>
+                                @endif
+                            @else
+                                <video class="w-100 d-block" controls autoplay style="max-height: 85vh; object-fit: contain;">
+                                    <source src="{{ $homeVideoUrl }}" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
                             @endif
-                        @else
-                            <video class="w-100" controls autoplay>
-                                <source src="{{ $homeVideoUrl }}" type="video/mp4">
-                                Your browser does not support the video tag.
-                            </video>
-                        @endif
+                        </div>
                     </div>
                 </div>
             </div>
@@ -136,7 +140,7 @@
                                     <div class="col-md-3">
                                         <select class="form-select select2 border-0 py-3" name="category_id">
                                             <option selected value="">{{ __('website.service') ?? 'التصنيف' }}</option>
-                                            @foreach (\App\Models\Category::whereNull('parent_id')->where('is_active', true)->get() as $cat)
+                                            @foreach (\App\Models\Category::whereNull('parent_id')->where('is_active', true)->where('supports_supply_requests', false)->get() as $cat)
                                                 <option value="{{ $cat->id }}">{{ $cat->name }}</option>
                                             @endforeach
                                         </select>
@@ -350,7 +354,83 @@
         <!-- What You Need Section End -->
     @endif
 
-    @if (count($activeServices) > 0)
+    @if (isset($topSuppliers) && count($topSuppliers) > 0)
+        <!-- Suppliers Section Start -->
+        <div class="what-you-need-section py-5 bg-white">
+            <div class="container">
+                <!-- Header -->
+                <div class="wyn-header d-flex justify-content-between align-items-center mb-5 wow fadeInUp"
+                    data-wow-delay="0.1s">
+                    <div class="wyn-header-left">
+                        <span class="wyn-label"><i class="bi bi-box-seam me-1"></i> شركاء التوريد</span>
+                        <h2 class="wyn-title">أبرز الموردين المعتمدين</h2>
+                    </div>
+                    <div class="wyn-header-right">
+                        <a href="{{ route('website.suppliers.index') }}" class="btn btn-icon py-3 px-5 me-3 animated fadeIn">
+                            <span>عرض كل الموردين</span>
+                            <i class="icon-btn bi bi-arrow-up-left"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Cards Grid -->
+                <div class="row g-4">
+                    @foreach ($topSuppliers as $provider)
+                        <!-- Supplier Card -->
+                        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                            <div class="wyn-card position-relative overflow-hidden">
+                                @if($provider->hasActiveSubscription() && $provider->subscriptionPackage && $provider->subscriptionPackage->badge_name)
+                                    <div class="card-ribbon">
+                                        <span style="background-color: {{ $provider->subscriptionPackage->color ?: 'var(--bs-primary)' }}">
+                                            {{ $provider->subscriptionPackage->badge_name }}
+                                        </span>
+                                    </div>
+                                @endif
+                                <a href="{{ route('member.public', $provider->id) }}" class="wyn-card-link">
+                                    <div class="wyn-card-image {{ !$provider->getFirstMediaUrl('personal_photo') && !$provider->getFirstMediaUrl('users') ? 'bg-white p-3' : '' }}">
+                                        @php
+                                            $photoUrl = $provider->getFirstMediaUrl('personal_photo') ?: $provider->getFirstMediaUrl('users');
+                                            $isLogo = false;
+                                            if (!$photoUrl) {
+                                                $photoFallback = app()->getLocale() == 'ar' 
+                                                            ? \App\Models\Setting::getMediaUrl('logo_ar') 
+                                                            : \App\Models\Setting::getMediaUrl('logo_en');
+                                                $photoUrl = $photoFallback ?: asset('website/assets/img/logo.png');
+                                                $isLogo = true;
+                                            }
+                                        @endphp
+                                        <img src="{{ $photoUrl }}"
+                                            alt="{{ $provider->name }}"
+                                            style="{{ $isLogo ? 'object-fit: contain;' : '' }}">
+                                        <div class="wyn-card-overlay"></div>
+                                    </div>
+                                    <div class="wyn-card-content">
+                                        <div class="card-content-header">
+                                            <span class="wyn-category">
+                                                <i class="bi bi-box-seam me-1"></i> {{ $provider->categories->first()->name ?? 'مورد معتمد' }}
+                                            </span>
+                                            <div class="wyn-dots"
+                                                title="{{ number_format($provider->average_rating, 1) }}">
+                                                @php $rating = round($provider->average_rating); @endphp
+                                                @for ($i = 1; $i <= 5; $i++)
+                                                    <span class="dot {{ $i <= $rating ? 'active' : '' }}"></span>
+                                                @endfor
+                                            </div>
+                                        </div>
+                                        <h5 class="wyn-card-title">{{ $provider->name }}</h5>
+                                        <div class="d-flex align-items-center mt-3 text-muted small">
+                                            <i class="bi bi-geo-alt-fill text-danger me-1"></i> {{ $provider->city->name ?? 'المملكة العربية السعودية' }}
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+        <!-- Suppliers Section End -->
+    @endif    @if (count($activeServices) > 0)
         <!-- Featured Services Section Start -->
         <div class="featured-services-section py-5 bg-light">
             <div class="container">

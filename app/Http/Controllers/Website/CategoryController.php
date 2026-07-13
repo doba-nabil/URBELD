@@ -58,6 +58,11 @@ class CategoryController extends Controller
             });
         }
 
+        // Filter by Company Size / Classification
+        if ($request->filled('classification_id')) {
+            $providersQuery->where('classification_id', $request->classification_id);
+        }
+
         $allProviders = $providersQuery
             ->select('users.*')
             ->leftJoin('subscription_packages', 'users.subscription_package_id', '=', 'subscription_packages.id')
@@ -114,6 +119,7 @@ class CategoryController extends Controller
         $cities = City::orderBy('name')->get();
         $regions = \App\Models\Region::orderBy('name')->get();
         $subCategories = $category->children;
+        $classifications = \App\Models\CompanyClassification::where('type', 'company')->get();
 
         if ($request->ajax()) {
             return view('website.categories.partials._providers_tabs_content', [
@@ -131,6 +137,7 @@ class CategoryController extends Controller
             'cities' => $cities,
             'regions' => $regions,
             'subCategories' => $subCategories,
+            'classifications' => $classifications,
             'stats' => $stats
         ]);
     }

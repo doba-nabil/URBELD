@@ -55,18 +55,7 @@ class ChatController extends Controller
 
         return redirect()->route('dashboard.chat.show', $chat->id);
     }
-    {
-        $chats = Auth::user()->chats()
-            ->with(['serviceRequest', 'participants' => function($query) {
-                $query->where('users.id', '!=', Auth::id());
-            }, 'messages' => function($query) {
-                $query->latest()->limit(1);
-            }])
-            ->orderByDesc('updated_at')
-            ->get();
 
-        return view('website.chat.index', compact('chats'));
-    }
 
     /**
      * Display the specified chat.

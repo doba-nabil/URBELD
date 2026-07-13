@@ -13,6 +13,8 @@ return [
     'add' => 'اضافة',
     'submit' => 'ارسال',
     'image' => 'صورة',
+    'choose' => 'اختر',
+    'close' => 'إغلاق',
     'none_background' => 'بدون خلفية',
     'avatar' => 'صورة شخصية',
     'desc' => 'نبذة',

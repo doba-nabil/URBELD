@@ -4,32 +4,23 @@
             @php
                 $isPremium = $provider->hasActiveSubscription();
                 $isTrusted = $provider->is_trusted;
-                $borderColor = $isPremium && isset($category->color) && $category->color ? $category->color : '#e2e8f0';
+                $borderColor = $isPremium && isset($category) && isset($category->color) && $category->color ? $category->color : '#e2e8f0';
+                $catColor = isset($category) && isset($category->color) ? $category->color : '#f59e0b';
             @endphp
             <div class="co-card {{ $isPremium ? 'featured' : '' }}" style="border-color: {{ $borderColor }}; border-width: {{ $isPremium ? '2px' : '1px' }};">
               <div class="co-header">
                 @if($isPremium)
-                <div class="featured-ribbon" style="background-color: {{ $category->color ?? '#f59e0b' }};"><i class="bi bi-award-fill"></i> مميّز</div>
+                <div class="featured-ribbon" style="background-color: {{ $catColor }};"><i class="bi bi-award-fill"></i> مميّز</div>
                 @endif
-                <a href="{{ route('member.public', $provider->id) }}" class="d-block text-decoration-none text-dark">
-                    <div class="co-avatar" style="background:linear-gradient(135deg,#1a5c3a,#2d8f5e);">
-                        @if($provider->getFirstMediaUrl('personal_photo'))
-                            <img src="{{ $provider->getFirstMediaUrl('personal_photo') }}" alt="">
-                        @elseif($provider->getFirstMediaUrl('users'))
-                            <img src="{{ $provider->getFirstMediaUrl('users') }}" alt="">
-                        @else
-                            {{ mb_substr($provider->name, 0, 1) }}
-                        @endif
-                    </div>
-                </a>
+
                 <a href="{{ route('member.public', $provider->id) }}" class="text-decoration-none">
                     <div class="co-name" style="color: #2c3e50;">{{ $provider->name }}</div>
                 </a>
                 <div class="co-city"><i class="bi bi-geo-alt-fill text-danger"></i> {{ $provider->city->name ?? __('website.jeddah') }}</div>
-                <div class="co-sub"><i class="bi bi-tools text-primary"></i> {{ $category->name }}</div>
+                <div class="co-sub"><i class="bi bi-tools text-primary"></i> {{ isset($category) ? $category->name : ($provider->categories->first()->name ?? '') }}</div>
                 <div class="badges-row">
                   @if($isPremium)
-                  <span class="badge b-featured" style="background-color: rgba({{ hexdec(substr($category->color ?? '#f59e0b', 1, 2)) }}, {{ hexdec(substr($category->color ?? '#f59e0b', 3, 2)) }}, {{ hexdec(substr($category->color ?? '#f59e0b', 5, 2)) }}, 0.1); color: {{ $category->color ?? '#f59e0b' }};"><i class="bi bi-award-fill"></i> مميّز</span>
+                  <span class="badge b-featured" style="background-color: rgba({{ hexdec(substr($catColor, 1, 2)) }}, {{ hexdec(substr($catColor, 3, 2)) }}, {{ hexdec(substr($catColor, 5, 2)) }}, 0.1); color: {{ $catColor }};"><i class="bi bi-award-fill"></i> مميّز</span>
                   @endif
                   @if($isTrusted)
                   <span class="badge b-verified"><i class="bi bi-check-circle-fill"></i> موثوق</span>

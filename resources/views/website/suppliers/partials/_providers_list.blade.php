@@ -57,12 +57,9 @@
         @endforeach
     </div>
 @else
-    <!-- No Results -->
-    <div class="text-center py-5 w-100">
-        <div class="mb-4">
-            <i class="bi bi-search" style="font-size: 4rem; color: #143526; opacity: 0.2;"></i>
-        </div>
-        <h4 class="fw-bold mb-3" style="color: #2c3e50;">{{ __('website.no_providers_found') }}</h4>
-        <p class="text-muted">{{ __('website.no_providers_desc') }}</p>
+    <div class="col-12 text-center py-5 bg-white rounded shadow-sm">
+        <img src="{{ asset('website/assets/img/no-data.svg') }}" alt="لا يوجد بيانات" class="mb-3" style="width: 150px; opacity: 0.5;">
+        <h4 class="text-muted fw-bold">لم يتم العثور على موردين</h4>
+        <p class="text-muted mb-0">لا يوجد موردين يطابقون معايير البحث الحالية في هذا القسم. جرب تغيير التصنيف للحصول على نتائج أفضل.</p>
     </div>
 @endif

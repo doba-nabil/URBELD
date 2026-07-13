@@ -21,8 +21,16 @@ class MembershipDataTable extends DataTable
             ->addColumn('type', function ($q) {
                 // Use provider_type if exists, fallback to membership_type
                 $type = $q->provider_type ?: $q->membership_type;
-                $badgeClass = $type === 'individual' ? 'bg-label-primary' : 'bg-label-info';
-                $typeText = $type === 'individual' ? __('admin.individual') : __('admin.company');
+                if ($type === 'individual') {
+                    $badgeClass = 'bg-label-primary';
+                    $typeText = __('admin.individual');
+                } elseif ($type === 'supplier') {
+                    $badgeClass = 'bg-label-success';
+                    $typeText = __('admin.supplier');
+                } else {
+                    $badgeClass = 'bg-label-info';
+                    $typeText = __('admin.company');
+                }
                 return '<span class="badge ' . $badgeClass . '">' . $typeText . '</span>';
             })
             ->addColumn('main_category', function ($q) {

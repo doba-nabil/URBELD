@@ -243,6 +243,7 @@ class User extends Authenticatable implements HasMedia, Auditable
     {
         return $this->belongsTo(City::class);
     }
+
     /**
      * Categories that user works in (multi-select)
      */

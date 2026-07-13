@@ -3,9 +3,13 @@
 @section('content')
     <!-- Header Start -->
     <div class="category-header-section text-center services-header-section without-search">
-        <h1 class="fw-bold mb-3 wow fadeInUp" data-wow-delay="0.1s">{{ __('website.suppliers_hub') ?? 'دليل الموردين' }}</h1>
-        <p class="mb-0 wow fadeInUp" data-wow-delay="0.2s">{{ __('website.browse_suppliers') ?? 'تصفح أفضل الموردين واطلب تسعيرة لتوريداتك بكل سهولة' }}</p>
-
+        @if(isset($selectedCategory))
+            <h1 class="fw-bold mb-3 wow fadeInUp" data-wow-delay="0.1s">{{ $selectedCategory->name }}</h1>
+            <p class="mb-0 wow fadeInUp" data-wow-delay="0.2s">{{ $selectedCategory->description }}</p>
+        @else
+            <h1 class="fw-bold mb-3 wow fadeInUp" data-wow-delay="0.1s">{{ __('website.suppliers_hub') ?? 'دليل الموردين' }}</h1>
+            <p class="mb-0 wow fadeInUp" data-wow-delay="0.2s">{{ __('website.browse_suppliers') ?? 'تصفح أفضل الموردين واطلب تسعيرة لتوريداتك بكل سهولة' }}</p>
+        @endif
     </div>
     <!-- Header End -->
 
@@ -15,11 +19,11 @@
         <div class="bc-left">
           <div class="bc-icon-wrap"><i class="bi bi-megaphone-fill text-white"></i></div>
           <div>
-            <div class="bc-title">{{ __('website.send_request_to_all_providers_at_once') }}</div>
-            <div class="bc-sub">{{ __('website.choose_section_and_receive_quotes') }}</div>
+            <div class="bc-title">{{ isset($selectedCategory) && $selectedCategory->bulk_request_title ? $selectedCategory->bulk_request_title : __('website.send_request_to_all_providers_at_once') }}</div>
+            <div class="bc-sub">{{ isset($selectedCategory) && $selectedCategory->bulk_request_subtitle ? $selectedCategory->bulk_request_subtitle : __('website.choose_section_and_receive_quotes') }}</div>
           </div>
         </div>
-        <a href="{{ route('website.supply-requests.create') }}" class="btn-bc" style="text-decoration: none;"><i class="bi bi-send-fill me-1"></i> {{ __('website.send_bulk_request') ?? 'طلب توريد عام' }}</a>
+        <a href="{{ isset($selectedCategory) ? route('website.supply-requests.create', ['category_id' => $selectedCategory->id]) : route('website.supply-requests.create') }}" class="btn-bc" style="text-decoration: none;"><i class="bi bi-send-fill me-1"></i> {{ isset($selectedCategory) && $selectedCategory->bulk_request_button_text ? $selectedCategory->bulk_request_button_text : (__('website.send_bulk_request') ?? 'طلب توريد عام') }}</a>
       </div>
     </div>
 
@@ -30,6 +34,9 @@
           <div class="filter-title"><i class="bi bi-search me-1"></i> {{ __('website.search_for_provider') }}</div>
         </div>
         <form action="{{ route('website.suppliers.index') }}" method="GET">
+            @if(isset($selectedCategory))
+                <input type="hidden" name="category_id" value="{{ $selectedCategory->id }}">
+            @endif
             <div class="filter-grid" style="grid-template-columns: repeat(4, 1fr);">
               <div class="fg">
                 <label>{{ __('website.region') }}</label>
@@ -60,6 +67,9 @@
                   @if (isset($supplyCategories))
                       @foreach ($supplyCategories as $cat)
                           <option value="{{ $cat->id }}" {{ request('category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                          @foreach ($cat->children ?? [] as $sub)
+                              <option value="{{ $sub->id }}" {{ request('category_id') == $sub->id ? 'selected' : '' }}>&nbsp;&nbsp;↳ {{ $sub->name }}</option>
+                          @endforeach
                       @endforeach
                   @endif
                 </select>

@@ -14,7 +14,10 @@ class SupplierController extends Controller
     public function index(Request $request)
     {
         // 1. Fetch main categories that are designated as supply categories
-        $supplyCategories = Category::whereNull('parent_id')
+        $supplyCategories = Category::with(['children' => function($q) {
+                                        $q->where('is_active', true)->where('supports_supply_requests', true);
+                                    }])
+                                    ->whereNull('parent_id')
                                     ->where('is_active', true)
                                     ->where('supports_supply_requests', true)
                                     ->withCount(['users as providers_count' => function ($query) {
@@ -84,7 +87,12 @@ class SupplierController extends Controller
         // 6. Data for Dropdowns
         $cities = City::all();
         $regions = \App\Models\Region::all();
-        $classifications = CompanyClassification::all();
+        $classifications = CompanyClassification::where('type', 'supplier')->get();
+
+        $selectedCategory = null;
+        if ($request->filled('category_id')) {
+            $selectedCategory = Category::find($request->category_id);
+        }
 
         if ($request->ajax()) {
             return view('website.suppliers.partials._providers_list', [
@@ -92,6 +100,6 @@ class SupplierController extends Controller
             ])->render();
         }
 
-        return view('website.suppliers.index', compact('suppliers', 'supplyCategories', 'cities', 'regions', 'classifications'));
+        return view('website.suppliers.index', compact('suppliers', 'supplyCategories', 'cities', 'regions', 'classifications', 'selectedCategory'));
     }
 }

@@ -20,7 +20,7 @@ class MembershipRequest extends FormRequest
             'phone' => ['required', 'string', 'max:20', 'unique:users,phone,' . $this->route('membership')],
             'bio' => ['nullable', 'string'],
             'years_of_experience' => ['nullable', 'integer', 'min:0'],
-            'type' => ['required', 'in:company,individual'],
+            'type' => ['required', 'in:company,individual,supplier'],
             'is_active' => ['nullable', 'boolean'],
             'active' => ['nullable', 'in:active,pending,blocked'],
             'sort_order' => ['nullable', 'integer', 'min:0'],

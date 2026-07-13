@@ -10,24 +10,24 @@
             <div class="col-md-8">
                 <h1 class="fw-bold mb-2">{{ $user->name }}</h1>
                 <div class="d-flex flex-wrap gap-3 mb-4 text-white-50" style="font-size: 0.9rem;">
-                    <span><i class="bi bi-geo-alt-fill text-danger"></i> {{ $user->city->name ?? 'الموقع غير محدد' }}</span>
+                    <span><i class="bi bi-geo-alt-fill text-danger"></i> {{ $user->city->name ?? __('website.location_unspecified') ?? 'الموقع غير محدد' }}</span>
                     @if($user->categories->isNotEmpty())
                         <span><i class="bi bi-tools text-warning"></i> {{ $user->categories->first()->name }}</span>
                     @endif
-                    <span><i class="bi bi-calendar-event"></i> عضو منذ {{ $user->created_at->format('Y') }}</span>
+                    <span><i class="bi bi-calendar-event"></i> {{ __('website.member_since') ?? 'عضو منذ' }} {{ $user->created_at->format('Y') }}</span>
                 </div>
                 <div class="d-flex flex-wrap gap-2">
                     @if($user->hasActiveSubscription())
-                        <span class="header-badge premium"><i class="bi bi-award-fill" style="color: #fcd34d;"></i> مورد مميز</span>
+                        <span class="header-badge premium"><i class="bi bi-award-fill" style="color: #fcd34d;"></i> {{ __('website.premium_supplier') ?? 'مورد مميز' }}</span>
                     @endif
                     @if($user->is_trusted)
-                        <span class="header-badge trusted"><i class="bi bi-shield-check" style="color: #93c5fd;"></i> موثوق</span>
+                        <span class="header-badge trusted"><i class="bi bi-shield-check" style="color: #93c5fd;"></i> {{ __('website.trusted') ?? 'موثوق' }}</span>
                     @endif
                     @if($user->classification_id && $user->classification)
                         <span class="header-badge" style="border-color: #b45309; color: #fcd34d;"><i class="bi bi-box-seam" style="color: #d97706;"></i> {{ $user->classification->name }}</span>
                     @endif
                     @if($user->deliveryCities()->exists())
-                        <span class="header-badge delivery"><i class="bi bi-truck" style="color: #6ee7b7;"></i> توصيل متاح</span>
+                        <span class="header-badge delivery"><i class="bi bi-truck" style="color: #6ee7b7;"></i> {{ __('website.delivery_available') ?? 'توصيل متاح' }}</span>
                     @endif
                 </div>
             </div>
@@ -92,16 +92,16 @@
                         <div class="col-md-4">
                             <div class="pp-product-card">
                                 <div class="pp-product-img-wrap" style="background-color: #fef08a;">
-                                    @if($product->getFirstMediaUrl('products'))
-                                        <img src="{{ $product->getFirstMediaUrl('products') }}" alt="{{ $product->name }}" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">
+                                    @if($product->getFirstMediaUrl('product_images'))
+                                        <img src="{{ $product->getFirstMediaUrl('product_images') }}" alt="{{ $product->title }}" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">
                                     @else
                                         <i class="bi bi-box-seam" style="font-size: 3rem; color: #b45309;"></i>
                                     @endif
                                 </div>
                                 <div class="pp-product-info">
-                                    <div class="pp-product-title">{{ $product->name }}</div>
-                                    <div class="pp-product-desc">{{ Str::limit($product->description, 40) }}</div>
-                                    <div class="pp-product-price">{{ $product->price }} {{ __('website.currency_sar') ?? 'ريال' }}</div>
+                                    <div class="pp-product-title">{{ $product->title }}</div>
+                                    <div class="pp-product-desc">{{ Str::limit($product->subtitle, 40) }}</div>
+                                    <div class="pp-product-price">{{ $product->price }}</div>
                                 </div>
                             </div>
                         </div>
@@ -113,7 +113,7 @@
                 <!-- Offers -->
                 @if($user->supplierOffers && $user->supplierOffers->isNotEmpty())
                 <div class="pp-main-card">
-                    <div class="pp-card-title"><i class="bi bi-gift-fill text-danger"></i> {{ __('website.offers_and_discounts') ?? 'العروض والخصومات' }}</div>
+                    <div class="pp-card-title"> {{ __('website.offers_and_discounts') ?? 'العروض والخصومات' }}</div>
                     <div class="row g-3">
                         @foreach($user->supplierOffers as $offer)
                         <div class="col-md-6">
@@ -156,13 +156,13 @@
 
                 <!-- Reviews -->
                 <div class="pp-main-card">
-                    <div class="pp-card-title"><i class="bi bi-chat-dots text-secondary"></i> آراء وتقييمات العملاء</div>
+                    <div class="pp-card-title"><i class="bi bi-chat-dots text-secondary"></i> {{ __('website.customer_reviews') ?? 'آراء وتقييمات العملاء' }}</div>
                     
                     @if($user->ratingsReceived && $user->ratingsReceived->count() > 0)
                         @foreach($user->ratingsReceived as $rating)
                         <div class="pp-review-card mb-3 pb-3 border-bottom">
                             <div class="pp-review-header d-flex justify-content-between align-items-center mb-2">
-                                <div class="pp-review-name fw-bold">{{ $rating->rater->name ?? 'مستخدم' }}</div>
+                                <div class="pp-review-name fw-bold">{{ $rating->rater->name ?? __('website.user') ?? 'مستخدم' }}</div>
                                 <div class="pp-review-stars text-warning">
                                     @for($i=1; $i<=5; $i++)
                                         <i class="bi {{ $i <= $rating->rating ? 'bi-star-fill' : 'bi-star' }}"></i>
@@ -176,7 +176,7 @@
                     @else
                         <div class="text-center py-4 text-muted">
                             <i class="bi bi-chat-square-text fs-1 mb-2 text-light"></i>
-                            <p>لا توجد تقييمات حتى الآن.</p>
+                            <p>{{ __('website.no_reviews_yet') ?? 'لا توجد تقييمات حتى الآن.' }}</p>
                         </div>
                     @endif
                 </div>
@@ -190,73 +190,79 @@
                 <!-- Premium Badge Card -->
                 <div class="pp-sidebar-card pp-premium-box">
                     <div class="pp-premium-icon"><i class="bi bi-award-fill"></i></div>
-                    <div class="pp-premium-title">مورد مميز</div>
-                    <div class="pp-premium-text">هذا المورد حاصل على شارة التميز من منصة أوربيلد بعد التحقق من جودته والتزامه</div>
+                    <div class="pp-premium-title">{{ __('website.premium_supplier') ?? 'مورد مميز' }}</div>
+                    <div class="pp-premium-text">{{ __('website.premium_supplier_desc') ?? 'هذا المورد حاصل على شارة التميز من منصة أوربيلد بعد التحقق من جودته والتزامه' }}</div>
                 </div>
                 @endif
 
                 <!-- Contact Card -->
                 <div class="pp-sidebar-card text-center">
-                    <h6 class="fw-bold mb-3">تواصل مع المورد</h6>
+                    <h6 class="fw-bold mb-3">{{ __('website.contact_supplier') ?? 'تواصل مع المورد' }}</h6>
                     <a href="{{ route('website.supply-requests.create', array_filter(['provider_id' => $user->id, 'category' => $user->categories->first()->id ?? null])) }}" class="btn pp-btn-order">
-                        <i class="bi bi-box-seam me-2"></i> طلب توريد الآن
+                        <i class="bi bi-box-seam me-2"></i> {{ __('website.request_supply_now') ?? 'طلب توريد الآن' }}
                     </a>
-                    <button class="btn pp-btn-msg mt-2">
-                        <i class="bi bi-chat-dots me-2"></i> مراسلة المورد
-                    </button>
-                    <div class="text-muted mt-2" style="font-size: 0.75rem;">بوابات التواصل المباشر متاحة بعد الاشتراك في الباقة</div>
+                    <a href="{{ route('chat.start', $user->id) }}" class="btn pp-btn-msg mt-2">
+                        <i class="bi bi-chat-dots me-2"></i> {{ __('website.message_supplier') ?? 'مراسلة المورد' }}
+                    </a>
+                    <div class="text-muted mt-2" style="font-size: 0.75rem;">{{ __('website.direct_contact_available_after_subscription') ?? 'بوابات التواصل المباشر متاحة بعد الاشتراك في الباقة' }}</div>
                 </div>
 
                 <!-- Quick Info -->
                 <div class="pp-sidebar-card">
-                    <h6 class="fw-bold border-bottom pb-3 mb-3"><i class="bi bi-card-list text-success me-2"></i> معلومات سريعة</h6>
+                    <h6 class="fw-bold border-bottom pb-3 mb-3"><i class="bi bi-card-list text-success me-2"></i> {{ __('website.quick_info') ?? 'معلومات سريعة' }}</h6>
                     <div class="pp-quick-info">
                         <div class="pp-quick-info-row">
-                            <span class="pp-quick-info-label">القسم</span>
-                            <span class="pp-quick-info-val">{{ $user->categories->first()->name ?? 'غير محدد' }}</span>
+                            <span class="pp-quick-info-label">{{ __('website.section') ?? 'القسم' }}</span>
+                            <span class="pp-quick-info-val">{{ $user->categories->first()->name ?? __('website.unspecified') ?? 'غير محدد' }}</span>
                         </div>
                         <div class="pp-quick-info-row">
-                            <span class="pp-quick-info-label">الموقع</span>
-                            <span class="pp-quick-info-val">{{ $user->city->name ?? 'غير محدد' }}</span>
+                            <span class="pp-quick-info-label">{{ __('website.location') ?? 'الموقع' }}</span>
+                            <span class="pp-quick-info-val">{{ $user->city->name ?? __('website.unspecified') ?? 'غير محدد' }}</span>
                         </div>
                         @if($user->email)
                         <div class="pp-quick-info-row">
-                            <span class="pp-quick-info-label">البريد الإلكتروني</span>
+                            <span class="pp-quick-info-label">{{ __('website.email') ?? 'البريد الإلكتروني' }}</span>
                             <span class="pp-quick-info-val" style="word-break: break-all;">{{ $user->email }}</span>
                         </div>
                         @endif
                         @if($user->phone)
                         <div class="pp-quick-info-row">
-                            <span class="pp-quick-info-label">رقم الجوال</span>
+                            <span class="pp-quick-info-label">{{ __('website.mobile_number') ?? 'رقم الجوال' }}</span>
                             <span class="pp-quick-info-val">{{ $user->phone }}</span>
                         </div>
                         @endif
                         @if($user->id_number)
                         <div class="pp-quick-info-row">
-                            <span class="pp-quick-info-label">السجل / الهوية</span>
+                            <span class="pp-quick-info-label">{{ __('website.commercial_register_or_id') ?? 'السجل / الهوية' }}</span>
                             <span class="pp-quick-info-val">{{ $user->id_number }}</span>
                         </div>
                         @endif
                         @if($user->representative_name)
                         <div class="pp-quick-info-row">
-                            <span class="pp-quick-info-label">الممثل</span>
+                            <span class="pp-quick-info-label">{{ __('website.representative') ?? 'الممثل' }}</span>
                             <span class="pp-quick-info-val">{{ $user->representative_name }}</span>
                         </div>
                         @endif
+                        @if($user->classification)
                         <div class="pp-quick-info-row">
-                            <span class="pp-quick-info-label">حجم التوريد</span>
-                            <span class="pp-quick-info-val"><i class="bi bi-box text-warning"></i> كميات كبيرة</span>
+                            <span class="pp-quick-info-label">{{ __('website.supply_volume') ?? 'حجم التوريد' }}</span>
+                            <span class="pp-quick-info-val"><i class="bi bi-box text-warning"></i> {{ $user->classification->name }}</span>
+                        </div>
+                        @endif
+                        <div class="pp-quick-info-row">
+                            <span class="pp-quick-info-label">{{ __('website.delivery') ?? 'التوصيل' }}</span>
+                            @if($user->deliveryCities && $user->deliveryCities->isNotEmpty())
+                                <span class="pp-quick-info-val text-success"><i class="bi bi-truck"></i> {{ __('website.available') ?? 'متاح' }}</span>
+                            @else
+                                <span class="pp-quick-info-val text-danger"><i class="bi bi-x-circle"></i> {{ __('website.unavailable') ?? 'غير متاح' }}</span>
+                            @endif
                         </div>
                         <div class="pp-quick-info-row">
-                            <span class="pp-quick-info-label">التوصيل</span>
-                            <span class="pp-quick-info-val text-success"><i class="bi bi-truck"></i> متاح</span>
+                            <span class="pp-quick-info-label">{{ __('website.status') ?? 'الحالة' }}</span>
+                            <span class="pp-quick-info-val text-success">● {{ __('website.active') ?? 'نشط' }}</span>
                         </div>
                         <div class="pp-quick-info-row">
-                            <span class="pp-quick-info-label">الحالة</span>
-                            <span class="pp-quick-info-val text-success">● نشط</span>
-                        </div>
-                        <div class="pp-quick-info-row">
-                            <span class="pp-quick-info-label">عضو منذ</span>
+                            <span class="pp-quick-info-label">{{ __('website.member_since') ?? 'عضو منذ' }}</span>
                             <span class="pp-quick-info-val">{{ $user->created_at->format('Y') }}</span>
                         </div>
                     </div>
@@ -264,7 +270,7 @@
 
                 <!-- Ratings Summary -->
                 <div class="pp-sidebar-card">
-                    <h6 class="fw-bold border-bottom pb-3 mb-3"><i class="bi bi-star-half text-warning me-2"></i> ملخص التقييمات</h6>
+                    <h6 class="fw-bold border-bottom pb-3 mb-3"><i class="bi bi-star-half text-warning me-2"></i> {{ __('website.ratings_summary') ?? 'ملخص التقييمات' }}</h6>
                     <div class="text-center mb-3">
                         <div style="font-size: 3.5rem; font-weight: 800; color: #111827; line-height: 1;">{{ number_format($averageRating, 1) }}</div>
                         <div class="text-warning my-2" style="font-size: 1.2rem;">
@@ -272,15 +278,26 @@
                                 <i class="bi {{ $i <= round($averageRating) ? 'bi-star-fill' : 'bi-star' }}"></i>
                             @endfor
                         </div>
-                        <div class="text-muted small">بناءً على {{ $ratingsCount }} تقييم</div>
+                        <div class="text-muted small">{{ __('website.based_on') ?? 'بناءً على' }} {{ $ratingsCount }} {{ __('website.evaluation') ?? 'تقييم' }}</div>
                     </div>
                     <!-- Progress Bars -->
+                    @php
+                        $ratingCounts = [5 => 0, 4 => 0, 3 => 0, 2 => 0, 1 => 0];
+                        if (isset($user->ratingsReceived) && $user->ratingsReceived) {
+                            foreach($user->ratingsReceived as $rating) {
+                                $star = round($rating->rating);
+                                if (isset($ratingCounts[$star])) {
+                                    $ratingCounts[$star]++;
+                                }
+                            }
+                        }
+                    @endphp
                     <div>
-                        @foreach([5=>77, 4=>8, 3=>2, 2=>0, 1=>0] as $star => $count)
+                        @foreach($ratingCounts as $star => $count)
                         <div class="d-flex align-items-center mb-1" style="font-size: 0.8rem;">
                             <div style="width: 35px;" class="text-start"><i class="bi bi-star-fill text-warning"></i> {{ $star }}</div>
                             <div class="progress flex-grow-1 mx-2" style="height: 6px; background-color: #f3f4f6; border-radius: 10px;">
-                                <div class="progress-bar bg-warning" role="progressbar" style="width: {{ $count > 0 ? ($count/87)*100 : 0 }}%; border-radius: 10px;"></div>
+                                <div class="progress-bar bg-warning" role="progressbar" style="width: {{ $ratingsCount > 0 ? ($count/$ratingsCount)*100 : 0 }}%; border-radius: 10px;"></div>
                             </div>
                             <div style="width: 25px;" class="text-muted text-end">{{ $count }}</div>
                         </div>

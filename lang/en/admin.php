@@ -12,8 +12,9 @@ return [
 // all pages
     'save' => 'Save',
     'add' => 'Add',
-    'submit' => 'Submit',
+    'submit' => 'Send',
     'image' => 'Image',
+    'choose' => 'Choose',
     'none_background' => 'None',
     'avatar' => 'Avatar',
     'desc' => 'About',

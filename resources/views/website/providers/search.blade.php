@@ -2,7 +2,7 @@
 @section('body_class', 'sup-page')
 @section('content')
     <!-- Header Start -->
-    <div class="services-header-section without-search">
+    <div class="services-header-section">
         <div class="container p-md-5 p-4 mb-md-5">
             <div class="row align-items-center">
                 <div class="col-lg-12">
@@ -26,53 +26,66 @@
             </div>
         </div>
 
-        <div class="search-section">
-            <div class="container">
-                <div class="search-content wow fadeIn" data-wow-delay="0.1s">
-                    <form action="{{ route('providers.search') }}" method="GET">
-                        <div class="row g-2">
-                            <div class="col-md-4">
-                                <select name="sub_category_id" class="form-select select2 border-0 py-3">
-                                    @foreach ($categories as $cat)
-                                        <option value="{{ $cat->id }}"
-                                            {{ request('category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}
-                                        </option>
-                                        @foreach ($cat->children ?? [] as $sub)
-                                            <option value="{{ $sub->id }}"
-                                                {{ request('category_id') == $sub->id ? 'selected' : '' }}>&nbsp;&nbsp;↳
-                                                {{ $sub->name }}</option>
-                                        @endforeach
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <select name="city_id" class="form-select select2 border-0 py-3">
-                                    <option value="">{{ __('website.all_cities') }}</option>
-                                    @foreach ($cities as $city)
-                                        <option value="{{ $city->id }}"
-                                            {{ request('city_id') == $city->id ? 'selected' : '' }}>{{ $city->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <button type="submit" class="btn btn-icon py-3 px-5 me-3 animated fadeIn w-100">
-                                    <span>{{ __('website.search') }}</span>
-                                    <i class="icon-btn bi bi-arrow-up-left"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-
+        <!-- FILTER -->
+        <div class="filter-wrap position-relative" style='z-index: 9;'>
+          <div class="filter-card">
+            <div class="filter-top">
+              <div class="filter-title"><i class="bi bi-search me-1"></i> {{ __('website.search_for_provider') }}</div>
             </div>
+            <form action="{{ route('providers.search') }}" method="GET">
+                <div class="filter-grid" style="grid-template-columns: repeat(4, 1fr);">
+                    <div class="fg">
+                        <label>{{ __('website.region') }}</label>
+                        <select name="region_id" class="select2">
+                            <option value="">{{ __('website.all') }}</option>
+                            @foreach ($regions ?? [] as $region)
+                                <option value="{{ $region->id }}" {{ request('region_id') == $region->id ? 'selected' : '' }}>{{ $region->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="fg">
+                        <label>{{ __('website.city') }}</label>
+                        <select name="city_id" class="select2">
+                            <option value="">{{ __('website.all') }}</option>
+                            @foreach ($cities ?? [] as $city)
+                                <option value="{{ $city->id }}" {{ request('city_id') == $city->id ? 'selected' : '' }}>{{ $city->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="fg">
+                        <label>{{ __('website.sub_category') ?? 'القسم الفرعي' }}</label>
+                        <select name="sub_category_id" class="select2">
+                            <option value="">{{ __('website.all_sections') }}</option>
+                            @foreach ($categories ?? [] as $cat)
+                                <option value="{{ $cat->id }}" {{ request('category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                                @foreach ($cat->children ?? [] as $sub)
+                                    <option value="{{ $sub->id }}" {{ request('category_id') == $sub->id ? 'selected' : '' }}>&nbsp;&nbsp;↳ {{ $sub->name }}</option>
+                                @endforeach
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="fg">
+                        <label>{{ __('website.company_size') ?? 'حجم الشركة' }}</label>
+                        <select name="classification_id" class="select2">
+                            <option value="">{{ __('website.all') }}</option>
+                            @foreach ($classifications ?? [] as $class)
+                                <option value="{{ $class->id }}" {{ request('classification_id') == $class->id ? 'selected' : '' }}>{{ $class->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-actions">
+                    <button type="submit" class="btn-search"><i class="bi bi-search me-1"></i> {{ __('website.search_providers') ?? 'ابحث عن مزودي الخدمة' }}</button>
+                </div>
+            </form>
+          </div>
         </div>
     </div>
     <!-- Header End -->
 
 
     <!-- Services Category Start -->
-    <div class="container-fluid bg-white services-section">
+    <div class="container-fluid">
         <div class="container">
 
             <div class="category-companies-grid">
@@ -153,39 +166,9 @@
                 </div>
             </div>
 
-            <!-- Tabs Start -->
-            <ul class="nav nav-tabs border-0 mb-4 justify-content-center wow fadeInUp" id="searchProviderTabs" role="tablist" data-wow-delay="0.3s">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active rounded-pill px-4 me-2 shadow-sm border-0" id="search-companies-tab" data-bs-toggle="tab" data-bs-target="#search-companies" type="button" role="tab" aria-controls="search-companies" aria-selected="true" style="background-color: #f8f9fa; color: #333;">
-                        <i class="bi bi-building me-2"></i>{{ __('website.companies_and_institutions') }}
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link rounded-pill px-4 shadow-sm border-0" id="search-individuals-tab" data-bs-toggle="tab" data-bs-target="#search-individuals" type="button" role="tab" aria-controls="search-individuals" aria-selected="false" style="background-color: #f8f9fa; color: #333;">
-                        <i class="bi bi-person me-2"></i>{{ __('website.individual_providers') }}
-                    </button>
-                </li>
-            </ul>
-
-            <style>
-                #searchProviderTabs .nav-link.active {
-                    background-color: var(--primary, #00B98E) !important;
-                    color: white !important;
-                }
-                #searchProviderTabs .nav-link:hover:not(.active) {
-                    background-color: #e9ecef !important;
-                }
-            </style>
-
-            <div class="tab-content wow fadeIn" id="searchProviderTabsContent" data-wow-delay="0.4s">
-                <div class="tab-pane fade show active" id="search-companies" role="tabpanel" aria-labelledby="search-companies-tab">
-                    @include('website.categories.partials._providers_list', ['providers' => $companyProviders])
-                </div>
-                <div class="tab-pane fade" id="search-individuals" role="tabpanel" aria-labelledby="search-individuals-tab">
-                    @include('website.categories.partials._providers_list', ['providers' => $individualProviders])
-                </div>
+            <div class="wow fadeIn" data-wow-delay="0.4s">
+                @include('website.categories.partials._providers_list', ['providers' => $providers])
             </div>
-            <!-- Tabs End -->
         </div>
     </div>
     <!-- Providers Section End -->

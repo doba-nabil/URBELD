@@ -57,7 +57,7 @@
         </div>
         <form action="{{ route('providers.search') }}" method="GET">
             <input type="hidden" name="category_id" value="{{ $category->id }}">
-            <div class="filter-grid" style="grid-template-columns: repeat(3, 1fr);">
+            <div class="filter-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
               <div class="fg">
                 <label>{{ __('website.region') }}</label>
                 <select name="region_id" class="select2">
@@ -72,7 +72,7 @@
               <div class="fg">
                 <label>{{ __('website.city') }}</label>
                 <select name="city_id" class="select2">
-                  <option value="">{{ __('website.jeddah') }}</option>
+                  <option value="">{{ __('website.all') }}</option>
                   @if (isset($cities))
                       @foreach ($cities as $city)
                           <option value="{{ $city->id }}" {{ request('city_id') == $city->id ? 'selected' : '' }}>{{ $city->name }}</option>
@@ -87,6 +87,17 @@
                   @if (isset($subCategories))
                       @foreach ($subCategories as $sub)
                           <option value="{{ $sub->id }}" {{ request('sub_category_id') == $sub->id ? 'selected' : '' }}>{{ $sub->name }}</option>
+                      @endforeach
+                  @endif
+                </select>
+              </div>
+              <div class="fg">
+                <label>{{ __('website.company_size') ?? 'حجم الشركة' }}</label>
+                <select name="classification_id" class="select2">
+                  <option value="">{{ __('website.all') }}</option>
+                  @if (isset($classifications))
+                      @foreach ($classifications as $classification)
+                          <option value="{{ $classification->id }}" {{ request('classification_id') == $classification->id ? 'selected' : '' }}>{{ $classification->name }}</option>
                       @endforeach
                   @endif
                 </select>

@@ -19,6 +19,7 @@ class ProviderSearchController extends Controller
     {
         // Build the provider query
         $providersQuery = User::serviceProviders()
+            ->where('provider_type', 'company')
             ->where('users.active', 'active');
 
         // Filter by category (main or sub)
@@ -37,9 +38,18 @@ class ProviderSearchController extends Controller
             }
         }
 
-        // Filter by city
+        // Filter by city or region
         if ($request->filled('city_id')) {
             $providersQuery->where('city_id', $request->city_id);
+        } elseif ($request->filled('region_id')) {
+            $providersQuery->whereHas('city', function($q) use ($request) {
+                $q->where('region_id', $request->region_id);
+            });
+        }
+
+        // Filter by classification (size)
+        if ($request->filled('classification_id')) {
+            $providersQuery->where('classification_id', $request->classification_id);
         }
 
         // Filter by keyword (name search)
@@ -83,15 +93,19 @@ class ProviderSearchController extends Controller
         ]);
 
         // For the search form dropdowns
-        $categories = Category::whereNull('parent_id')->where('is_active', true)->get();
+        $categories = Category::with(['children' => function($q) {
+            $q->where('is_active', true)->where('supports_supply_requests', false);
+        }])->whereNull('parent_id')->where('is_active', true)->where('supports_supply_requests', false)->get();
         $cities = City::orderBy('name')->get();
+        $regions = \App\Models\Region::all();
+        $classifications = \App\Models\CompanyClassification::where('type', 'company')->get();
 
         // If a main category is selected, load its subcategories
         $subCategories = collect();
         if ($selectedCategory) {
             $subCategories = $selectedCategory->parent_id 
-                ? Category::where('parent_id', $selectedCategory->parent_id)->where('is_active', true)->get()
-                : $selectedCategory->children()->where('is_active', true)->get();
+                ? Category::where('parent_id', $selectedCategory->parent_id)->where('is_active', true)->where('supports_supply_requests', false)->get()
+                : $selectedCategory->children()->where('is_active', true)->where('supports_supply_requests', false)->get();
         }
 
         return view('website.providers.search', [
@@ -100,6 +114,8 @@ class ProviderSearchController extends Controller
             'individualProviders' => $individualProviders,
             'categories' => $categories,
             'cities' => $cities,
+            'regions' => $regions,
+            'classifications' => $classifications,
             'subCategories' => $subCategories,
             'selectedCategory' => $selectedCategory
         ]);

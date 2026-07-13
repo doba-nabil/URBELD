@@ -22,10 +22,26 @@ class SupplyRequestController extends Controller
         return view('website.supply_requests.show', compact('supplyRequest'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
-        $cities = \App\Models\City::orderBy('name')->get();
-        return view('website.supply_requests.create', compact('cities'));
+        $regions = \App\Models\Region::with('cities')->orderBy('name')->get();
+        $providerId = $request->get('provider_id');
+        $providerCities = [];
+        $provider = null;
+        $providerDoesNotDeliver = false;
+        
+        if ($providerId) {
+            $provider = \App\Models\User::with('deliveryCities', 'city')->find($providerId);
+            if ($provider) {
+                if ($provider->deliveryCities->isNotEmpty()) {
+                    $providerCities = $provider->deliveryCities->pluck('id')->toArray();
+                } else {
+                    $providerDoesNotDeliver = true;
+                }
+            }
+        }
+
+        return view('website.supply_requests.create', compact('regions', 'providerCities', 'provider', 'providerDoesNotDeliver'));
     }
 
     public function store(Request $request)
