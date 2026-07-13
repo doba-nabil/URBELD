@@ -8,6 +8,9 @@
                 {{__('admin.categories')}}
                 <div class="buttons d-flex justify-content-between">
                     @include('dashboard.partials.index.table_btns')
+                    <a class="btn btn-outline-info me-2" href="{{ route('settings.get') }}?tab=home">
+                        <i class="menu-icon icon-base ti tabler-settings"></i> إعدادات قسم التوريد
+                    </a>
                     <a class="btn btn-primary" href="{{ route('categories.create') }}"><i
                             class="menu-icon icon-base ti tabler-plus"></i> {{ __('admin.add_new') }}</a>
                 </div>

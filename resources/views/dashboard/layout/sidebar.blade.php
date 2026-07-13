@@ -292,14 +292,6 @@
         @endif
 
 
-        @if(auth('admin')->user()->can('landing-page.index'))
-            <li class="menu-item {{ request()->is('*landing-page*') ? 'active open' : '' }}">
-                <a href="{{ route('admin.landing-page.index') }}" class="menu-link">
-                    <i class="menu-icon icon-base ti tabler-browser"></i>
-                    <div>{{ __('admin.landing_page') }}</div>
-                </a>
-            </li>
-        @endif
 
 
         @if(auth('admin')->user()->can('faqs.index'))

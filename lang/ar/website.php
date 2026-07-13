@@ -637,6 +637,7 @@ return [
     'successful_supply_operation' => 'عملية توريد ناجحة',
     'average_rating' => 'متوسط التقييم',
     'financial_report' => 'التقرير المالي (آخر 6 أشهر)',
+    'already_rated' => 'تم التقييم مسبقاً',
     'response_rate' => 'معدل الاستجابة',
     'about_company' => 'عن الشركة',
     'available_products' => 'المنتجات المتاحة',

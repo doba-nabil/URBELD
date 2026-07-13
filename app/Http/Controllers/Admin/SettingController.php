@@ -64,6 +64,7 @@ class SettingController extends Controller
             'home_hero_image' => 'nullable|image|max:2048',
             'home_video_cover' => 'nullable|image|max:2048',
             'banners.*' => 'nullable|image|max:2048',
+            'suppliers_card_image' => 'nullable|image|max:2048',
         ]);
 
         $translatableKeys = [
@@ -72,13 +73,13 @@ class SettingController extends Controller
             'home_video_label', 'home_video_title', 'home_partners_title',
             'home_commitments_badge', 'home_commitments_title', 'home_commitments_desc',
             'home_contact_badge', 'home_contact_title', 'home_contact_desc', 'home_contact_btn',
-            'home_services_title'
+            'home_services_title', 'suppliers_card_title', 'suppliers_card_link', 'suppliers_card_desc'
         ];
 
         foreach ($translatableKeys as $key) {
             Setting::setValue($key, $request->input($key), true);
         }
-        foreach (['contact_email','contact_phone', 'longitude', 'latitude', 'main_background_type', 'footer_background_type', 'is_subscription_enabled', 'is_payment_enabled', 'tender_apply_fee', 'tender_add_fee'] as $key) {
+        foreach (['contact_email','contact_phone', 'longitude', 'latitude', 'main_background_type', 'footer_background_type', 'is_subscription_enabled', 'is_payment_enabled', 'tender_apply_fee', 'tender_add_fee', 'show_suppliers_card'] as $key) {
             Setting::setValue($key, $request->input($key));
         }
 
@@ -143,6 +144,11 @@ class SettingController extends Controller
         if ($request->hasFile('home_video_cover') && $request->file('home_video_cover')->isValid()) {
             $settingModel->clearMediaCollection('home_video_cover');
             $settingModel->addMedia($request->file('home_video_cover'))->toMediaCollection('home_video_cover');
+        }
+
+        if ($request->hasFile('suppliers_card_image') && $request->file('suppliers_card_image')->isValid()) {
+            $settingModel->clearMediaCollection('suppliers_card_image');
+            $settingModel->addMedia($request->file('suppliers_card_image'))->toMediaCollection('suppliers_card_image');
         }
 
         // Handle home image deletion

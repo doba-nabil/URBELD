@@ -620,5 +620,6 @@ return [
     'city' => 'City',
     'delivery_outside_desc' => 'For delivery outside the specified cities, please contact the administration',
     'financial_report' => 'Financial Report (Last 6 Months)',
+    'already_rated' => 'Already Rated',
 ];
 

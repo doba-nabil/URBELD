@@ -215,7 +215,22 @@
 
     <!-- CTA -->
     <div class="cta-card">
-      @if($tender->isExpired())
+      @if($tender->status === \App\Models\Tender::STATUS_COMPLETED)
+        <div class="cta-status"><i class="bi bi-flag-fill" style="font-size: 14px; color: #10b981;"></i> {{ __('website.completed_tender') ?? 'مناقصة مكتملة' }}</div>
+        <button class="btn-main-offer" disabled style="background:#10b981;cursor:not-allowed;">
+            <i class="bi bi-check-all"></i> {{ __('website.work_completed_successfully') ?? 'تم الإنتهاء من العمل بنجاح' }}
+        </button>
+      @elseif($tender->status === \App\Models\Tender::STATUS_IN_PROGRESS)
+        <div class="cta-status"><i class="bi bi-gear-fill" style="font-size: 14px; color: #3b82f6;"></i> {{ __('website.in_progress_tender') ?? 'قيد التنفيذ' }}</div>
+        <button class="btn-main-offer" disabled style="background:#3b82f6;cursor:not-allowed;">
+            <i class="bi bi-tools"></i> {{ __('website.work_in_progress') ?? 'العمل جاري حالياً' }}
+        </button>
+      @elseif($tender->status === \App\Models\Tender::STATUS_CLOSED)
+        <div class="cta-status"><i class="bi bi-x-circle-fill" style="font-size: 14px; color: #ef4444;"></i> {{ __('website.closed_tender') ?? 'مناقصة مغلقة' }}</div>
+        <button class="btn-main-offer" disabled style="background:#ef4444;cursor:not-allowed;">
+            <i class="bi bi-lock-fill"></i> {{ __('website.tender_is_closed') ?? 'تم إغلاق المناقصة' }}
+        </button>
+      @elseif($tender->isExpired())
         <div class="cta-status"><i class="bi bi-circle-fill" style="font-size: 10px; color: #ef4444;"></i> {{ __('tenders.ended_tender') }}</div>
         <button class="btn-main-offer" disabled style="background:#9ca3af;cursor:not-allowed;">
             {{ __('tenders.time_ended') }}

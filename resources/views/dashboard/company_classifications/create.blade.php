@@ -19,9 +19,17 @@
                     @csrf
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">{{ __('admin.name') ?? 'الاسم (مثل: A, B, كبير, متوسط)' }} <span class="text-danger">*</span></label>
-                            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" required>
-                            @error('name')
+                            <label class="form-label">{{ __('admin.name') ?? 'الاسم' }} (عربي) <span class="text-danger">*</span></label>
+                            <input type="text" name="name[ar]" class="form-control @error('name.ar') is-invalid @enderror" value="{{ old('name.ar') }}" required>
+                            @error('name.ar')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">{{ __('admin.name') ?? 'الاسم' }} (English)</label>
+                            <input type="text" name="name[en]" class="form-control @error('name.en') is-invalid @enderror" value="{{ old('name.en') }}">
+                            @error('name.en')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>

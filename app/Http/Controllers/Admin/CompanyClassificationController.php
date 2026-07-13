@@ -22,7 +22,8 @@ class CompanyClassificationController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name.ar' => 'required|string|max:255',
+            'name.en' => 'nullable|string|max:255',
             'type' => 'required|in:company,supplier',
         ]);
 
@@ -39,7 +40,8 @@ class CompanyClassificationController extends Controller
     public function update(Request $request, CompanyClassification $companyClassification)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name.ar' => 'required|string|max:255',
+            'name.en' => 'nullable|string|max:255',
             'type' => 'required|in:company,supplier',
         ]);
 
