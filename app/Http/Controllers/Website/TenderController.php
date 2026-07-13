@@ -65,7 +65,7 @@ class TenderController extends Controller
             return redirect()->route('website.tenders.index')->with('error_popup', 'subscription_required');
         }
 
-        $categories = Category::active()->whereNull('parent_id')->get();
+        $categories = Category::active()->whereNull('parent_id')->where('supports_tenders', true)->get();
         $cities = City::orderBy('name')->get();
 
         return view('website.tenders.create', compact('categories', 'cities'));
