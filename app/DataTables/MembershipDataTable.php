@@ -236,7 +236,7 @@ class MembershipDataTable extends DataTable
             Column::make('country')->title(__('admin.country'))->addClass('text-start'),
             Column::make('city')->title(__('admin.city'))->addClass('text-start'),
             Column::make('is_active')->title(__('admin.status'))->addClass('text-center'),
-            Column::make('is_featured')->title('مميز')->addClass('text-center')->searchable(false)->orderable(false),
+            Column::make('is_featured')->title('مميز')->addClass('text-center')->searchable(false)->orderable(false)->width(150),
             Column::computed('action')->title(__('admin.actions'))
                 ->exportable(false)
                 ->printable(false)
