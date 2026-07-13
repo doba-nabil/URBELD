@@ -29,13 +29,20 @@
                                     <i class="bi bi-arrow-right"></i>
                                 </a>
                             @else
-                                <a href="{{ route('requests.show', $chat->service_request_id) }}" class="chat-back-btn"
-                                    title="{{ __('website.back_to_requests') }}">
-                                    <i class="bi bi-arrow-right"></i>
-                                </a>
+                                @if($chat->service_request_id)
+                                    <a href="{{ route('requests.show', $chat->service_request_id) }}" class="chat-back-btn"
+                                        title="{{ __('website.back_to_requests') }}">
+                                        <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                @else
+                                    <a href="{{ route('dashboard.chat.index') }}" class="chat-back-btn"
+                                        title="العودة للمحادثات">
+                                        <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                @endif
                             @endif
                             <div class="chat-header-avatar">
-                                <img src="{{ $otherUser->getFirstMediaUrl(' personal_photo') ?: $otherUser->getFirstMediaUrl('users') ?: asset('website/assets/img/logo.png') }}"
+                                <img src="{{ $otherUser->getFirstMediaUrl('personal_photo') ?: $otherUser->getFirstMediaUrl('users') ?: asset('website/assets/img/logo.png') }}"
                                     alt="{{ $otherUser->name }}">
                                 <span class="online-status"></span>
                             </div>
@@ -45,11 +52,13 @@
                             </div>
                         </div>
                         <div class="chat-header-actions">
+                            @if($chat->serviceRequest)
                             <div class="text-end">
                                 <small class="text-muted d-block">{{ __('website.request_number') }} #{{ $chat->serviceRequest->id }}</small>
                                 <span
                                     class="badge bg-primary text-white">{{ $chat->serviceRequest->category->name ?? __('website.service') }}</span>
                             </div>
+                            @endif
                         </div>
                     </div>
 

@@ -59,6 +59,7 @@
             align-items: center;
             justify-content: space-between;
             background-color: #fff;
+            height: auto !important;
         }
         .pd-doc-icon {
             width: 44px;
@@ -346,10 +347,12 @@
                                     </div>
                                 </div>
                             @endforeach
-                        @elseif(!$isLocked)
-                            <div class="pd-doc-box d-block p-3" id="certificates-container">
+                        @endif
+
+                        @if(!$isLocked)
+                            <div class="pd-doc-box d-block p-3 mt-3" id="certificates-container">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <label class="pd-label mb-0 fw-bold text-dark">أوراق ومستندات رسمية</label>
+                                    <label class="pd-label mb-0 fw-bold text-dark">إضافة المزيد من الأوراق والمستندات</label>
                                     <button type="button" class="btn btn-sm btn-outline-primary" id="add-certificate-btn">
                                         <i class="bi bi-plus-lg"></i> إضافة ملف
                                     </button>

@@ -10,8 +10,10 @@
                     @include('dashboard.partials.index.table_btns')
                 </div>
             </h5>
-            <div class="table-responsive text-nowrap">
-                {{ $dataTable->table() }}
+            <div class="card-body">
+                <div class="card-datatable table-responsive">
+                    {{ $dataTable->table(['class' => 'table border-top'], true) }}
+                </div>
             </div>
         </div>
     </div>

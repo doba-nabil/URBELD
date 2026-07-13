@@ -108,7 +108,7 @@
                                 <div class="col-12">
                                     <label class="form-label fw-bold">{{ __('website.delivery_date') ?? 'آخر موعد للتسليم (اختياري)' }}</label>
                                     <div class="input-group-custom">
-                                        <input type="date" name="delivery_date" class="form-control">
+                                        <input type="date" name="delivery_date" class="form-control" min="{{ date('Y-m-d') }}">
                                     </div>
                                 </div>
 
