@@ -27,18 +27,10 @@
 
 <body class="login-page">
     <div class="site-scale">
-    <div class="login-container">
-        <!-- Left Side - Background Image -->
-        <div class="login-left-section">
-            <div class="login-background-overlay">
-                <img src="{{ asset('website/assets/img/auth-img.png') }}" alt="Background" class="login-background-image">
-                <div class="login-text-overlay">URBELD</div>
-            </div>
-        </div>
-
-        <!-- Right Side - Forgot Password Form -->
-        <div class="login-right-section">
-            <div class="login-form-wrapper">
+    <div class="container d-flex align-items-center justify-content-center min-vh-100 py-5">
+        <div class="card shadow-lg border-0 rounded-4 w-100" style="max-width: 450px;">
+            <div class="card-body p-5">
+                <div class="login-form-wrapper">
                 <!-- Logo -->
                 <div class="login-logo">
                     <a href="{{ url('/') }}">

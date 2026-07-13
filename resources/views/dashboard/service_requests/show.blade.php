@@ -116,14 +116,16 @@
                             <div class="row mb-4">
                                 <div class="col-md-12">
                                     <h6 class="fw-bold mb-2"><i class="ti tabler-map me-1"></i>الموقع على الخريطة:</h6>
-                                    <iframe
-                                        width="100%"
-                                        height="300"
-                                        style="border:0; border-radius: 8px;"
-                                        loading="lazy"
-                                        allowfullscreen
-                                        src="https://www.google.com/maps/embed/v1/place?q={{ $serviceRequest->latitude }},{{ $serviceRequest->longitude }}&key={{ config('services.google_maps.key') }}">
+                                    <iframe 
+                                        width="100%" 
+                                        height="300" 
+                                        style="border:1px solid #e0e0e0; border-radius: 8px;" 
+                                        loading="lazy" 
+                                        src="https://www.openstreetmap.org/export/embed.html?bbox={{ $serviceRequest->longitude - 0.01 }}%2C{{ $serviceRequest->latitude - 0.01 }}%2C{{ $serviceRequest->longitude + 0.01 }}%2C{{ $serviceRequest->latitude + 0.01 }}&amp;layer=mapnik&amp;marker={{ $serviceRequest->latitude }}%2C{{ $serviceRequest->longitude }}">
                                     </iframe>
+                                    <div class="mt-2 text-end">
+                                        <a href="https://www.google.com/maps/search/?api=1&query={{ $serviceRequest->latitude }},{{ $serviceRequest->longitude }}" target="_blank" class="btn btn-sm btn-outline-primary"><i class="bi bi-google"></i> فتح في جوجل ماب</a>
+                                    </div>
                                 </div>
                             </div>
                         @endif

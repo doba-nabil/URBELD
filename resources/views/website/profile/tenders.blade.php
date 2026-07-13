@@ -15,25 +15,25 @@
         </div>
 
         <!-- Tabs Section -->
-        <div class="nav nav-pills d-flex justify-content-start mb-4 border-bottom flex-wrap gap-2" role="tablist">
+        <div class="nav d-flex justify-content-start mb-4 border-bottom flex-wrap gap-2">
             @if(auth()->user()->isServiceProvider() || auth()->user()->isSupplier() || auth()->user()->isCompanyProvider())
-            <button class="btn border fw-bold px-4 py-2 ir-tab-active bg-white" id="incoming-tab" data-bs-toggle="pill" data-bs-target="#incoming-tenders" type="button" role="tab" aria-selected="true" style="border-bottom: none !important; border-bottom-left-radius: 0; border-bottom-right-radius: 0; color: #1f2937;">
+            <a href="?tab=incoming" class="btn text-decoration-none fw-bold px-4 py-2 {{ $tab == 'incoming' ? 'border ir-tab-active bg-white' : 'border-0 text-muted' }}" style="{{ $tab == 'incoming' ? 'border-bottom: none !important; border-bottom-left-radius: 0; border-bottom-right-radius: 0; color: #1f2937;' : '' }}">
                 المناقصات الواردة ({{ $incomingTenders->total() }})
-            </button>
+            </a>
             @endif
-            <button class="btn @if(auth()->user()->isServiceProvider() || auth()->user()->isSupplier() || auth()->user()->isCompanyProvider()) border-0 text-muted @else border ir-tab-active bg-white @endif fw-bold px-4 py-2" id="my-tenders-tab" data-bs-toggle="pill" data-bs-target="#my-tenders" type="button" role="tab" aria-selected="false" @if(!(auth()->user()->isServiceProvider() || auth()->user()->isSupplier() || auth()->user()->isCompanyProvider())) style="border-bottom: none !important; border-bottom-left-radius: 0; border-bottom-right-radius: 0; color: #1f2937;" @endif>
+            <a href="?tab=my_tenders" class="btn text-decoration-none fw-bold px-4 py-2 {{ $tab == 'my_tenders' ? 'border ir-tab-active bg-white' : 'border-0 text-muted' }}" style="{{ $tab == 'my_tenders' ? 'border-bottom: none !important; border-bottom-left-radius: 0; border-bottom-right-radius: 0; color: #1f2937;' : '' }}">
                 مناقصاتي وتقديماتي ({{ $myTenders->count() + $myApplications->count() }})
-            </button>
-            <button class="btn border-0 fw-bold px-4 py-2 text-muted" id="saved-tab" data-bs-toggle="pill" data-bs-target="#saved-tenders" type="button" role="tab" aria-selected="false">
+            </a>
+            <a href="?tab=saved" class="btn text-decoration-none fw-bold px-4 py-2 {{ $tab == 'saved' ? 'border ir-tab-active bg-white' : 'border-0 text-muted' }}" style="{{ $tab == 'saved' ? 'border-bottom: none !important; border-bottom-left-radius: 0; border-bottom-right-radius: 0; color: #1f2937;' : '' }}">
                 المناقصات المحفوظة ({{ $savedTenders->count() }})
-            </button>
+            </a>
         </div>
 
         <!-- Tab Content -->
         <div class="tab-content">
             <!-- Incoming Tenders Tab -->
-            @if(auth()->user()->isServiceProvider() || auth()->user()->isSupplier() || auth()->user()->isCompanyProvider())
-            <div class="tab-pane fade show active" id="incoming-tenders" role="tabpanel">
+            @if($tab == 'incoming' && (auth()->user()->isServiceProvider() || auth()->user()->isSupplier() || auth()->user()->isCompanyProvider()))
+            <div id="incoming-tenders">
                 <div class="row">
                     @forelse($incomingTenders as $tender)
                         <div class="col-md-12 mb-3">
@@ -66,7 +66,8 @@
             @endif
 
             <!-- My Tenders & Applications Tab -->
-            <div class="tab-pane fade @if(!(auth()->user()->isServiceProvider() || auth()->user()->isSupplier() || auth()->user()->isCompanyProvider())) show active @endif" id="my-tenders" role="tabpanel">
+            @if($tab == 'my_tenders')
+            <div id="my-tenders">
                 <h5 class="fw-bold mb-3 border-bottom pb-2">المناقصات التي قمت بطرحها</h5>
                 <div class="row mb-4">
                     @forelse($myTenders as $tender)
@@ -119,7 +120,8 @@
             </div>
 
             <!-- Saved Tenders Tab -->
-            <div class="tab-pane fade" id="saved-tenders" role="tabpanel">
+            @if($tab == 'saved')
+            <div id="saved-tenders">
                 <div class="row">
                     @forelse($savedTenders as $savedTender)
                         <div class="col-md-12 mb-3">
@@ -140,6 +142,7 @@
                     @endforelse
                 </div>
             </div>
+            @endif
         </div>
 
     </div>
@@ -148,24 +151,6 @@
 
 @push('js')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Tabs logic
-    const tabs = document.querySelectorAll('.incoming-requests-wrapper [data-bs-toggle="pill"]');
-    tabs.forEach(tab => {
-        tab.addEventListener('click', function() {
-            tabs.forEach(t => {
-                t.classList.remove('ir-tab-active', 'bg-white', 'border');
-                t.classList.add('border-0', 'text-muted');
-                t.style.color = '#6c757d';
-                t.style.borderBottom = 'none';
-            });
-            this.classList.remove('border-0', 'text-muted');
-            this.classList.add('ir-tab-active', 'bg-white', 'border');
-            this.style.color = '#1f2937';
-            this.style.borderBottomColor = 'white';
-        });
-    });
-});
 
 const csrfToken = '{{ csrf_token() }}';
 window.toggleSaveTender = function(tenderId, btnElement) {
@@ -182,7 +167,7 @@ window.toggleSaveTender = function(tenderId, btnElement) {
     .then(response => response.json())
     .then(data => {
         // If it was removed, hide the card
-        if(data.status === 'unsaved') {
+        if(data.status === 'removed') {
             btnElement.closest('.col-md-12').remove();
         }
     })

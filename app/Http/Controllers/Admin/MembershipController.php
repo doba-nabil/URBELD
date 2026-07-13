@@ -83,6 +83,19 @@ class MembershipController extends Controller
         }
         return redirect()->route('memberships.show', $id)->with('success', __('admin.membership_status_updated'));
     }
+
+    public function toggleFeatured(Request $request, $id)
+    {
+        $membership = \App\Models\Membership::findOrFail($id);
+        $membership->is_featured = !$membership->is_featured;
+        $membership->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'تم تحديث حالة التميز بنجاح',
+            'is_featured' => $membership->is_featured
+        ]);
+    }
     public function edit($id)
     {
         // Try to find by User ID first (since the index list uses user IDs)

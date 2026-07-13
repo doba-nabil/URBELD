@@ -93,8 +93,9 @@
 
   <div class="tabs-row">
     <button class="tab-pill {{ $tab == 'all' ? 'active' : '' }}" onclick="changeTab('all')">{{ __('tenders.tab_all') }} ({{ $stats['all'] }})</button>
-    <button class="tab-pill {{ $tab == 'urgent' ? 'active' : '' }}" onclick="changeTab('urgent')">{{ __('tenders.tab_urgent') }} ({{ $stats['urgent'] }})</button>
+    <button class="tab-pill {{ $tab == 'open' ? 'active' : '' }}" onclick="changeTab('open')">{{ __('tenders.tab_open') ?? 'مفتوحة' }} ({{ $stats['open'] ?? 0 }})</button>
     <button class="tab-pill {{ $tab == 'closed' ? 'active' : '' }}" onclick="changeTab('closed')">{{ __('tenders.tab_closed') }} ({{ $stats['closed'] }})</button>
+    <button class="tab-pill {{ $tab == 'urgent' ? 'active' : '' }}" onclick="changeTab('urgent')">{{ __('tenders.tab_urgent') }} ({{ $stats['urgent'] }})</button>
   </div>
 
   <div class="stats-bar">

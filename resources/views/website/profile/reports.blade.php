@@ -175,6 +175,11 @@
                         @endforeach
                     </div>
 
+                    <div class="table-container mb-4">
+                        <h5 class="fw-bold mb-4" style="color: var(--primary);">{{ __('website.financial_report') ?? 'التقرير المالي (آخر 6 أشهر)' }}</h5>
+                        <canvas id="serviceChart" height="100"></canvas>
+                    </div>
+
                     <div class="table-container">
                         <h5 class="fw-bold mb-4" style="color: var(--primary);">{{ __('website.recent_activities') ?? 'الأنشطة الأخيرة' }}</h5>
                         @if (count($recentActivity) > 0)
@@ -255,6 +260,11 @@
                         @endforeach
                     </div>
 
+                    <div class="table-container mb-4">
+                        <h5 class="fw-bold mb-4" style="color: var(--primary);">{{ __('website.financial_report') ?? 'التقرير المالي (آخر 6 أشهر)' }}</h5>
+                        <canvas id="tenderChart" height="100"></canvas>
+                    </div>
+
                     <div class="table-container">
                         <h5 class="fw-bold mb-4" style="color: #503545;">{{ __('website.recent_activities') ?? 'الأنشطة الأخيرة' }}</h5>
                         @if (count($recentTenderActivity) > 0)
@@ -314,3 +324,71 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const labels = {!! json_encode(array_reverse($chartLabels)) !!};
+        const serviceData = {!! json_encode(array_reverse($serviceChartData)) !!};
+        const tenderData = {!! json_encode(array_reverse($tenderChartData)) !!};
+        
+        const chartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        };
+
+        const ctxService = document.getElementById('serviceChart').getContext('2d');
+        new Chart(ctxService, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '{{ __("admin.total_amount_paid") ?? "القيمة" }}',
+                    data: serviceData,
+                    backgroundColor: 'rgba(37, 99, 235, 0.7)',
+                    borderColor: 'rgba(37, 99, 235, 1)',
+                    borderWidth: 1,
+                    borderRadius: 4
+                }]
+            },
+            options: chartOptions
+        });
+
+        const ctxTender = document.getElementById('tenderChart').getContext('2d');
+        new Chart(ctxTender, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '{{ __("admin.total_amount_paid") ?? "القيمة" }}',
+                    data: tenderData,
+                    backgroundColor: 'rgba(16, 185, 129, 0.7)',
+                    borderColor: 'rgba(16, 185, 129, 1)',
+                    borderWidth: 1,
+                    borderRadius: 4
+                }]
+            },
+            options: chartOptions
+        });
+    });
+</script>
+@endpush

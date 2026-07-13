@@ -26,7 +26,7 @@ class TenderController extends Controller
     public function index(Request $request)
     {
         $tenders = $this->tenderService->getFilteredTenders($request);
-        $stats = $this->tenderService->getStats();
+        $stats = $this->tenderService->getStats($request);
         
         $categories = Category::active()->whereNull('parent_id')->where('supports_tenders', true)->get();
         $cities = City::orderBy('name')->get();
@@ -51,7 +51,14 @@ class TenderController extends Controller
             $tender->load(['applications.user.city', 'applications.user.media']);
         }
 
-        return view('website.tenders.show', compact('tender', 'hasApplied', 'isSaved'));
+        $hasRated = false;
+        if ($user) {
+            $hasRated = \App\Models\Rating::where('rater_id', $user->id)
+                                          ->where('tender_id', $tender->id)
+                                          ->exists();
+        }
+
+        return view('website.tenders.show', compact('tender', 'hasApplied', 'isSaved', 'hasRated'));
     }
 
     /**

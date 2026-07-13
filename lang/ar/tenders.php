@@ -21,6 +21,7 @@ return [
     'add_new' => 'إضافة مناقصة جديدة',
     
     'tab_all' => 'الكل',
+    'tab_open' => 'مفتوحة',
     'tab_urgent' => 'عاجلة',
     'tab_closed' => 'مغلقة',
     'showing' => 'عرض',

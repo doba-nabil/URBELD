@@ -21,6 +21,7 @@ return [
     'add_new' => 'Add New Tender',
     
     'tab_all' => 'All',
+    'tab_open' => 'Open',
     'tab_urgent' => 'Urgent',
     'tab_closed' => 'Closed',
     'showing' => 'Showing',

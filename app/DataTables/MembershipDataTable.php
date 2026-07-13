@@ -116,6 +116,16 @@ class MembershipDataTable extends DataTable
                 }
                 return '<span class="badge bg-label-secondary">' . __('admin.unactive') . '</span>';
             })
+            ->addColumn('is_featured', function ($q) {
+                $isFeatured = $q->membership ? $q->membership->is_featured : false;
+                $checked = $isFeatured ? 'checked' : '';
+                $toggleUrl = route('admin.memberships.toggle-featured', $q->membership_id ?? 0);
+                
+                // Return a checkbox toggle
+                return '<div class="form-check form-switch d-flex justify-content-center">
+                            <input class="form-check-input toggle-featured" type="checkbox" data-url="' . $toggleUrl . '" ' . $checked . ' ' . (!$q->membership_id ? 'disabled' : '') . '>
+                        </div>';
+            })
     ->addColumn('action', function ($q) {
                 $showUrl = url('/admin-panel/memberships/' . $q->id);
                 $editUrl = url('/admin-panel/memberships/' . $q->id . '/edit');
@@ -169,7 +179,7 @@ class MembershipDataTable extends DataTable
             </ul>
         </div>';
             })
-            ->rawColumns(['action', 'name', 'type', 'membership_plan', 'main_category', 'sub_categories_count', 'certificates_count', 'available_requests', 'country', 'city', 'is_active'])
+            ->rawColumns(['action', 'name', 'type', 'membership_plan', 'main_category', 'sub_categories_count', 'certificates_count', 'available_requests', 'country', 'city', 'is_active', 'is_featured'])
             ->setRowId('id');
     }
 
@@ -226,6 +236,7 @@ class MembershipDataTable extends DataTable
             Column::make('country')->title(__('admin.country'))->addClass('text-start'),
             Column::make('city')->title(__('admin.city'))->addClass('text-start'),
             Column::make('is_active')->title(__('admin.status'))->addClass('text-center'),
+            Column::make('is_featured')->title('مميز')->addClass('text-center')->searchable(false)->orderable(false),
             Column::computed('action')->title(__('admin.actions'))
                 ->exportable(false)
                 ->printable(false)

@@ -183,9 +183,15 @@
                                             <button type="submit" class="btn btn-primary w-100"><i class="bi bi-flag-fill"></i> {{ __('website.mark_as_completed') ?? 'تأكيد إنتهاء العمل' }}</button>
                                         </form>
                                     @elseif($tender->status === \App\Models\Tender::STATUS_COMPLETED)
-                                        <button type="button" class="btn btn-warning w-100 mt-2" data-bs-toggle="modal" data-bs-target="#ratingModal">
-                                            <i class="bi bi-star"></i> {{ __('website.rate_provider') ?? 'تقييم المورد' }}
-                                        </button>
+                                        @if($hasRated)
+                                            <button type="button" class="btn btn-secondary w-100 mt-2" disabled>
+                                                <i class="bi bi-star-fill text-warning"></i> {{ __('website.already_rated') ?? 'تم التقييم' }}
+                                            </button>
+                                        @else
+                                            <button type="button" class="btn btn-warning w-100 mt-2" data-bs-toggle="modal" data-bs-target="#ratingModal">
+                                                <i class="bi bi-star"></i> {{ __('website.rate_provider') ?? 'تقييم المورد' }}
+                                            </button>
+                                        @endif
                                     @endif
                                 @endif
                             </div>

@@ -83,6 +83,7 @@ Route::group(['prefix' => 'admin-panel', 'middleware' => [IsAdminMiddleware::cla
     Route::get('memberships/{id}/certificates', [MembershipController::class, 'getCertificates'])->name('memberships.certificates');
     Route::get('memberships/{id}/service-requests', [MembershipController::class, 'serviceRequests'])->name('memberships.service-requests');
     Route::put('memberships/{id}/update-status', [MembershipController::class, 'updateStatus'])->name('memberships.update-status');
+    Route::post('memberships/{id}/toggle-featured', [MembershipController::class, 'toggleFeatured'])->name('admin.memberships.toggle-featured');
     Route::resource('memberships', MembershipController::class);
 
     // Services

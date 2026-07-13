@@ -613,5 +613,11 @@ return [
     'execution_time' => 'Execution Time',
     'view_details' => 'View Details',
     'files' => 'Files',
+    'delivery_service' => 'Delivery Service',
+    'delivery_available' => 'Delivery Available',
+    'delivery_desc' => 'We provide delivery service',
+    'covered_cities' => 'Covered Cities',
+    'city' => 'City',
+    'delivery_outside_desc' => 'For delivery outside the specified cities, please contact the administration',
 ];
 

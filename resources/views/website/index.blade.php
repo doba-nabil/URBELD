@@ -387,20 +387,20 @@
         <!-- What You Need Section End -->
     @endif
 
-    @if (isset($topSuppliers) && count($topSuppliers) > 0)
-        <!-- Suppliers Section Start -->
+    @if (isset($featuredMemberships) && count($featuredMemberships) > 0)
+        <!-- Featured Memberships Section Start -->
         <div class="what-you-need-section py-5 bg-white">
             <div class="container">
                 <!-- Header -->
                 <div class="wyn-header d-flex justify-content-between align-items-center mb-5 wow fadeInUp"
                     data-wow-delay="0.1s">
                     <div class="wyn-header-left">
-                        <span class="wyn-label"><i class="bi bi-box-seam me-1"></i> شركاء التوريد</span>
-                        <h2 class="wyn-title">أبرز الموردين المعتمدين</h2>
+                        <span class="wyn-label"><i class="bi bi-star-fill text-warning me-1"></i> العضويات المميزة</span>
+                        <h2 class="wyn-title">أبرز العضويات والشركات</h2>
                     </div>
                     <div class="wyn-header-right">
-                        <a href="{{ route('website.suppliers.index') }}" class="btn btn-icon py-3 px-5 me-3 animated fadeIn">
-                            <span>عرض كل الموردين</span>
+                        <a href="{{ route('providers.search') }}" class="btn btn-icon py-3 px-5 me-3 animated fadeIn">
+                            <span>عرض جميع الأعضاء</span>
                             <i class="icon-btn bi bi-arrow-up-left"></i>
                         </a>
                     </div>
@@ -408,7 +408,7 @@
 
                 <!-- Cards Grid -->
                 <div class="row g-4">
-                    @foreach ($topSuppliers as $provider)
+                    @foreach ($featuredMemberships as $provider)
                         <!-- Supplier Card -->
                         <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
                             <div class="wyn-card position-relative overflow-hidden">

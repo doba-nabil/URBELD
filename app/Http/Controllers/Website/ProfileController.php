@@ -193,11 +193,14 @@ class ProfileController extends Controller
                 ->whereHas('serviceRequest', function($q) {
                     $q->whereIn('status', [\App\Models\ServiceRequest::STATUS_COMPLETED, \App\Models\ServiceRequest::STATUS_SEEKER_CONFIRMED]);
                 })->sum('proposed_price');
+            
+            $avgServiceRating = \App\Models\Rating::where('rated_id', $user->id)->whereNotNull('service_request_id')->avg('rating') ?? 0.0;
+            
             $kpis = [
                 ['title' => __('admin.total_responses_submitted'), 'value' => $totalResponses, 'icon' => 'fas fa-briefcase', 'color' => 'primary'],
                 ['title' => __('admin.completed_projects'), 'value' => $completedProjects, 'icon' => 'fas fa-check', 'color' => 'success'],
                 ['title' => __('admin.total_revenue'), 'value' => number_format($totalRevenue, 2) . ' ' . __('admin.currency'), 'icon' => 'fas fa-money-bill', 'color' => 'info'],
-                ['title' => __('admin.average_rating'), 'value' => number_format($user->average_rating, 1) . ' / 5', 'icon' => 'fas fa-star', 'color' => 'warning'],
+                ['title' => __('admin.average_rating'), 'value' => number_format($avgServiceRating, 1) . ' / 5', 'icon' => 'fas fa-star', 'color' => 'warning'],
             ];
             // Recent Completed Projects
             $recentActivity = $user->serviceRequestResponses()
@@ -221,10 +224,13 @@ class ProfileController extends Controller
             $totalTenderResponses = $user->tenderApplications()->count();
             $completedTenderProjects = $user->tenderApplications()->where('status', \App\Models\TenderApplication::STATUS_ACCEPTED)->count();
             $totalTenderRevenue = $user->tenderApplications()->where('status', \App\Models\TenderApplication::STATUS_ACCEPTED)->sum('price');
+            $avgTenderRating = \App\Models\Rating::where('rated_id', $user->id)->whereNotNull('tender_id')->avg('rating') ?? 0.0;
+            
             $tenderKpis = [
                 ['title' => __('website.tenders_submitted') ?? 'عروض مقدمة', 'value' => $totalTenderResponses, 'icon' => 'fas fa-briefcase', 'color' => 'primary'],
                 ['title' => __('website.tenders_accepted') ?? 'عروض مقبولة', 'value' => $completedTenderProjects, 'icon' => 'fas fa-check', 'color' => 'success'],
                 ['title' => __('website.expected_revenue') ?? 'إيرادات محتملة', 'value' => number_format($totalTenderRevenue, 2) . ' ' . __('admin.currency'), 'icon' => 'fas fa-money-bill', 'color' => 'info'],
+                ['title' => __('admin.average_rating') ?? 'متوسط التقييم', 'value' => number_format($avgTenderRating, 1) . ' / 5', 'icon' => 'fas fa-star', 'color' => 'warning'],
             ];
             $recentTenderActivity = $user->tenderApplications()->with('tender')
                 ->latest()
@@ -252,10 +258,14 @@ class ProfileController extends Controller
                 ->sum(function($req) {
                     return $req->acceptedResponse ? $req->acceptedResponse->proposed_price : 0;
                 });
+            
+            $avgServiceRating = \App\Models\Rating::where('rated_id', $user->id)->whereNotNull('service_request_id')->avg('rating') ?? 0.0;
+            
             $kpis = [
                 ['title' => __('admin.total_requests_created'), 'value' => $totalRequests, 'icon' => 'fas fa-file-alt', 'color' => 'primary'],
                 ['title' => __('admin.completed_requests_count'), 'value' => $completedRequests, 'icon' => 'fas fa-check', 'color' => 'success'],
                 ['title' => __('admin.total_amount_paid'), 'value' => number_format($totalSpent, 2) . ' ' . __('admin.currency'), 'icon' => 'fas fa-credit-card', 'color' => 'info'],
+                ['title' => __('admin.average_rating') ?? 'متوسط التقييم', 'value' => number_format($avgServiceRating, 1) . ' / 5', 'icon' => 'fas fa-star', 'color' => 'warning'],
             ];
             // Recent Requests
             $recentActivity = $user->serviceRequests()
@@ -283,10 +293,13 @@ class ProfileController extends Controller
                 ->sum(function($tender) {
                     return $tender->applications->where('status', \App\Models\TenderApplication::STATUS_ACCEPTED)->sum('price');
                 });
+                
+            $avgTenderRating = \App\Models\Rating::where('rated_id', $user->id)->whereNotNull('tender_id')->avg('rating') ?? 0.0;
             $tenderKpis = [
                 ['title' => __('website.total_tenders') ?? 'إجمالي المناقصات', 'value' => $totalTenders, 'icon' => 'fas fa-file-alt', 'color' => 'primary'],
                 ['title' => __('website.completed_tenders') ?? 'مناقصات مكتملة', 'value' => $completedTenders, 'icon' => 'fas fa-check', 'color' => 'success'],
                 ['title' => __('website.total_spent') ?? 'الإنفاق الإجمالي', 'value' => number_format($totalTenderSpent, 2) . ' ' . __('admin.currency'), 'icon' => 'fas fa-credit-card', 'color' => 'info'],
+                ['title' => __('admin.average_rating') ?? 'متوسط التقييم', 'value' => number_format($avgTenderRating, 1) . ' / 5', 'icon' => 'fas fa-star', 'color' => 'warning'],
             ];
             $recentTenderActivity = $user->tenders()
                 ->with('applications')
@@ -306,7 +319,49 @@ class ProfileController extends Controller
                     ];
                 });
         }
-        return view('website.profile.reports', compact('user', 'kpis', 'recentActivity', 'tenderKpis', 'recentTenderActivity'));
+        
+        // Chart Data (Last 6 Months Revenue/Spent)
+        $chartLabels = collect(range(5, 0))->map(function($i) {
+            return now()->subMonths($i)->translatedFormat('M Y');
+        })->values()->toArray();
+
+        $serviceChartData = [];
+        $tenderChartData = [];
+        
+        for ($i = 5; $i >= 0; $i--) {
+            $monthStart = now()->subMonths($i)->startOfMonth();
+            $monthEnd = now()->subMonths($i)->endOfMonth();
+            
+            if ($user->user_type === 'service_provider') {
+                $serviceChartData[] = $user->serviceRequestResponses()->where('status', \App\Models\ServiceRequestResponse::STATUS_ACCEPTED)
+                    ->whereHas('serviceRequest', function($q) use ($monthStart, $monthEnd) {
+                        $q->whereIn('status', [\App\Models\ServiceRequest::STATUS_COMPLETED, 'work_completed'])
+                          ->whereBetween('updated_at', [$monthStart, $monthEnd]);
+                    })->sum('proposed_price');
+                    
+                $tenderChartData[] = $user->tenderApplications()->where('status', \App\Models\TenderApplication::STATUS_ACCEPTED)
+                    ->whereBetween('updated_at', [$monthStart, $monthEnd])->sum('price');
+            } else {
+                $serviceChartData[] = $user->serviceRequests()
+                    ->whereIn('status', [\App\Models\ServiceRequest::STATUS_COMPLETED, 'work_completed'])
+                    ->whereBetween('updated_at', [$monthStart, $monthEnd])
+                    ->with('acceptedResponse')
+                    ->get()
+                    ->sum(function($req) {
+                        return $req->acceptedResponse ? $req->acceptedResponse->proposed_price : 0;
+                    });
+                    
+                $tenderChartData[] = $user->tenders()->where('status', \App\Models\Tender::STATUS_CLOSED)
+                    ->whereBetween('updated_at', [$monthStart, $monthEnd])
+                    ->with('applications')
+                    ->get()
+                    ->sum(function($tender) {
+                        return $tender->applications->where('status', \App\Models\TenderApplication::STATUS_ACCEPTED)->sum('price');
+                    });
+            }
+        }
+
+        return view('website.profile.reports', compact('user', 'kpis', 'recentActivity', 'tenderKpis', 'recentTenderActivity', 'chartLabels', 'serviceChartData', 'tenderChartData'));
     }
     public function tenders(Request $request): View
     {
@@ -335,7 +390,10 @@ class ProfileController extends Controller
             ->with(['tender.category', 'tender.city'])
             ->latest()
             ->get();
-        return view('website.profile.tenders', compact('user', 'incomingTenders', 'myTenders', 'myApplications', 'savedTenders'));
+        $defaultTab = ($user->isServiceProvider() || $user->isSupplier() || $user->isCompanyProvider()) ? 'incoming' : 'my_tenders';
+        $tab = $request->get('tab', $defaultTab);
+
+        return view('website.profile.tenders', compact('user', 'incomingTenders', 'myTenders', 'myApplications', 'savedTenders', 'tab'));
     }
     public function destroyMedia(Request $request, $mediaId): RedirectResponse
     {

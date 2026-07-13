@@ -163,6 +163,33 @@
                     }
                 });
             });
+
+            // Handle toggle-featured checkbox
+            $(document).on('change', '.toggle-featured', function() {
+                const url = $(this).data('url');
+                const isChecked = $(this).is(':checked');
+                const checkbox = $(this);
+
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            toastr.success(response.message);
+                        } else {
+                            toastr.error('Error updating status');
+                            checkbox.prop('checked', !isChecked); // Revert
+                        }
+                    },
+                    error: function() {
+                        toastr.error('Server Error');
+                        checkbox.prop('checked', !isChecked); // Revert
+                    }
+                });
+            });
         });
     </script>
 @endsection

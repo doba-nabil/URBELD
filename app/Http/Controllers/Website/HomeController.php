@@ -41,12 +41,16 @@ class HomeController extends Controller
             ->limit(3)
             ->get();
 
-        $topSuppliers = \App\Models\User::where('user_type', 'service_provider')
-            ->where('provider_type', 'supplier')
+        $featuredMemberships = \App\Models\User::where('user_type', 'service_provider')
             ->where('active', 'active')
             ->select('users.*')
             ->with(['categories', 'city'])
             ->leftJoin('subscription_packages', 'users.subscription_package_id', '=', 'subscription_packages.id')
+            ->leftJoin('memberships', 'users.membership_id', '=', 'memberships.id')
+            ->where(function($query) {
+                $query->where('subscription_packages.is_featured', true)
+                      ->orWhere('memberships.is_featured', true);
+            })
             ->orderByRaw('COALESCE(subscription_packages.sort_order, 0) DESC')
             ->orderByDesc('users.created_at')
             ->limit(6)
@@ -66,6 +70,6 @@ class HomeController extends Controller
         $banners = \App\Models\Banner::getForPage('home');
         $activeTenders = \App\Models\Tender::active()->latest()->limit(6)->get();
 
-        return view('website.index', compact('logoUrl', 'siteName', 'categories', 'successPartners', 'topProviders', 'activeServices', 'banners', 'activeTenders', 'topSuppliers'));
+        return view('website.index', compact('logoUrl', 'siteName', 'categories', 'successPartners', 'topProviders', 'activeServices', 'banners', 'activeTenders', 'featuredMemberships'));
     }
 }

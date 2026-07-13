@@ -28,11 +28,15 @@ class TenderService
                            ->where('ends_at', '<=', now());
                   });
             });
+        } elseif ($tab === 'open') {
+            $query->active(); // Active means status = active and ends_at > now
+        } elseif ($tab === 'urgent') {
+            $query->active()->where('is_urgent', true);
         } else {
-            $query->active();
-            if ($tab === 'urgent') {
-                $query->where('is_urgent', true);
-            }
+            // 'all'
+            $query->where(function($q) {
+                $q->whereIn('status', [Tender::STATUS_ACTIVE, Tender::STATUS_CLOSED, Tender::STATUS_COMPLETED]);
+            });
         }
 
         if ($request->filled('category_id')) {
@@ -66,17 +70,51 @@ class TenderService
     /**
      * Get statistics for tabs
      */
-    public function getStats()
+    public function getStats(Request $request = null)
     {
+        $applyFilters = function ($q) use ($request) {
+            if ($request) {
+                if ($request->filled('category_id')) {
+                    $q->where('category_id', $request->category_id);
+                }
+                if ($request->filled('city_id')) {
+                    $q->where('city_id', $request->city_id);
+                }
+                if ($request->filled('keyword')) {
+                    $keyword = $request->keyword;
+                    $q->where(function ($sub) use ($keyword) {
+                        $sub->where('title', 'like', "%{$keyword}%")
+                            ->orWhere('description', 'like', "%{$keyword}%");
+                    });
+                }
+            }
+            return $q;
+        };
+
+        $allQuery = Tender::whereIn('status', [Tender::STATUS_ACTIVE, Tender::STATUS_CLOSED, Tender::STATUS_COMPLETED]);
+        $allQuery = $applyFilters($allQuery);
+
+        $openQuery = Tender::active();
+        $openQuery = $applyFilters($openQuery);
+
+        $urgentQuery = Tender::active()->where('is_urgent', true);
+        $urgentQuery = $applyFilters($urgentQuery);
+
+        $closedQuery = Tender::where(function($q) {
+            $q->whereIn('status', [Tender::STATUS_CLOSED, Tender::STATUS_COMPLETED])
+              ->orWhere(function($subq) {
+                  $subq->where('status', Tender::STATUS_ACTIVE)
+                       ->whereNotNull('ends_at')
+                       ->where('ends_at', '<=', now());
+              });
+        });
+        $closedQuery = $applyFilters($closedQuery);
+
         return [
-            'all' => Tender::active()->count(),
-            'urgent' => Tender::active()->where('is_urgent', true)->count(),
-            'closed' => Tender::whereIn('status', [Tender::STATUS_CLOSED, Tender::STATUS_COMPLETED])
-                              ->orWhere(function($q) {
-                                  $q->where('status', Tender::STATUS_ACTIVE)
-                                    ->whereNotNull('ends_at')
-                                    ->where('ends_at', '<=', now());
-                              })->count(),
+            'all' => $allQuery->count(),
+            'open' => $openQuery->count(),
+            'urgent' => $urgentQuery->count(),
+            'closed' => $closedQuery->count(),
         ];
     }
 

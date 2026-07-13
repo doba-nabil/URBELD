@@ -647,4 +647,10 @@ return [
     'execution_time' => 'مدة التنفيذ',
     'view_details' => 'عرض التفاصيل',
     'files' => 'الملفات',
+    'delivery_service' => 'خدمة التوصيل',
+    'delivery_available' => 'يتوفر توصيل',
+    'delivery_desc' => 'نوفر خدمة التوصيل',
+    'covered_cities' => 'المدن المغطاة',
+    'city' => 'المدينة',
+    'delivery_outside_desc' => 'للتوصيل خارج المدن المحدده يرجى التواصل مع الاداره',
 ];
