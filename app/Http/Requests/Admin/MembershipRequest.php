@@ -42,6 +42,8 @@ class MembershipRequest extends FormRequest
             'sub_categories.*' => ['exists:categories,id'],
             'country_id' => ['nullable', 'exists:countries,id'],
             'city_id' => ['nullable', 'exists:cities,id'],
+            'delivery_cities' => ['nullable', 'array'],
+            'delivery_cities.*' => ['exists:cities,id'],
             
             // Certificates
             'certificates' => ['nullable', 'array'],

@@ -192,9 +192,9 @@
             container.appendChild(newItem);
         });
 
-        // Load cities based on country selection
         const countrySelect = document.getElementById('membership_country_id');
         const citySelect = document.getElementById('membership_city_id');
+        const deliveryCitiesSelect = document.getElementById('delivery_cities');
         
         if (countrySelect && citySelect) {
             $(countrySelect).on('change', function() {
@@ -203,6 +203,12 @@
                 const countryId = $(this).val();
                 const $citySelect = $(citySelect);
                 $citySelect.empty().append('<option value="">{{ __("admin.select_city") }}</option>');
+                
+                let $deliveryCitiesSelect = null;
+                if (deliveryCitiesSelect) {
+                    $deliveryCitiesSelect = $(deliveryCitiesSelect);
+                    $deliveryCitiesSelect.empty();
+                }
                 
                 if (countryId) {
                     const url = '{{ route("cities.by-country", ":id") }}'.replace(':id', countryId);
@@ -213,6 +219,11 @@
                                 data.cities.forEach(city => {
                                     const option = new Option(city.name, city.id, false, false);
                                     $citySelect.append(option);
+                                    
+                                    if ($deliveryCitiesSelect) {
+                                        const option2 = new Option(city.name, city.id, false, false);
+                                        $deliveryCitiesSelect.append(option2);
+                                    }
                                 });
                             }
                             $citySelect.trigger('change');

@@ -170,6 +170,12 @@ class MembershipController extends Controller
             $allCategoryIds = array_unique(array_merge($allCategoryIds, $request->input('sub_categories')));
         }
         $provider->categories()->sync($allCategoryIds);
+        
+        // Sync Delivery Cities if it is a supplier
+        if ($newType === 'supplier') {
+            $provider->deliveryCities()->sync($request->input('delivery_cities', []));
+        }
+
         // Sync Membership info via Service
         $this->membershipService->update($membership, $data, $request->allFiles(), $provider);
         return redirect()->route('memberships.edit', $id)->with('success', __('admin.update_success'));

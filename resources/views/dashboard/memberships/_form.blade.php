@@ -198,6 +198,30 @@
                 <span class="text-danger small">{{ $message }}</span>
             @enderror
         </div>
+
+        @php
+            $isSupplier = old('type', ($provider->provider_type ?? request('type'))) == 'supplier';
+            $selectedDeliveryCities = (isset($provider) && $provider->deliveryCities) ? $provider->deliveryCities->pluck('id')->toArray() : [];
+        @endphp
+        @if($isSupplier)
+        <div class="col-md-12 mb-3">
+            <label class="form-label">مناطق التوصيل للمورد</label>
+            <select name="delivery_cities[]" class="form-select select2" id="delivery_cities" multiple>
+                @if ($isEdit && (($membership && $membership->country_id) || ($provider && $provider->city)))
+                    @foreach ($cities ?? [] as $city)
+                        <option value="{{ $city->id }}"
+                            {{ in_array($city->id, old('delivery_cities', $selectedDeliveryCities)) ? 'selected' : '' }}>
+                            {{ $city->name }}
+                        </option>
+                    @endforeach
+                @endif
+            </select>
+            @error('delivery_cities')
+                <span class="text-danger small">{{ $message }}</span>
+            @enderror
+            <small class="text-muted">اختر المدن (أو المناطق) التي يوصل إليها المورد (ستظهر بناءً على الدولة المختارة أعلاه).</small>
+        </div>
+        @endif
     </div>
 </div>
 
@@ -437,10 +461,15 @@
     </div>
 </div>
 
+@php
+    $isSupplier = old('type', ($provider->provider_type ?? request('type'))) == 'supplier';
+@endphp
+@if(!$isSupplier)
 <!-- Works (Portfolio) -->
 <div class="card-header border-bottom mb-4 pb-3 mt-5 px-0 d-flex justify-content-between align-items-center">
     <h5 class="card-title mb-0 text-primary">
-        <i class="ti tabler-briefcase me-2"></i> {{ __('admin.works_portfolio') ?? 'الأعمال السابقة (البورتفوليو)' }}
+        <i class="ti tabler-briefcase me-2"></i> 
+        {{ __('admin.works_portfolio') ?? 'الأعمال السابقة (البورتفوليو)' }}
     </h5>
     <button type="button" class="btn btn-sm btn-outline-primary" id="add-work">
         <i class="ti tabler-plus me-1"></i> {{ __('admin.add_work') ?? 'إضافة عمل' }}
@@ -494,6 +523,19 @@
         @endif
     </div>
 </div>
+@endif
+
+@if($isSupplier)
+<div class="alert alert-info mt-4 d-flex align-items-center">
+    <i class="ti tabler-discount me-3 fs-3"></i>
+    <div>
+        <h6 class="alert-heading mb-1 fw-bold">إضافة عروض خصم المورد</h6>
+        <p class="mb-0">
+            لإضافة عروض التخفيضات والخصومات على منتجات المورد، يرجى التوجه إلى قسم <a href="{{ route('supplier-offers.index') }}" class="alert-link">عروض الموردين</a> المخصص لذلك في القائمة الجانبية.
+        </p>
+    </div>
+</div>
+@endif
 
 <!-- Sticky Bottom Save Bar (Optional, but let's keep it consistent) -->
 <div class="row mt-5 pt-3 border-top">
