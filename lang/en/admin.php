@@ -6,6 +6,7 @@ return [
     'English' => 'English',
     'Arabic' => 'Arabic',
     'name' => 'Name',
+    'suppliers_statistics' => 'Suppliers Statistics',
 // create page
     'create' => 'Add',
     'new' => 'New',

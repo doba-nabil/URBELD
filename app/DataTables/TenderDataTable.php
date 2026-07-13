@@ -96,8 +96,7 @@ class TenderDataTable extends DataTable
                 Button::make('reset'),
                 Button::make('reload')
             ])->parameters([
-                'language' => $this->getDataTableLanguage(),
-                'scrollX' => true,
+                'language' => $this->getDataTableLanguage()
             ]);
     }
 

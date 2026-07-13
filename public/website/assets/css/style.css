@@ -9396,7 +9396,7 @@ body.sup-page .flip-card-back .service-image-wrapper {
 
 .message-sent {
     justify-content: flex-end;
-    flex-direction: row-reverse;
+    /* flex-direction: row-reverse; */
 }
 
 .message-avatar {

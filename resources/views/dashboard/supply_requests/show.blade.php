@@ -93,7 +93,7 @@
                                         @foreach ($supplyRequest->responses as $resp)
                                             <tr>
                                                 <td>{{ $resp->user->name ?? '-' }}</td>
-                                                <td>{{ number_format($resp->proposed_price, 2) }} {{ \App\Models\Setting::get('currency', 'ر.س') }}</td>
+                                                <td>{{ number_format($resp->proposed_price, 2) }} </td>
                                                 <td>{{ $resp->notes ?? '-' }}</td>
                                                 <td>{{ $resp->created_at->format('Y-m-d H:i') }}</td>
                                                 <td>

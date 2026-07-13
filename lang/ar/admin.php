@@ -5,6 +5,7 @@ return [
     'English' => 'الانجليزية',
     'Arabic' => 'العربية',
     'name' => 'الاسم',
+    'suppliers_statistics' => 'إحصائيات الموردين',
     //    create page
     'create' => 'اضافة',
     'new' => 'جديد',
