@@ -244,7 +244,7 @@ class ProfileController extends Controller
                         'status' => __('admin.' . $app->status) ?? $app->status,
                         'status_code' => $app->status,
                         'amount' => number_format($app->price, 2) . ' ' . __('admin.currency'),
-                        'route' => route('tenders.show', $app->tender_id)
+                        'route' => route('website.tenders.show', $app->tender_id)
                     ];
                 });
         } else {
@@ -315,7 +315,7 @@ class ProfileController extends Controller
                         'status' => __('admin.' . $tender->status) ?? $tender->status,
                         'status_code' => $tender->status,
                         'amount' => $acceptedApp ? number_format($acceptedApp->price, 2) . ' ' . __('admin.currency') : '-',
-                        'route' => route('tenders.show', $tender->id)
+                        'route' => route('website.tenders.show', $tender->id)
                     ];
                 });
         }

@@ -177,7 +177,9 @@
 
                     <div class="table-container mb-4">
                         <h5 class="fw-bold mb-4" style="color: var(--primary);">{{ __('website.financial_report') ?? 'التقرير المالي (آخر 6 أشهر)' }}</h5>
-                        <canvas id="serviceChart" height="100"></canvas>
+                        <div style="position: relative; height: 300px; width: 100%;">
+                            <canvas id="serviceChart"></canvas>
+                        </div>
                     </div>
 
                     <div class="table-container">
@@ -262,7 +264,9 @@
 
                     <div class="table-container mb-4">
                         <h5 class="fw-bold mb-4" style="color: var(--primary);">{{ __('website.financial_report') ?? 'التقرير المالي (آخر 6 أشهر)' }}</h5>
-                        <canvas id="tenderChart" height="100"></canvas>
+                        <div style="position: relative; height: 300px; width: 100%;">
+                            <canvas id="tenderChart"></canvas>
+                        </div>
                     </div>
 
                     <div class="table-container">

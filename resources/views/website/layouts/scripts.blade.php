@@ -12,3 +12,4 @@
 
 <!-- Template Javascript -->
 <script src="{{ asset('website/assets/js/main.js') }}"></script>
+@stack('scripts')
