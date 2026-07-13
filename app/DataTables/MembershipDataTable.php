@@ -116,10 +116,30 @@ class MembershipDataTable extends DataTable
                 }
                 return '<span class="badge bg-label-secondary">' . __('admin.unactive') . '</span>';
             })
-            ->addColumn('action', function ($q) {
+    ->addColumn('action', function ($q) {
                 $showUrl = url('/admin-panel/memberships/' . $q->id);
                 $editUrl = url('/admin-panel/memberships/' . $q->id . '/edit');
                 $deleteUrl = url('/admin-panel/users/' . $q->id);
+                $type = $q->provider_type ?: $q->membership_type;
+
+                $extraLinks = '';
+                if ($type === 'supplier') {
+                    $productsUrl = route('supplier-products.index', ['supplier_id' => $q->id]);
+                    $offersUrl = route('supplier-offers.index', ['supplier_id' => $q->id]);
+                    $extraLinks = '
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <a href="' . $productsUrl . '" class="dropdown-item text-primary">
+                        <i class="icon-base ti tabler-box"></i> المنتجات
+                    </a>
+                </li>
+                <li>
+                    <a href="' . $offersUrl . '" class="dropdown-item text-success">
+                        <i class="icon-base ti tabler-discount"></i> العروض
+                    </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>';
+                }
 
                 return '
         <div class="dropdown">
@@ -136,7 +156,7 @@ class MembershipDataTable extends DataTable
                     <a href="' . $editUrl . '" class="dropdown-item">
                         <i class="icon-base ti tabler-edit"></i> ' . __('admin.edit') . '
                     </a>
-                </li>
+                </li>' . $extraLinks . '
                 <li>
                     <a href="javascript:void(0)" class="dropdown-item delete-btn"
                         data-id="' . $q->id . '"

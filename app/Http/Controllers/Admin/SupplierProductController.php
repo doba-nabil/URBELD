@@ -10,10 +10,9 @@ class SupplierProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(\App\DataTables\SupplierProductDataTable $dataTable)
     {
-        $products = \App\Models\Product::with('user')->latest()->paginate(15);
-        return view('dashboard.supplier-products.index', compact('products'));
+        return $dataTable->render('dashboard.supplier-products.index');
     }
 
     public function create()

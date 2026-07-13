@@ -13,6 +13,7 @@ return [
     'save' => 'Save',
     'add' => 'Add',
     'submit' => 'Send',
+    'no_data_found' => 'No Data Found',
     'image' => 'Image',
     'choose' => 'Choose',
     'none_background' => 'None',

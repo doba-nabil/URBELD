@@ -12,6 +12,7 @@ return [
     'save' => 'حفظ',
     'add' => 'اضافة',
     'submit' => 'ارسال',
+    'no_data_found' => 'لا توجد بيانات',
     'image' => 'صورة',
     'choose' => 'اختر',
     'close' => 'إغلاق',

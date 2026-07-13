@@ -10,10 +10,9 @@ class SupplierOfferController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(\App\DataTables\SupplierOfferDataTable $dataTable)
     {
-        $offers = \App\Models\SupplierOffer::with('user')->latest()->paginate(15);
-        return view('dashboard.supplier-offers.index', compact('offers'));
+        return $dataTable->render('dashboard.supplier-offers.index');
     }
 
     public function create()
