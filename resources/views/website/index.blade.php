@@ -205,7 +205,26 @@
             </div>
 
             <div class="services-grid">
-                @foreach ($categories as $category)
+                @foreach ($categories as $index => $category)
+                    @if($index == count($categories) - 1)
+                        @if(\App\Models\Setting::getValue('show_suppliers_card', null, '1') == '1')
+                            <div class="service-card wow fadeInUp" data-wow-delay="0.1s">
+                                <a href="{{ \App\Models\Setting::getValue('suppliers_card_link', null, route('website.suppliers.index')) }}" class="service-link">
+                                    <div class="service-image-wrapper">
+                                        <img src="{{ \App\Models\Setting::getMediaUrl('suppliers_card_image') ?: asset('website/assets/img/suppliers-icon.png') }}" alt="{{ \App\Models\Setting::getValue('suppliers_card_title', app()->getLocale(), 'شركات التوريد والمواد') }}" class="service-image" style="width: auto; max-height: 120px; object-fit: contain;">
+                                        <div class="service-arrow">
+                                            <i class="bi bi-arrow-up-left"></i>
+                                        </div>
+                                    </div>
+                                    <div class="service-content">
+                                        <h5>{{ \App\Models\Setting::getValue('suppliers_card_title', app()->getLocale(), 'شركات التوريد والمواد') }}</h5>
+                                        <p>{{ \App\Models\Setting::getValue('suppliers_card_desc', app()->getLocale(), 'نربطك بأفضل موردي مواد البناء والمعدات الهندسية في المملكة، قارن الأسعار واطلب عروضاً مباشرةً من خلال المنصة.') }}</p>
+                                    </div>
+                                </a>
+                            </div>
+                        @endif
+                    @endif
+
                     <!-- Service Card -->
                     <div class="service-card wow fadeInUp {{ $category->is_full_width ? 'text-center' : '' }}" data-wow-delay="0.1s" style="{{ $category->is_full_width ? 'grid-column: 1 / -1;' : '' }}">
                         <a href="{{ route('website.category.show', $category->id) }}" class="service-link">

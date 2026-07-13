@@ -2,6 +2,9 @@
 
 return [
     'service_request' => 'Service Request',
+    'work_completed_successfully' => 'Work completed successfully',
+    'select_rating' => 'Select Rating',
+    'rating_comment' => 'Your Comment (Optional)',
     // Meta
     'meta_tagline' => 'Real Estate Development',
     'meta_keywords' => 'real estate development, engineering consulting, project management',

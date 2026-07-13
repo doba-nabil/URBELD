@@ -257,6 +257,58 @@
                                 </div>
                             </div>
 
+                            <hr class="my-4">
+                            <h5 class="mb-3 text-primary">{{ __('admin.suppliers_card_section') ?? 'قسم بطاقة شركات التوريد' }}</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">{{ __('admin.show_section') ?? 'إظهار القسم' }}</label>
+                                    <select name="show_suppliers_card[ar]" class="form-select">
+                                        <option value="1" {{ \App\Models\Setting::getValue('show_suppliers_card', 'ar', '1') == '1' ? 'selected' : '' }}>{{ __('admin.yes') }}</option>
+                                        <option value="0" {{ \App\Models\Setting::getValue('show_suppliers_card', 'ar', '1') == '0' ? 'selected' : '' }}>{{ __('admin.no') }}</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">{{ __('admin.image') }}</label>
+                                    @if (\App\Models\Setting::getMediaUrl('suppliers_card_image'))
+                                        <div class="mb-2">
+                                            <img src="{{ \App\Models\Setting::getMediaUrl('suppliers_card_image') }}"
+                                                alt="Suppliers Card Image" style="height: 100px; border-radius:8px;">
+                                        </div>
+                                    @endif
+                                    <input type="file" name="suppliers_card_image" class="form-control" accept="image/*">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">{{ __('admin.title') }} (عربي)</label>
+                                    <input type="text" name="suppliers_card_title[ar]" class="form-control"
+                                        value="{{ \App\Models\Setting::getValue('suppliers_card_title', 'ar', 'شركات التوريد والمواد') }}"
+                                        required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">{{ __('admin.title') }} (English)</label>
+                                    <input type="text" name="suppliers_card_title[en]" class="form-control"
+                                        value="{{ \App\Models\Setting::getValue('suppliers_card_title', 'en', 'Suppliers and Materials') }}">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">{{ __('admin.link') ?? 'الرابط' }} (عربي)</label>
+                                    <input type="text" name="suppliers_card_link[ar]" class="form-control"
+                                        value="{{ \App\Models\Setting::getValue('suppliers_card_link', 'ar', route('website.suppliers.index')) }}"
+                                        required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">{{ __('admin.link') ?? 'الرابط' }} (English)</label>
+                                    <input type="text" name="suppliers_card_link[en]" class="form-control"
+                                        value="{{ \App\Models\Setting::getValue('suppliers_card_link', 'en', route('website.suppliers.index')) }}">
+                                </div>
+                                <div class="col-md-12 mb-3">
+                                    <label class="form-label">{{ __('admin.description') }} (عربي)</label>
+                                    <textarea name="suppliers_card_desc[ar]" class="form-control" rows="2" required>{{ \App\Models\Setting::getValue('suppliers_card_desc', 'ar', 'نربطك بأفضل موردي مواد البناء والمعدات الهندسية في المملكة، قارن الأسعار واطلب عروضاً مباشرةً من خلال المنصة.') }}</textarea>
+                                </div>
+                                <div class="col-md-12 mb-3">
+                                    <label class="form-label">{{ __('admin.description') }} (English)</label>
+                                    <textarea name="suppliers_card_desc[en]" class="form-control" rows="2">{{ \App\Models\Setting::getValue('suppliers_card_desc', 'en', 'We connect you with the best suppliers of building materials and engineering equipment in the Kingdom.') }}</textarea>
+                                </div>
+                            </div>
+
                             <div class="col-12 text-end mt-4">
                                 <button type="submit" class="btn btn-primary">{{ __('admin.save_changes') }}</button>
                             </div>

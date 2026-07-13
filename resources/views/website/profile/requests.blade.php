@@ -15,6 +15,7 @@
 @endphp
 
 <div class="incoming-requests-wrapper mt-4 mb-5" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
+    @if(auth()->user()->user_type != 'supplier')
     <div class="container bg-light rounded-4 p-4 shadow-sm" style="background-color: #f8f9fa !important;">
         
         <!-- Header Section -->
@@ -85,6 +86,7 @@
         </div>
 
     </div>
+    @endif
 
     {{-- طلبات التوريد --}}
     @if(isset($supplyRequests) && $supplyRequests->isNotEmpty())
@@ -93,43 +95,45 @@
             <i class="bi bi-box-seam me-2"></i> طلبات التوريد الخاصة بي
             <span class="badge ms-2" style="background: #d97706;">{{ $supplyRequests->count() }}</span>
         </h5>
-        @foreach($supplyRequests as $sr)
-        <div class="card mb-3 border-0 shadow-sm" style="border-right: 4px solid #d97706;">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <h6 class="fw-bold mb-1">{{ $sr->title }}</h6>
-                        <p class="text-muted small mb-1">
-                            <i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ $sr->city->name ?? '' }}
-                            @if($sr->delivery_date)
-                            &nbsp;|&nbsp; <i class="bi bi-calendar me-1"></i> التسليم: {{ $sr->delivery_date->format('Y-m-d') }}
-                            @endif
-                        </p>
-                        <p class="text-muted small mb-0">{{ Str::limit($sr->description, 100) }}</p>
-                    </div>
-                    <div class="text-end ms-3">
-                        @php
-                            $srStatusMap = [
-                                'open' => ['label' => 'مفتوح', 'class' => 'bg-success'],
-                                'in_progress' => ['label' => 'قيد التنفيذ', 'class' => 'bg-primary'],
-                                'completed' => ['label' => 'مكتمل', 'class' => 'bg-secondary'],
-                                'closed' => ['label' => 'مغلق', 'class' => 'bg-dark'],
-                            ];
-                            $srBadge = $srStatusMap[$sr->status] ?? ['label' => $sr->status, 'class' => 'bg-secondary'];
-                        @endphp
-                        <span class="badge {{ $srBadge['class'] }} mb-2">{{ $srBadge['label'] }}</span>
-                        <br>
-                        <small class="text-muted">{{ $sr->responses->count() }} عرض</small>
-                    </div>
+
+        @if(auth()->user()->user_type == 'supplier')
+            @php
+                $activeSupplyRequests = $supplyRequests->whereNotIn('status', ['completed', 'closed', 'cancelled']);
+                $completedSupplyRequests = $supplyRequests->whereIn('status', ['completed', 'closed', 'cancelled']);
+            @endphp
+            <!-- Supply Requests Tabs -->
+            <ul class="nav nav-pills mb-3" id="supply-pills-tab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active fw-bold" id="supply-active-tab" data-bs-toggle="pill" data-bs-target="#supply-active" type="button" role="tab" style="color: #d97706;">الطلبات النشطة (قيد التنفيذ) <span class="badge bg-secondary ms-1">{{ $activeSupplyRequests->count() }}</span></button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link fw-bold" id="supply-completed-tab" data-bs-toggle="pill" data-bs-target="#supply-completed" type="button" role="tab" style="color: #d97706;">الطلبات المكتملة <span class="badge bg-secondary ms-1">{{ $completedSupplyRequests->count() }}</span></button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="supply-pills-tabContent">
+                <!-- Active Supply Requests -->
+                <div class="tab-pane fade show active" id="supply-active" role="tabpanel">
+                    @forelse($activeSupplyRequests as $sr)
+                        @include('website.profile.partials.supply-order-card', ['sr' => $sr])
+                    @empty
+                        <div class="alert alert-info text-center rounded-3 border-0">لا توجد طلبات نشطة حالياً</div>
+                    @endforelse
                 </div>
-                <div class="mt-3 d-flex gap-2">
-                    <a href="{{ route('website.supply-requests.show', $sr->id) }}" class="btn btn-sm btn-outline-secondary">
-                        <i class="bi bi-eye me-1"></i> التفاصيل والعروض
-                    </a>
+                <!-- Completed Supply Requests -->
+                <div class="tab-pane fade" id="supply-completed" role="tabpanel">
+                    @forelse($completedSupplyRequests as $sr)
+                        @include('website.profile.partials.supply-order-card', ['sr' => $sr])
+                    @empty
+                        <div class="alert alert-info text-center rounded-3 border-0">لا توجد طلبات مكتملة حالياً</div>
+                    @endforelse
                 </div>
             </div>
-        </div>
-        @endforeach
+        @else
+            @foreach($supplyRequests as $sr)
+                @include('website.profile.partials.supply-order-card', ['sr' => $sr])
+            @endforeach
+        @endif
     </div>
     @endif
 

@@ -177,12 +177,36 @@
         <div class="modal-body">
             <div class="mb-3 text-center">
                 <label class="form-label d-block fw-bold">{{ __('website.select_rating') ?? 'اختر التقييم (من 1 إلى 5):' }}</label>
-                <div class="d-flex justify-content-center gap-3 rating-stars" style="direction:ltr;">
-                    <input type="radio" name="score" value="1" id="star1" required> <label for="star1" class="text-warning fs-3"><i class="bi bi-star-fill"></i></label>
-                    <input type="radio" name="score" value="2" id="star2"> <label for="star2" class="text-warning fs-3"><i class="bi bi-star-fill"></i></label>
-                    <input type="radio" name="score" value="3" id="star3"> <label for="star3" class="text-warning fs-3"><i class="bi bi-star-fill"></i></label>
-                    <input type="radio" name="score" value="4" id="star4"> <label for="star4" class="text-warning fs-3"><i class="bi bi-star-fill"></i></label>
-                    <input type="radio" name="score" value="5" id="star5"> <label for="star5" class="text-warning fs-3"><i class="bi bi-star-fill"></i></label>
+                <style>
+                    .rating-stars {
+                        display: flex;
+                        flex-direction: row-reverse;
+                        justify-content: center;
+                    }
+                    .rating-stars input {
+                        display: none;
+                    }
+                    .rating-stars label {
+                        cursor: pointer;
+                        color: #e4e5e9;
+                        font-size: 2.5rem;
+                        transition: color 0.2s;
+                    }
+                    .rating-stars input:checked ~ label,
+                    .rating-stars label:hover,
+                    .rating-stars label:hover ~ label {
+                        color: #ffc107 !important;
+                    }
+                    .rating-stars label i {
+                        color: inherit;
+                    }
+                </style>
+                <div class="rating-stars" style="direction:ltr;">
+                    <input type="radio" name="score" value="5" id="star5" required> <label for="star5"><i class="bi bi-star-fill"></i></label>
+                    <input type="radio" name="score" value="4" id="star4"> <label for="star4"><i class="bi bi-star-fill"></i></label>
+                    <input type="radio" name="score" value="3" id="star3"> <label for="star3"><i class="bi bi-star-fill"></i></label>
+                    <input type="radio" name="score" value="2" id="star2"> <label for="star2"><i class="bi bi-star-fill"></i></label>
+                    <input type="radio" name="score" value="1" id="star1"> <label for="star1"><i class="bi bi-star-fill"></i></label>
                 </div>
             </div>
             <div class="mb-3">

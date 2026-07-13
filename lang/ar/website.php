@@ -2,6 +2,9 @@
 
 return [
     'service_request' => 'طلب الخدمة',
+    'work_completed_successfully' => 'تم استلام العمل بنجاح',
+    'select_rating' => 'اختر التقييم',
+    'rating_comment' => 'تعليقك (اختياري)',
     // Meta
     'meta_tagline' => 'للتطوير العقاري',
     'meta_keywords' => 'تطوير عقاري، استشارات هندسية، إدارة مشاريع',

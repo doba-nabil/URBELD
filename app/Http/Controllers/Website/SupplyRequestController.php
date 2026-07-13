@@ -9,9 +9,33 @@ class SupplyRequestController extends Controller
 {
     public function index(Request $request)
     {
-        $requests = \App\Models\SupplyRequest::with(['user', 'city'])
-            ->latest()
-            ->paginate(12);
+        $query = \App\Models\SupplyRequest::with(['user', 'city'])->latest();
+
+        if (auth()->check()) {
+            $user = auth()->user();
+            
+            if ($user->isServiceProvider()) {
+                $categoryIds = $user->categories()->pluck('categories.id')->toArray();
+                
+                $query->where(function($q) use ($user, $categoryIds) {
+                    $q->where('user_id', $user->id)
+                      ->orWhere('provider_id', $user->id);
+                      
+                    if (!empty($categoryIds)) {
+                        $q->orWhere(function($subQ) use ($categoryIds) {
+                            $subQ->whereNull('provider_id')
+                                 ->whereIn('category_id', $categoryIds);
+                        });
+                    }
+                });
+            } else {
+                $query->where('user_id', $user->id);
+            }
+        } else {
+            $query->whereRaw('1 = 0');
+        }
+
+        $requests = $query->paginate(12);
 
         return view('website.supply_requests.index', compact('requests'));
     }
@@ -51,12 +75,56 @@ class SupplyRequestController extends Controller
             'description' => 'required|string',
             'city_id' => 'required|exists:cities,id',
             'delivery_date' => 'nullable|date',
+            'category_id' => 'nullable|exists:categories,id',
+            'provider_id' => 'nullable|exists:users,id',
         ]);
 
         $supplyRequest = new \App\Models\SupplyRequest($validated);
         $supplyRequest->user_id = auth()->id();
+        $supplyRequest->category_id = $request->input('category_id');
+        $supplyRequest->provider_id = $request->input('provider_id');
         $supplyRequest->status = 'open';
         $supplyRequest->save();
+
+        // Send notifications
+        $title = 'طلب توريد جديد';
+        $body = 'تم إضافة طلب توريد جديد بعنوان: ' . $supplyRequest->title;
+
+        // Notify Admin
+        \App\Services\NotificationService::createAdminNotification(
+            'supply_request', 
+            $title, 
+            $body, 
+            route('supply-requests.show', $supplyRequest->id)
+        );
+
+        // Notify Provider if specified
+        if ($supplyRequest->provider_id) {
+            \App\Services\NotificationService::createNotification(
+                $supplyRequest->provider_id,
+                'supply_request',
+                'طلب توريد خاص لك',
+                'لديك طلب توريد جديد موجه لك بعنوان: ' . $supplyRequest->title,
+                route('website.supply-requests.show', $supplyRequest->id),
+                true
+            );
+        } elseif ($supplyRequest->category_id) {
+            // General request to a category: Notify all providers in that category
+            $providersInCat = \App\Models\User::whereHas('categories', function($q) use ($supplyRequest) {
+                $q->where('categories.id', $supplyRequest->category_id);
+            })->where('user_type', 'supplier')->get();
+            
+            foreach ($providersInCat as $catProvider) {
+                \App\Services\NotificationService::createNotification(
+                    $catProvider->id,
+                    'supply_request',
+                    'طلب توريد عام في تخصصك',
+                    'يوجد طلب توريد جديد عام في تخصصك بعنوان: ' . $supplyRequest->title,
+                    route('website.supply-requests.show', $supplyRequest->id),
+                    true
+                );
+            }
+        }
 
         return redirect()->route('website.supply-requests.index')->with('success', 'تم إضافة طلب التوريد بنجاح');
     }
