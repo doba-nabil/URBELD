@@ -68,7 +68,7 @@ return [
     'apply_now' => 'Submit Your Offer Now',
     'save_tender' => 'Save Tender',
     'remove_saved' => 'Remove from Saved',
-    'terms_agree' => 'By submitting your offer, you agree to the terms and conditions of URBELD platform',
+    'terms_agree' => 'By submitting your offer, you agree to the terms and conditions of ERSAA platform',
     'cant_apply_own' => 'You cannot apply',
     'own_tender' => 'Your own tender',
     'already_applied' => 'Already Applied',
@@ -113,7 +113,7 @@ return [
     'offer_files' => 'Offer Attachments (Optional)',
     'offer_files_hint' => 'Attach the technical offer, company profile, or any documents supporting your position (up to 10MB per file).',
     'offer_file_ph' => 'File Name (e.g. Technical Offer PDF)',
-    'agree_terms' => 'I acknowledge that I have read the RFP and agree to the terms of use of URBELD platform.',
+    'agree_terms' => 'I acknowledge that I have read the RFP and agree to the terms of use of ERSAA platform.',
     'submit_offer' => 'Submit Offer',
     
     // Messages
@@ -132,7 +132,7 @@ return [
     'error_try_again' => 'An error occurred. Please try again later.',
     
     // Whatsapp
-    'wa_share' => 'Check out this tender on URBELD: ',
+    'wa_share' => 'Check out this tender on ERSAA: ',
     'latest_tenders' => 'Latest Tenders',
     'view_all_tenders' => 'View All Tenders',
     'new_offer_title' => 'New Offer for Your Tender',

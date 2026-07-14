@@ -14,9 +14,9 @@ class CommandController extends Controller
      */
     public function index()
     {
-        // Only super-admin or the original admin email 'admin@urbeld.com' should see this.
+        // Only super-admin or the original admin email 'admin@ERSAA.com' should see this.
         $user = auth('admin')->user();
-        if (!$user->hasRole('super-admin', 'admin') && $user->email !== 'admin@urbeld.com') {
+        if (!$user->hasRole('super-admin', 'admin') && $user->email !== 'admin@ERSAA.com') {
             abort(403);
         }
 
@@ -29,7 +29,7 @@ class CommandController extends Controller
     public function execute(Request $request)
     {
         $user = auth('admin')->user();
-        if (!$user->hasRole('super-admin', 'admin') && $user->email !== 'admin@urbeld.com') {
+        if (!$user->hasRole('super-admin', 'admin') && $user->email !== 'admin@ERSAA.com') {
             return response()->json(['output' => 'Unauthorized'], 403);
         }
 
@@ -90,7 +90,7 @@ class CommandController extends Controller
             app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
             // 6. Update the specific admins and current user
-            $emails = ['admin@urbeld.com'];
+            $emails = ['admin@ERSAA.com'];
             $currentUser = auth('admin')->user();
             if ($currentUser) {
                 $emails[] = $currentUser->email;

@@ -510,8 +510,8 @@ return [
 
 
     // Auth Page generated automatically
-    'asas' => 'Urbeld',
-    'welcome_to_dashboard' => 'Welcome to Urbeld Dashboard 👋',
+    'asas' => 'ERSAA',
+    'welcome_to_dashboard' => 'Welcome to ERSAA Dashboard 👋',
     'please_login' => 'Please sign in to your account',
     'enter_email' => 'Enter your email here',
     'login_button' => 'Log In',

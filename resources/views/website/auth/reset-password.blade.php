@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>{{ __('website.reset_password') }} - {{ $settings['site_name'] ?? 'اوربلد' }}</title>
+    <title>{{ __('website.reset_password') }} - {{ $settings['site_name'] ?? 'ارساء' }}</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     
     <!-- Favicon -->
@@ -34,7 +34,7 @@
                 <!-- Logo -->
                 <div class="login-logo">
                     <a href="{{ url('/') }}">
-                        <img src="{{ asset('website/assets/img/logo.png') }}" alt="Urbeld Logo" class="login-logo-img">
+                        <img src="{{ asset('website/assets/img/logo.png') }}" alt="ERSAA Logo" class="login-logo-img">
                     </a>
                 </div>
 

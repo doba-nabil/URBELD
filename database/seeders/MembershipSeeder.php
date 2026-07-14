@@ -18,8 +18,8 @@ class MembershipSeeder extends Seeder
         // Individual Memberships (Engineers)
         $individualMemberships = [
             [
-                'name' => ['ar' => 'عضوية مهندس اوربلد', 'en' => 'Urbeld Engineer Membership'],
-                'description' => 'عضوية اوربلد للمهندسين الأفراد',
+                'name' => ['ar' => 'عضوية مهندس ارساء', 'en' => 'ERSAA Engineer Membership'],
+                'description' => 'عضوية ارساء للمهندسين الأفراد',
                 'type' => 'individual',
                 'is_active' => true,
                 'sort_order' => 1,
@@ -36,8 +36,8 @@ class MembershipSeeder extends Seeder
         // Company Memberships
         $companyMemberships = [
             [
-                'name' => ['ar' => 'عضوية شركة اوربلد', 'en' => 'Urbeld Company Membership'],
-                'description' => 'عضوية اوربلد للشركات',
+                'name' => ['ar' => 'عضوية شركة ارساء', 'en' => 'ERSAA Company Membership'],
+                'description' => 'عضوية ارساء للشركات',
                 'type' => 'company',
                 'is_active' => true,
                 'sort_order' => 3,

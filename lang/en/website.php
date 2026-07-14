@@ -8,7 +8,7 @@ return [
     // Meta
     'meta_tagline' => 'Real Estate Development',
     'meta_keywords' => 'real estate development, engineering consulting, project management',
-    'meta_description' => 'Urbeld - We innovate in designing spaces that inspire, innovate, and endure.',
+    'meta_description' => 'ERSAA - We innovate in designing spaces that inspire, innovate, and endure.',
     'form_error_hint' => 'Please review the errors in the form.',
     
     'suppliers_of_category' => ':category Suppliers',
@@ -37,7 +37,7 @@ return [
 
     'member_since' => 'Member Since',
     'premium_supplier' => 'Premium Supplier',
-    'premium_supplier_desc' => 'This supplier has received a badge of excellence from the UrbelD platform after verifying their quality and commitment.',
+    'premium_supplier_desc' => 'This supplier has received a badge of excellence from the ERSAA platform after verifying their quality and commitment.',
     'trusted' => 'Trusted',
     'customer_reviews' => 'Customer Reviews & Ratings',
     'user' => 'User',
@@ -84,7 +84,7 @@ return [
     'forgot_password_desc' => 'Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.',
     'no_account' => "Don't have an account?",
     'create_account' => 'Create a New Account',
-    'agree_terms' => 'By continuing, you agree to Urbeld <a href="#">Terms of Use</a> and <a href="#">Privacy Policy</a>',
+    'agree_terms' => 'By continuing, you agree to ERSAA <a href="#">Terms of Use</a> and <a href="#">Privacy Policy</a>',
     
     'register_title' => 'Create Account',
     'choose_account_type' => 'Choose Account Type to Login as',
@@ -309,14 +309,14 @@ return [
     'yes_delete_request' => 'Yes, Delete Request',
     'cancel' => 'Cancel',
 
-    'chat_title' => 'Chat - Urbeld',
+    'chat_title' => 'Chat - ERSAA',
     'back_to_requests' => 'Back to Requests',
     'request_number' => 'Request Number',
     'attachment' => 'Attachment',
     'type_message' => 'Type your message...',
     'file_selected' => 'File selected',
 
-    'new_service_request_title' => 'New Service Request - Urbeld',
+    'new_service_request_title' => 'New Service Request - ERSAA',
     'new_request' => 'New Request',
     'request_directed_to' => 'Request directed to',
     'request_directed_desc' => 'This request will be sent exclusively to this provider for a quote.',
@@ -478,7 +478,7 @@ return [
     'complete_data_now' => 'Complete Data Now',
     'loading' => 'Loading...',
     'footer_fallback_text' => 'We excel in designing spaces that inspire, innovate, and last.',
-    'site_name_fallback' => 'Urbeld Saudi Arabia',
+    'site_name_fallback' => 'ERSAA Saudi Arabia',
     'commercial_registration' => 'Commercial Registration',
     'nav_requests' => 'Requests',
     'add_service' => 'Add Service',

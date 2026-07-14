@@ -21,10 +21,10 @@
                         <div class="footer-logo-section">
                             <a href="{{ route('home') }}">
                                 @if (isset($settings['logo']) && $settings['logo'])
-                                    <img src="{{ $settings['logo'] }}" alt="{{ $settings['site_name'] ?? 'URBELD' }}"
+                                    <img src="{{ $settings['logo'] }}" alt="{{ $settings['site_name'] ?? 'ERSAA' }}"
                                         class="footer-logo">
                                 @else
-                                    <img src="{{ asset('website/assets/img/footer-logo.png') }}" alt="URBELD Logo"
+                                    <img src="{{ asset('website/assets/img/footer-logo.png') }}" alt="ERSAA Logo"
                                         class="footer-logo">
                                 @endif
                             </a>
@@ -121,7 +121,7 @@
                                 <i class="bi bi-envelope-fill me-2 text-primary"></i>
                                 <a href="mailto:{{ $settings['site_email'] ?? '' }}"
                                     style="color: inherit; text-decoration: none;">
-                                    {{ $settings['site_email'] ?? 'info@urbeld.sa' }}
+                                    {{ $settings['site_email'] ?? 'info@ERSAA.sa' }}
                                 </a>
                             </p>
                         </div>

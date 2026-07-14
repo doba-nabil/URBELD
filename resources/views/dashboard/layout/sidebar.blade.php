@@ -6,7 +6,7 @@
                     <img height="30" src="{{ \App\Models\Setting::getMediaUrl('logo_ar') ?: (\App\Models\Setting::getMediaUrl('favicon') ?: asset('dashboard/assets/img/favicon/fav-icon.png')) }}" alt="logo">
                 </span>
             </span>
-            <span class="app-brand-text demo menu-text fw-bold ms-3">URBELD</span>
+            <span class="app-brand-text demo menu-text fw-bold ms-3">ERSAA</span>
         </a>
 
         <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">

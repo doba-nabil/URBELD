@@ -960,8 +960,8 @@ return [
 
 
     // Auth Page generated automatically
-    'asas' => 'اوربلد',
-    'welcome_to_dashboard' => 'مرحبا في لوحة تحكم اوربلد 👋',
+    'asas' => 'ارساء',
+    'welcome_to_dashboard' => 'مرحبا في لوحة تحكم ارساء 👋',
     'please_login' => 'يرجى تسجيل الدخول إلى حسابك',
     'enter_email' => 'قم بإدخال البريد الالكتروني هنا',
     'login_button' => 'تسجيل الدخول',

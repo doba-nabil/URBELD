@@ -8,7 +8,7 @@ return [
     // Meta
     'meta_tagline' => 'للتطوير العقاري',
     'meta_keywords' => 'تطوير عقاري، استشارات هندسية، إدارة مشاريع',
-    'meta_description' => 'اوربلد - نبدع في تصميم المساحات التي تُلهم وتُبتكر وتدوم.',
+    'meta_description' => 'ارساء - نبدع في تصميم المساحات التي تُلهم وتُبتكر وتدوم.',
     'form_error_hint' => 'يرجى التأكد من الأخطاء في النموذج.',
     
     'suppliers_of_category' => 'موردي :category',
@@ -93,7 +93,7 @@ return [
     'forgot_password_desc' => 'نسيت كلمة المرور؟ لا توجد مشكلة. فقط أدخل بريدك الإلكتروني وسنرسل لك رابطاً لإعادة تعيين كلمة المرور.',
     'no_account' => 'ليس لديك حساب؟',
     'create_account' => 'إنشاء حساب جديد',
-    'agree_terms' => 'بالمتابعة، أنت توافق على <a href="#">شروط الاستخدام</a> و <a href="#">سياسة الخصوصية</a> الخاصة باوربلد',
+    'agree_terms' => 'بالمتابعة، أنت توافق على <a href="#">شروط الاستخدام</a> و <a href="#">سياسة الخصوصية</a> الخاصة بارساء',
     
     'register_title' => 'إنشاء حساب',
     'choose_account_type' => 'اختر نوع الحساب الدخول كـ',
@@ -323,14 +323,14 @@ return [
     'yes_delete_request' => 'نعم، احذف الطلب',
     'cancel' => 'إلغاء',
 
-    'chat_title' => 'المحادثة - اوربلد',
+    'chat_title' => 'المحادثة - ارساء',
     'back_to_requests' => 'العودة للطلبات',
     'request_number' => 'طلب رقم',
     'attachment' => 'المرفق',
     'type_message' => 'اكتب رسالتك...',
     'file_selected' => 'تم اختيار ملف',
 
-    'new_service_request_title' => 'طلب خدمة جديد - اوربلد',
+    'new_service_request_title' => 'طلب خدمة جديد - ارساء',
     'new_request' => 'طلب جديد',
     'request_directed_to' => 'طلب موجه إلى',
     'request_directed_desc' => 'سيتم إرسال هذا الطلب حصرياً إلى هذا المورد لطلب عرض سعر.',
@@ -492,7 +492,7 @@ return [
     'complete_data_now' => 'إكمال البيانات الآن',
     'loading' => 'جاري التحميل...',
     'footer_fallback_text' => 'نحن نبدع في تصميم المساحات التي تُلهم وتُبتكر وتدوم.',
-    'site_name_fallback' => 'اوربلد السعودية',
+    'site_name_fallback' => 'ارساء السعودية',
     'commercial_registration' => 'السجل التجاري',
     'nav_requests' => 'الطلبات',
     'add_service' => 'إضافة خدمة',

@@ -33,11 +33,11 @@ class AppServiceProvider extends ServiceProvider
                     'favicon' => $settingModel?->getFirstMediaUrl('favicon'),
                     'socials' => $socialsModel ? json_decode($socialsModel->value, true) : [],
                     'location' => ['lat' => $latSetting?->value, 'long' => $longSetting?->value],
-                    'site_name' => Setting::getValue('site_name', $locale, 'اوربلد'),
+                    'site_name' => Setting::getValue('site_name', $locale, 'ارساء'),
                     'site_phone' => Setting::getValue('contact_phone', null, '+(084) 123-45688'),
-                    'site_email' => Setting::getValue('contact_email', null, 'info@urbeld.com'),
+                    'site_email' => Setting::getValue('contact_email', null, 'info@ERSAA.com'),
                     'site_address' => Setting::getValue('contact_address', $locale, __('website.address')),
-                    'footer_text' => Setting::getValue('footer_text', $locale, 'تقدم منصة اوربلد حلولاً متكاملة للعثور على المسكن المثالي أو مزود الخدمة المناسب بكل سهولة وموثوقية.'),
+                    'footer_text' => Setting::getValue('footer_text', $locale, 'تقدم منصة ارساء حلولاً متكاملة للعثور على المسكن المثالي أو مزود الخدمة المناسب بكل سهولة وموثوقية.'),
                 ];
             });
             $mainCategories = Cache::remember('main_categories', 3600, function () {

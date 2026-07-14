@@ -3,10 +3,10 @@
 
 <head>
     <meta charset="utf-8">
-    <title>التحقق من الرمز - {{ $settings['site_name'] ?? 'اوربلد' }}</title>
+    <title>التحقق من الرمز - {{ $settings['site_name'] ?? 'ارساء' }}</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="التحقق، رمز التحقق، OTP، اوربلد" name="keywords">
-    <meta content="اوربلد - نبدع في تصميم المساحات التي تُلهم وتُبتكر وتدوم" name="description">
+    <meta content="التحقق، رمز التحقق، OTP، ارساء" name="keywords">
+    <meta content="ارساء - نبدع في تصميم المساحات التي تُلهم وتُبتكر وتدوم" name="description">
 
     <!-- Favicon -->
     <link href="{{ asset('website/assets/img/fav.png') }}" rel="icon">
@@ -36,7 +36,7 @@
         <div class="login-left-section">
             <div class="login-background-overlay">
                 <img src="{{ asset('website/assets/img/auth-img.png') }}" alt="Background" class="login-background-image">
-                <div class="login-text-overlay">URBELD</div>
+                <div class="login-text-overlay">ERSAA</div>
             </div>
         </div>
 
@@ -46,7 +46,7 @@
                 <!-- Logo -->
                 <div class="login-logo">
                     <a href="{{ url('/') }}">
-                        <img src="{{ asset('website/assets/img/logo.png') }}" alt="Urbeld Logo" class="login-logo-img">
+                        <img src="{{ asset('website/assets/img/logo.png') }}" alt="ERSAA Logo" class="login-logo-img">
                     </a>
                 </div>
 
@@ -109,7 +109,7 @@
 
                 <!-- Legal Text -->
                 <div class="login-legal-text">
-                    <p>بالمتابعة، أنت توافق على <a href="#">شروط الاستخدام</a> و <a href="#">سياسة الخصوصية</a> الخاصة باوربلد</p>
+                    <p>بالمتابعة، أنت توافق على <a href="#">شروط الاستخدام</a> و <a href="#">سياسة الخصوصية</a> الخاصة بارساء</p>
                 </div>
             </div>
         </div>

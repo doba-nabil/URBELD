@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
 
         // 3. Admin User
         $admin = User::firstOrCreate(
-            ['email' => 'admin@urbeld.com'],
+            ['email' => 'admin@ERSAA.com'],
             [
                 'name' => 'مدير النظام',
                 'password' => Hash::make('password'),
@@ -46,7 +46,7 @@ class DatabaseSeeder extends Seeder
         $seekers = [];
         for ($i = 1; $i <= 3; $i++) {
             $seeker = User::firstOrCreate(
-                ['email' => "seeker{$i}@urbeld.com"],
+                ['email' => "seeker{$i}@ERSAA.com"],
                 [
                     'name' => "عميل {$i}",
                     'password' => Hash::make('password'),
@@ -62,9 +62,9 @@ class DatabaseSeeder extends Seeder
 
         // 5. Providers (Contracting, Engineering, Environment)
         $providerData = [
-            ['email' => 'contracting@urbeld.com', 'name' => 'شركة المقاولات المتحدة', 'category' => $contractingCategory],
-            ['email' => 'engineering@urbeld.com', 'name' => 'مكتب الهندسة الحديث', 'category' => $engineeringCategory],
-            ['email' => 'environment@urbeld.com', 'name' => 'مؤسسة البيئة الخضراء', 'category' => $environmentCategory],
+            ['email' => 'contracting@ERSAA.com', 'name' => 'شركة المقاولات المتحدة', 'category' => $contractingCategory],
+            ['email' => 'engineering@ERSAA.com', 'name' => 'مكتب الهندسة الحديث', 'category' => $engineeringCategory],
+            ['email' => 'environment@ERSAA.com', 'name' => 'مؤسسة البيئة الخضراء', 'category' => $environmentCategory],
         ];
 
         $providers = [];

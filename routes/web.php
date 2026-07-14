@@ -220,7 +220,7 @@ Route::get('/run-permission-seed', function () {
     }
 });
 // Landing Page
-Route::get('/urbeld', [\App\Http\Controllers\Website\LandingPageController::class, 'index'])->name('landing_page');
+Route::get('/ERSAA', [\App\Http\Controllers\Website\LandingPageController::class, 'index'])->name('landing_page');
 // Dynamic Pages (Must be at the bottom)
 Route::get('/{slug}', [App\Http\Controllers\Website\PageController::class , 'show'])->name('website.page.show');
 }); // End of Localization Route Group

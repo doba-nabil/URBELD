@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $siteName ?? 'Urbeld' }} - {{ __('admin.landing_page') }}</title>
+    <title>{{ $siteName ?? 'ERSAA' }} - {{ __('admin.landing_page') }}</title>
     
     <!-- Favicon -->
     @php

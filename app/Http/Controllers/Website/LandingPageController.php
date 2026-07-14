@@ -14,7 +14,7 @@ class LandingPageController extends Controller
         $locale = app()->getLocale();
         $features = LandingPageFeature::active()->orderBy('order')->get();
         
-        $siteName = Setting::getValue('site_name', $locale, 'URBELD');
+        $siteName = Setting::getValue('site_name', $locale, 'ERSAA');
         $siteLogo = Setting::getMediaUrl('logo_ar') ?: (Setting::getMediaUrl('favicon') ?: asset('dashboard/assets/img/logo/logo.png'));
         $isRtl = $locale == 'ar';
         $primaryColor = '#014D40'; // Site primary color

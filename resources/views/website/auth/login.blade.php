@@ -3,10 +3,10 @@
 
 <head>
     <meta charset="utf-8">
-    <title>{{ __('website.login_title') }} - {{ $settings['site_name'] ?? 'اوربلد' }}</title>
+    <title>{{ __('website.login_title') }} - {{ $settings['site_name'] ?? 'ارساء' }}</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="تسجيل الدخول، حسابي، اوربلد" name="keywords">
-    <meta content="اوربلد - نبدع في تصميم المساحات التي تُلهم وتُبتكر وتدوم" name="description">
+    <meta content="تسجيل الدخول، حسابي، ارساء" name="keywords">
+    <meta content="ارساء - نبدع في تصميم المساحات التي تُلهم وتُبتكر وتدوم" name="description">
 
     <!-- Favicon -->
     <link href="{{ \App\Models\Setting::getMediaUrl('favicon') ?: asset('website/assets/img/fav.png') }}" rel="icon">

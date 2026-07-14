@@ -51,7 +51,7 @@
             <div class="row g-5 align-items-center">
                 <div class="col-lg-6 wow fadeInLeft" data-wow-delay="0.1s">
                     <div class="about-img-frame position-relative">
-                        <img class="img-fluid w-100 about-img shadow-lg" src="{{ $aboutImage }}" alt="About URBELD">
+                        <img class="img-fluid w-100 about-img shadow-lg" src="{{ $aboutImage }}" alt="About ERSAA">
                     </div>
                 </div>
                 <div class="col-lg-6 wow fadeInRight" data-wow-delay="0.3s">
@@ -182,7 +182,7 @@
                 @endif
             </div>
             <div class="footer-copyright border-top pt-4">
-                <span class="opacity-75">{!! __('website.footer_copyright', ['site_name' => 'URBELD']) !!}</span>
+                <span class="opacity-75">{!! __('website.footer_copyright', ['site_name' => 'ERSAA']) !!}</span>
             </div>
         </div>
     </footer>
