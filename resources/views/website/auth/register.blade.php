@@ -31,18 +31,10 @@
 
 <body class="login-page">
     <div class="site-scale">
-    <div class="login-container">
-        <!-- Left Side - Background Image -->
-        <div class="login-left-section">
-            <div class="login-background-overlay">
-                <img src="{{ asset('website/assets/img/auth-img.png') }}" alt="Background" class="login-background-image">
-                <div class="login-text-overlay">URBELD</div>
-            </div>
-        </div>
-
-        <!-- Right Side - Register Form -->
-        <div class="login-right-section">
-            <div class="login-form-wrapper">
+    <div class="container d-flex align-items-center justify-content-center min-vh-100 py-5">
+        <div class="card shadow-lg border-0 rounded-4 w-100" style="max-width: 550px;">
+            <div class="card-body p-4 p-md-5">
+                <div class="login-form-wrapper">
                 <!-- Logo -->
                 <div class="login-logo text-center mb-4">
                     <a href="{{ url('/') }}">
@@ -227,6 +219,7 @@
                     <p>{!! __('website.agree_terms') !!}</p>
                 </div>
             </div>
+            </div>
         </div>
     </div>
     </div>
@@ -264,7 +257,13 @@
                 items.forEach(item => {
                     const option = document.createElement('option');
                     option.value = item.id;
-                    option.textContent = item.name;
+                    
+                    let itemName = item.name;
+                    if (typeof itemName === 'object' && itemName !== null) {
+                        itemName = itemName['{{ app()->getLocale() }}'] || itemName['ar'] || itemName['en'] || Object.values(itemName)[0];
+                    }
+                    option.textContent = itemName;
+
                     if (item.id == '{{ old('classification_id') }}') {
                         option.selected = true;
                     }
