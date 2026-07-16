@@ -117,13 +117,13 @@ class MembershipDataTable extends DataTable
                 return '<span class="badge bg-label-secondary">' . __('admin.unactive') . '</span>';
             })
             ->addColumn('is_featured', function ($q) {
-                $isFeatured = $q->membership ? $q->membership->is_featured : false;
+                $isFeatured = $q->is_trusted;
                 $checked = $isFeatured ? 'checked' : '';
-                $toggleUrl = route('admin.memberships.toggle-featured', $q->membership_id ?? 0);
+                $toggleUrl = route('admin.memberships.toggle-featured', $q->id);
                 
                 // Return a checkbox toggle
                 return '<div class="form-check form-switch d-flex justify-content-center">
-                            <input class="form-check-input toggle-featured" type="checkbox" data-url="' . $toggleUrl . '" ' . $checked . ' ' . (!$q->membership_id ? 'disabled' : '') . '>
+                            <input class="form-check-input toggle-featured" type="checkbox" data-url="' . $toggleUrl . '" ' . $checked . '>
                         </div>';
             })
     ->addColumn('action', function ($q) {
@@ -236,7 +236,7 @@ class MembershipDataTable extends DataTable
             Column::make('country')->title(__('admin.country'))->addClass('text-start'),
             Column::make('city')->title(__('admin.city'))->addClass('text-start'),
             Column::make('is_active')->title(__('admin.status'))->addClass('text-center'),
-            Column::make('is_featured')->title('مميز')->addClass('text-center')->searchable(false)->orderable(false)->width(150),
+            Column::make('is_featured')->title('موثوق')->addClass('text-center')->searchable(false)->orderable(false)->width(150),
             Column::computed('action')->title(__('admin.actions'))
                 ->exportable(false)
                 ->printable(false)

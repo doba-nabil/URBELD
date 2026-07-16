@@ -168,6 +168,9 @@ return [
         'attribute-name' => [
             'rule-name' => 'custom-message',
         ],
+        'provider_id' => [
+            'not_in' => 'لا يمكنك إرسال طلب لنفسك.',
+        ],
         'addons.*.type' => [
             'in' => 'قيمة :attribute يجب أن تكون إما اختيارية أو إجبارية.',
         ],

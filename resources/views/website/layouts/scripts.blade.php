@@ -12,4 +12,72 @@
 
 <!-- Template Javascript -->
 <script src="{{ asset('website/assets/js/main.js') }}"></script>
+<script>
+$(document).ready(function() {
+    $('select[name="region_id"]').each(function() {
+        const regionSelect = $(this);
+        const form = regionSelect.closest('form, .filter-wrapper, .search-section, .contact-form-section, .filter-card');
+        let citySelect = form.length ? form.find('select[name="city_id"]') : $('select[name="city_id"]');
+        
+        if (!citySelect.length) {
+            citySelect = form.length ? form.find('#city_id') : $('#city_id');
+        }
+
+        if (regionSelect.length && citySelect.length) {
+            if (regionSelect.data('linked-city')) return;
+            regionSelect.data('linked-city', true);
+
+            const originalCities = citySelect.find('option').clone();
+            
+            regionSelect.on('change', function() {
+                const regionId = $(this).val();
+                const currentCityVal = citySelect.val();
+                
+                citySelect.empty();
+                
+                const placeholder = originalCities.filter(function() { return !$(this).val(); }).first().clone();
+                if(placeholder.length) {
+                    citySelect.append(placeholder);
+                } else {
+                    citySelect.append('<option value="">اختر المدينة</option>');
+                }
+                
+                if (regionId) {
+                    citySelect.prop('disabled', false);
+                    originalCities.each(function() {
+                        if ($(this).val() && $(this).data('region') == regionId) {
+                            citySelect.append($(this).clone());
+                        }
+                    });
+                } else {
+                    citySelect.prop('disabled', true);
+                }
+                
+                if (citySelect.find(`option[value="${currentCityVal}"]`).length) {
+                    citySelect.val(currentCityVal);
+                } else {
+                    citySelect.val('');
+                }
+                
+                if (citySelect.hasClass('select2-hidden-accessible') || citySelect.hasClass('select2')) {
+                    citySelect.trigger('change.select2');
+                } else {
+                    citySelect.trigger('change');
+                }
+            });
+            
+            setTimeout(() => {
+                if (regionSelect.val()) {
+                    regionSelect.trigger('change');
+                } else {
+                    citySelect.prop('disabled', true);
+                    if (citySelect.hasClass('select2-hidden-accessible') || citySelect.hasClass('select2')) {
+                        citySelect.trigger('change.select2');
+                    }
+                }
+            }, 100);
+        }
+    });
+});
+</script>
 @stack('scripts')

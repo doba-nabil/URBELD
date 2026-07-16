@@ -128,11 +128,21 @@
                                     </div>
 
                                     <div class="col-md-6 mt-3">
+                                        <label class="mb-2 fw-bold">المنطقة <span class="text-danger">*</span></label>
+                                        <select name="region_id" class="form-select contact-input" required>
+                                            <option value="" selected disabled>اختر المنطقة</option>
+                                            @foreach (\App\Models\Region::orderBy('name')->get() as $region)
+                                                <option value="{{ $region->id }}">{{ $region->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-6 mt-3">
                                         <label class="mb-2 fw-bold">{{ __('website.city') }} <span class="text-danger">*</span></label>
                                         <select name="city_id" class="form-select contact-input" required>
                                             <option value="" selected disabled>{{ __('website.choose_city') }}</option>
                                             @foreach (\App\Models\City::orderBy('name')->get() as $city)
-                                                <option value="{{ $city->id }}">{{ $city->name }}</option>
+                                                <option value="{{ $city->id }}" data-region="{{ $city->region_id }}">{{ $city->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>

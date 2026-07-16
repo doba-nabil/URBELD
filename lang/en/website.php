@@ -417,7 +417,7 @@ return [
     'open_in_google_maps' => 'Open in Google Maps',
     'attached_files_lbl' => 'Attached Files',
     'blueprints_lbl' => 'Blueprints / Layouts',
-    'site_photos_lbl' => 'Site Photos',
+    'site_photos_lbl' => 'Request Attachments',
     'scheduled_inspection_lbl' => 'Scheduled Inspection Date',
     'confirm_start_work_msg' => 'Are you sure you want to confirm the final agreement and start work?',
     'confirm_start_work_btn' => 'Confirm Agreement / Start Work',

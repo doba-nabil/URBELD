@@ -62,7 +62,7 @@ class NotificationDataTable extends DataTable
 
     public function query(Notification $model): QueryBuilder
     {
-        return $model->newQuery()->whereNull('user_id')->orderBy('created_at', 'desc');
+        return $model->newQuery()->where('user_id', auth()->guard('admin')->id())->orderBy('created_at', 'desc');
     }
 
     public function html(): HtmlBuilder

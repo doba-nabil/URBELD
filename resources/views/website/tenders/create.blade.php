@@ -34,11 +34,23 @@
                                 @error('category_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
                             </div>
                             <div class="col-md-6">
+                                <label class="form-label fw-bold">المنطقة <span class="text-danger">*</span></label>
+                                @php $regions = \App\Models\Region::all(); @endphp
+                                <select name="region_id" class="form-select @error('region_id') is-invalid @enderror" required>
+                                    <option value="">اختر المنطقة</option>
+                                    @foreach($regions as $region)
+                                        <option value="{{ $region->id }}" {{ old('region_id') == $region->id ? 'selected' : '' }}>{{ $region->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('region_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            </div>
+                            <div class="col-md-6">
                                 <label class="form-label fw-bold">{{ __('tenders.city') }} <span class="text-danger">*</span></label>
+                                @php $cities = \App\Models\City::all(); @endphp
                                 <select name="city_id" class="form-select @error('city_id') is-invalid @enderror" required>
                                     <option value="">{{ __('tenders.all_cities') }}</option>
                                     @foreach($cities as $city)
-                                        <option value="{{ $city->id }}" {{ old('city_id') == $city->id ? 'selected' : '' }}>{{ $city->name }}</option>
+                                        <option value="{{ $city->id }}" data-region="{{ $city->region_id }}" {{ old('city_id') == $city->id ? 'selected' : '' }}>{{ $city->name }}</option>
                                     @endforeach
                                 </select>
                                 @error('city_id')<div class="invalid-feedback">{{ $message }}</div>@enderror

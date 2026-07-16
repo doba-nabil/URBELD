@@ -118,7 +118,7 @@
 
                         @if ($serviceRequest->hasMedia('site_photos'))
                             <div class="mb-4">
-                                <h5>صور الموقع</h5>
+                                <h5>{{ __('website.site_photos_lbl') }}</h5>
                                 <div class="row g-2">
                                     @foreach ($serviceRequest->getMedia('site_photos') as $media)
                                         <div class="col-md-3">

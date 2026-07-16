@@ -76,7 +76,7 @@ class SupplyRequestController extends Controller
             'city_id' => 'required|exists:cities,id',
             'delivery_date' => 'nullable|date',
             'category_id' => 'nullable|exists:categories,id',
-            'provider_id' => 'nullable|exists:users,id',
+            'provider_id' => ['nullable', 'exists:users,id', 'not_in:' . auth()->id()],
         ]);
 
         $supplyRequest = new \App\Models\SupplyRequest($validated);

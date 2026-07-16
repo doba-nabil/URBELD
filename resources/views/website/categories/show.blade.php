@@ -75,7 +75,7 @@
                   <option value="">{{ __('website.all') }}</option>
                   @if (isset($cities))
                       @foreach ($cities as $city)
-                          <option value="{{ $city->id }}" {{ request('city_id') == $city->id ? 'selected' : '' }}>{{ $city->name }}</option>
+                          <option value="{{ $city->id }}" data-region="{{ $city->region_id }}" {{ request('city_id') == $city->id ? 'selected' : '' }}>{{ $city->name }}</option>
                       @endforeach
                   @endif
                 </select>

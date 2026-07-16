@@ -432,7 +432,7 @@ return [
     'open_in_google_maps' => 'فتح في خرائط جوجل',
     'attached_files_lbl' => 'الملفات المرفقة',
     'blueprints_lbl' => 'الرسوم الكروكية / المخططات',
-    'site_photos_lbl' => 'صور الموقع',
+    'site_photos_lbl' => 'مرفقات الطلب',
     'scheduled_inspection_lbl' => 'موعد المعاينة المجدول',
     'confirm_start_work_msg' => 'هل أنت متأكد من تأكيد الاتفاق النهائي وبدء العمل؟',
     'confirm_start_work_btn' => 'تأكيد الاتفاق / بدء العمل',

@@ -134,7 +134,7 @@
                     <span class="position-relative">
                       <i class="icon-base ti tabler-bell icon-22px text-heading"></i>
                       @php
-                          $unreadCount = \App\Models\Notification::whereNull('user_id')->where('is_read', false)->count();
+                          $unreadCount = \App\Models\Notification::where('user_id', auth()->guard('admin')->id())->where('is_read', false)->count();
                       @endphp
                       @if($unreadCount > 0)
                           <span class="badge rounded-pill bg-danger badge-dot badge-notifications border">{{ $unreadCount }}</span>

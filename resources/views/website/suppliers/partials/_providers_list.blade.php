@@ -48,7 +48,9 @@
                 <div class="rating-chip"><i class="bi bi-star-fill text-warning"></i> {{ number_format($provider->average_rating, 1) }} <span style="color:#9ca3af;font-weight:400;font-size:11px;">({{ $provider->ratings_count ?? 0 }} تقييم)</span></div>
                 
                 @auth
+                    @if(auth()->id() !== $provider->id)
                     <a href="{{ route('website.supply-requests.create', array_filter(['provider_id' => $provider->id, 'category' => $providerCategory->id ?? null])) }}" class="btn-quote {{ $isPremium ? 'featured-btn' : '' }}">طلب تسعيرة توريد</a>
+                    @endif
                 @else
                     <a href="{{ route('login') }}" class="btn-quote {{ $isPremium ? 'featured-btn' : '' }}">طلب تسعيرة توريد</a>
                 @endauth
