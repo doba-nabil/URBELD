@@ -181,6 +181,9 @@ return [
         'attribute-name' => [
             'rule-name' => 'custom-message',
         ],
+        'provider_id' => [
+            'not_in' => 'You cannot send a request to yourself.',
+        ],
         'addons.*.type' => [
             'in' => 'The :attribute must be either optional or mandatory.',
         ],

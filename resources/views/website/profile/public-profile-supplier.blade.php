@@ -198,12 +198,14 @@
                 <!-- Contact Card -->
                 <div class="pp-sidebar-card text-center">
                     <h6 class="fw-bold mb-3">{{ __('website.contact_supplier') ?? 'تواصل مع المورد' }}</h6>
+                    @if(auth()->id() !== $user->id)
                     <a href="{{ route('website.supply-requests.create', array_filter(['provider_id' => $user->id, 'category' => $user->categories->first()->id ?? null])) }}" class="btn pp-btn-order">
                         <i class="bi bi-box-seam me-2"></i> {{ __('website.request_supply_now') ?? 'طلب توريد الآن' }}
                     </a>
                     <a href="{{ route('chat.start', $user->id) }}" class="btn pp-btn-msg mt-2">
                         <i class="bi bi-chat-dots me-2"></i> {{ __('website.message_supplier') ?? 'مراسلة المورد' }}
                     </a>
+                    @endif
                     <div class="text-muted mt-2" style="font-size: 0.75rem;">{{ __('website.direct_contact_available_after_subscription') ?? 'بوابات التواصل المباشر متاحة بعد الاشتراك في الباقة' }}</div>
                 </div>
 

@@ -41,11 +41,6 @@
                             @endif
                         </div>
 
-                        <h5 class="fw-bold mb-3">تفاصيل الطلب:</h5>
-                        <div class="mb-5 text-muted" style="line-height: 1.8;">
-                            {!! nl2br(e($supplyRequest->description)) !!}
-                        </div>
-
                         @if(auth()->id() == $supplyRequest->user_id)
                             <!-- Owner View: Show Responses -->
                             <h4 class="fw-bold mb-4 border-top pt-4">العروض المقدمة ({{ $supplyRequest->responses->count() }})</h4>
@@ -102,29 +97,20 @@
                                 <div class="alert alert-info text-center">لا توجد عروض مقدمة حتى الآن.</div>
                             @endforelse
                         @endif
+
+                        <h5 class="fw-bold mb-3 border-top pt-4">تفاصيل الطلب:</h5>
+                        <div class="mb-5 text-muted" style="line-height: 1.8;">
+                            {!! nl2br(e($supplyRequest->description)) !!}
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Sidebar / Apply Form -->
             <div class="col-lg-4">
+                @if(auth()->check() && auth()->id() != $supplyRequest->user_id && auth()->user()->isServiceProvider())
                 <div class="card border-0 shadow-sm rounded-4 sticky-top" style="top: 100px;">
                     <div class="card-body p-4">
-                        <div class="d-flex align-items-center mb-4">
-                            @php
-                                $siteLogo = app()->getLocale() == 'ar' 
-                                           ? \App\Models\Setting::getMediaUrl('logo_ar') 
-                                           : \App\Models\Setting::getMediaUrl('logo_en');
-                                $siteLogo = $siteLogo ?: asset('website/assets/img/logo.png');
-                            @endphp
-                            <img src="{{ $supplyRequest->user->getFirstMediaUrl('personal_photo') ?: $supplyRequest->user->getFirstMediaUrl('users') ?: $siteLogo }}" class="rounded-circle object-fit-cover" width="60" height="60" alt="User">
-                            <div class="ms-3">
-                                <h6 class="mb-1 fw-bold">{{ $supplyRequest->user->name }}</h6>
-                                <small class="text-muted">صاحب الطلب</small>
-                            </div>
-                        </div>
-
-                        @if(auth()->check() && auth()->id() != $supplyRequest->user_id && auth()->user()->isServiceProvider())
                             @php
                                 $hasApplied = $supplyRequest->responses()->where('user_id', auth()->id())->exists();
                             @endphp
@@ -135,7 +121,7 @@
                                     لقد قمت بتقديم عرض لهذا الطلب مسبقاً
                                 </div>
                             @else
-                                <h5 class="fw-bold mb-3 border-top pt-4">تقديم عرض أسعار</h5>
+                                <h5 class="fw-bold mb-3">تقديم عرض أسعار</h5>
                                 <form action="{{ route('website.supply-requests.storeApplication', $supplyRequest->id) }}" method="POST">
                                     @csrf
                                     <div class="mb-3">
@@ -151,13 +137,17 @@
                                     </button>
                                 </form>
                             @endif
-                        @elseif(!auth()->check())
-                            <div class="alert alert-warning text-center mb-0">
-                                يرجى <a href="{{ route('login') }}" class="fw-bold text-dark">تسجيل الدخول</a> كمورد لتقديم عرض.
-                            </div>
-                        @endif
                     </div>
                 </div>
+                @elseif(!auth()->check())
+                <div class="card border-0 shadow-sm rounded-4 sticky-top" style="top: 100px;">
+                    <div class="card-body p-4">
+                        <div class="alert alert-warning text-center mb-0">
+                            يرجى <a href="{{ route('login') }}" class="fw-bold text-dark">تسجيل الدخول</a> كمورد لتقديم عرض.
+                        </div>
+                    </div>
+                </div>
+                @endif
             </div>
         </div>
     </div>

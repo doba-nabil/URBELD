@@ -88,7 +88,7 @@ return [
     'req_ph' => 'Write a qualification requirement...',
     'add_req' => 'Add another requirement',
     'files_opt' => 'Tender Attachments (Optional)',
-    'files_hint' => 'You can attach files such as: RFP, preliminary plans, site photos (up to 10MB per file).',
+    'files_hint' => 'You can attach files such as: RFP, preliminary plans, request attachments (up to 10MB per file).',
     'file_name_ph' => 'File Name (e.g. Architectural Plan)',
     'add_file' => 'Add another attachment',
     'mark_urgent' => 'Mark as "Urgent Tender"',

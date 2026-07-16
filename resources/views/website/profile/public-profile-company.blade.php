@@ -161,10 +161,12 @@
                         <div class="card-body text-center p-4">
                             <p class="text-muted mb-4">{{ __('website.contact_provider_desc') }}</p>
                             @auth
+                                @if(auth()->id() !== $user->id)
                                 <a href="{{ route('requests.create', ['provider_id' => $user->id, 'category' => $user->categories->whereNull('parent_id')->first()?->id]) }}"
                                     class="btn btn-primary w-100 py-3 rounded-3 fw-bold shadow-sm">
                                     <i class="bi bi-envelope-paper me-2"></i> {{ __('website.request_quote_now') }}
                                 </a>
+                                @endif
                             @else
                                 <a href="{{ route('login') }}" class="btn btn-outline-primary w-100 py-3 rounded-3 fw-bold">
                                     <i class="bi bi-box-arrow-in-right me-2"></i> {{ __('website.login_to_request_service') }}

@@ -16,7 +16,7 @@ class StoreServiceRequest extends FormRequest
         $rules = [
             'category_id' => ['required', 'exists:categories,id'],
             'sub_category_id' => ['required', 'exists:categories,id'],
-            'provider_id' => ['nullable', 'exists:users,id'],
+            'provider_id' => ['nullable', 'exists:users,id', 'not_in:' . auth()->id()],
             'description' => ['required', 'string'],
             'location' => ['nullable', 'string'],
             'dynamic_data' => ['nullable', 'array'],

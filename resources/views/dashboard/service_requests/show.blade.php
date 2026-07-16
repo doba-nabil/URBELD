@@ -168,7 +168,7 @@
                                     @endif
                                     @if ($serviceRequest->hasMedia('site_photos'))
                                         <div class="mb-3">
-                                            <strong>صور الموقع:</strong>
+                                            <strong>مرفقات الطلب:</strong>
                                             <div class="mt-2 d-flex flex-wrap gap-3">
                                                 @foreach ($serviceRequest->getMedia('site_photos') as $media)
                                                     <div class="position-relative">
