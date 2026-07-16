@@ -68,7 +68,7 @@ html {
 }
 
 [dir="rtl"] .text-end {
-    text-align: left !important;
+    text-align: right !important;
 }
 
 [dir="ltr"] .text-end {

@@ -156,9 +156,9 @@
                     <div class="">
                         <label class="pd-label"><i class="bi bi-diagram-3 me-1"></i> التصنيف الرئيسي</label>
                         @if($isLocked)
-                            <div class="pd-readonly-box justify-content-{{ app()->getLocale() == 'ar' ? 'end' : 'start' }}">{{ $userMainCategory->name ?? __('website.not_specified') }}</div>
+                            <div class="pd-readonly-box justify-content-{{ app()->getLocale() == 'ar' ? 'start' : 'end' }}">{{ $userMainCategory->name ?? __('website.not_specified') }}</div>
                         @else
-                            <select class="pd-input-box text-{{ app()->getLocale() == 'ar' ? 'end' : 'start' }}" id="main_category" name="categories[]" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
+                            <select class="pd-input-box text-{{ app()->getLocale() == 'ar' ? 'start' : 'end' }}" id="main_category" name="categories[]" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
                                 <option value="">{{ __('website.choose_main_category') }}</option>
                                 @foreach ($categories as $category)
                                     <option value="{{ $category->id }}" {{ $userMainCategoryId == $category->id ? 'selected' : '' }}>
@@ -194,10 +194,10 @@
                     <div class="">
                         <label class="pd-label"><i class="bi bi-geo-alt me-1"></i> المنطقة</label>
                         @if($isLocked)
-                            <div class="pd-readonly-box justify-content-{{ app()->getLocale() == 'ar' ? 'end' : 'start' }}">{{ $user->city->region->name ?? __('website.not_specified') }}</div>
+                            <div class="pd-readonly-box justify-content-{{ app()->getLocale() == 'ar' ? 'start' : 'end' }}">{{ $user->city->region->name ?? __('website.not_specified') }}</div>
                         @else
                             @php $regions = \App\Models\Region::all(); @endphp
-                            <select id="region_id" class="pd-input-box text-{{ app()->getLocale() == 'ar' ? 'end' : 'start' }}" name="region_id" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
+                            <select id="region_id" class="pd-input-box text-{{ app()->getLocale() == 'ar' ? 'start' : 'end' }}" name="region_id" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
                                 <option value="">{{ __('website.choose_region') ?? 'اختر المنطقة' }}</option>
                                 @foreach ($regions as $region)
                                     <option value="{{ $region->id }}" {{ ($user->city && $user->city->region_id == $region->id) ? 'selected' : '' }}>{{ $region->name }}</option>
@@ -211,9 +211,9 @@
                     <div class="">
                         <label class="pd-label"><i class="bi bi-geo-alt me-1"></i> المدينة</label>
                         @if($isLocked)
-                            <div class="pd-readonly-box justify-content-{{ app()->getLocale() == 'ar' ? 'end' : 'start' }}">{{ $user->city->name ?? __('website.not_specified') }}</div>
+                            <div class="pd-readonly-box justify-content-{{ app()->getLocale() == 'ar' ? 'start' : 'end' }}">{{ $user->city->name ?? __('website.not_specified') }}</div>
                         @else
-                            <select id="city_id" class="pd-input-box text-{{ app()->getLocale() == 'ar' ? 'end' : 'start' }}" name="city_id" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
+                            <select id="city_id" class="pd-input-box text-{{ app()->getLocale() == 'ar' ? 'start' : 'end' }}" name="city_id" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
                                 <option value="">{{ __('website.choose_city') }}</option>
                                 @foreach ($cities as $city)
                                     <option value="{{ $city->id }}" data-region="{{ $city->region_id }}" {{ $user->city_id == $city->id ? 'selected' : '' }}>{{ $city->name }}</option>
@@ -223,7 +223,26 @@
                     </div>
                 </div>
 
-                <!-- Row 3: Contact -->
+                <!-- Row 2 -->
+                <div class="col-md-6">
+                    <div class="">
+                        <label class="pd-label">التصنيفات الفرعية</label>
+                        @if($isLocked)
+                            <div class="d-flex flex-wrap gap-2 justify-content-{{ app()->getLocale() == 'ar' ? 'start' : 'end' }} mt-1">
+                                @forelse($userSubCategories as $subcat)
+                                    <span class="pd-subcat-badge">{{ $subcat->name }}</span>
+                                @empty
+                                    <span class="text-muted small">لا يوجد</span>
+                                @endforelse
+                            </div>
+                        @else
+                            <select class="pd-input-box text-{{ app()->getLocale() == 'ar' ? 'end' : 'start' }}" id="sub_categories" name="categories[]" multiple dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}" style="height: auto; min-height: 56px;">
+                                <!-- Options populated by JS -->
+                            </select>
+                        @endif
+                    </div>
+                </div>
+
                 <div class="col-md-6">
                     <div class="">
                         <label class="pd-label"><i class="bi bi-envelope me-1"></i> البريد الإلكتروني</label>
@@ -239,7 +258,7 @@
                     <div class="">
                         <label class="pd-label"><i class="bi bi-telephone me-1"></i> رقم التواصل</label>
                         @if($isLocked)
-                            <div class="pd-readonly-box justify-content-end font-monospace" dir="ltr">{{ $user->phone ?? 'غير متوفر' }}</div>
+                            <div class="pd-readonly-box justify-content-start">{{ $user->years_of_experience ?? 0 }} سنة</div>
                         @else
                             <input type="text" class="pd-input-box  font-monospace" disabled value="{{ $user->phone }}" dir="ltr">
                         @endif
@@ -251,7 +270,7 @@
                     <div class="">
                         <label class="pd-label">سنوات الخبرة</label>
                         @if($isLocked)
-                            <div class="pd-readonly-box justify-content-end">{{ $user->years_of_experience ?? 0 }} سنة</div>
+                            <div class="pd-readonly-box justify-content-start font-monospace" dir="ltr">{{ $user->phone ?? 'غير متوفر' }}</div>
                         @else
                             <input type="number" class="pd-input-box " name="years_of_experience" value="{{ $user->years_of_experience ?? 0 }}">
                         @endif
@@ -267,7 +286,7 @@
                     <div class="">
                         <label class="pd-label">رقم السجل التجاري</label>
                         @if($isLocked)
-                            <div class="pd-readonly-box justify-content-end font-monospace">{{ $user->company_registration_number ?? 'غير متوفر' }}</div>
+                            <div class="pd-readonly-box justify-content-start font-monospace">{{ $user->company_registration_number ?? 'غير متوفر' }}</div>
                         @else
                             <input type="text" class="pd-input-box font-monospace text-end" name="company_registration_number" value="{{ $user->company_registration_number }}">
                         @endif
@@ -278,9 +297,9 @@
                     <div class="">
                         <label class="pd-label">اسم المفوض</label>
                         @if($isLocked)
-                            <div class="pd-readonly-box justify-content-end">{{ $user->representative_name ?? 'غير متوفر' }}</div>
+                            <div class="pd-readonly-box justify-content-start">{{ $user->representative_name ?? 'غير متوفر' }}</div>
                         @else
-                            <input type="text" class="pd-input-box text-end" name="representative_name" value="{{ $user->representative_name }}">
+                            <input type="text" class="pd-input-box text-start" name="representative_name" value="{{ $user->representative_name }}">
                         @endif
                     </div>
                 </div>
@@ -372,7 +391,7 @@
             <div class="mb-4 border-top pt-4 ">
                 <label class="pd-label">نبذة عن المكتب/الشركة</label>
                 @if($isLocked)
-                    <div class="pd-readonly-box justify-content-end align-items-start" style="min-height: 80px; padding-top: 16px; font-weight: normal;">
+                    <div class="pd-readonly-box justify-content-start align-items-start" style="min-height: 80px; padding-top: 16px; font-weight: normal;">
                         {{ auth()->user()->bio ?? 'لا توجد نبذة حالياً.' }}
                     </div>
                 @else
