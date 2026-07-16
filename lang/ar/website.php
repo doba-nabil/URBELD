@@ -97,8 +97,8 @@ return [
     
     'register_title' => 'إنشاء حساب',
     'choose_account_type' => 'اختر نوع الحساب الدخول كـ',
-    'full_name' => 'الاسم الكامل',
-    'phone' => 'رقم الهاتف',
+    'full_name' => 'الإسم التجاري',
+    'phone' => 'رقم الجوال',
     'confirm_password' => 'تأكيد كلمة المرور',
     'agree_terms_checkbox' => 'أوافق على <a href="#">شروط الخدمة</a> و <a href="#">بيان الخصوصية</a>',
     'register_btn' => 'إنشاء حساب',
@@ -133,7 +133,8 @@ return [
     'footer_quick_links' => 'روابط سريعة',
     'footer_our_services' => 'خدماتنا',
     'footer_contact_info' => 'معلومات التواصل',
-    'footer_copyright' => '&copy;جميع الحقوق محفوظة لمنصة. :site_name',
+    'footer_copyright' => '&copy; جميع الحقوق محفوظة لمنصة. :site_name 2026',
+    'footer_copyright1' => 'تصميم وبرمجة حلول نت الرقمية',
 
     // Home Page
     'search_your_service' => 'ابحث عن <br> خدمتك',

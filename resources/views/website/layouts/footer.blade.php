@@ -142,6 +142,7 @@
                 <!-- Copyright -->
                 <div class="footer-bottom">
 <p>{!! __('website.footer_copyright', ['site_name' => $settings['site_name'] ?? __('website.site_name_fallback')]) !!}</p>
+<a href="https://7loll.net/" target="_blank">{!! __('website.footer_copyright1', ['site_name' => $settings['site_name'] ?? __('website.site_name_fallback')]) !!}</a>
 </div>
             </div>
         </div>
