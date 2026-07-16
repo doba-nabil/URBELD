@@ -16,7 +16,7 @@ class NotificationController extends Controller
 
     public function markAsRead($id)
     {
-        $notification = Notification::whereNull('user_id')
+        $notification = Notification::where('user_id', auth()->guard('admin')->id())
             ->findOrFail($id);
         
         $notification->update([
@@ -29,7 +29,7 @@ class NotificationController extends Controller
 
     public function markAllAsRead()
     {
-        Notification::whereNull('user_id')
+        Notification::where('user_id', auth()->guard('admin')->id())
             ->where('is_read', false)
             ->update([
                 'is_read' => true,
@@ -41,7 +41,7 @@ class NotificationController extends Controller
 
     public function getUnreadCount()
     {
-        $count = Notification::whereNull('user_id')
+        $count = Notification::where('user_id', auth()->guard('admin')->id())
             ->where('is_read', false)
             ->count();
         
@@ -50,7 +50,7 @@ class NotificationController extends Controller
 
     public function destroy($id)
     {
-        $notification = Notification::whereNull('user_id')
+        $notification = Notification::where('user_id', auth()->guard('admin')->id())
             ->findOrFail($id);
         
         $notification->delete();

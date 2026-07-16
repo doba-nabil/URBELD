@@ -75,6 +75,24 @@
                                 <i class="ti tabler-id text-primary me-2 fs-5"></i>
                                 <span>{{ $provider->id_number ?? __('admin.not_specified') }}</span>
                             </li>
+                            @if(in_array($provider->provider_type, ['company', 'supplier']))
+                            <li class="d-flex align-items-center mb-3">
+                                <i class="ti tabler-building-bank text-primary me-2 fs-5"></i>
+                                <span>سجل تجاري: {{ $provider->company_registration_number ?? __('admin.not_specified') }}</span>
+                            </li>
+                            <li class="d-flex align-items-center mb-3">
+                                <i class="ti tabler-users text-primary me-2 fs-5"></i>
+                                <span>المفوض: {{ $provider->representative_name ?? __('admin.not_specified') }}</span>
+                            </li>
+                            <li class="d-flex align-items-center mb-3">
+                                <i class="ti tabler-chart-pie text-primary me-2 fs-5"></i>
+                                @php
+                                    $classModel = $provider->classification;
+                                    $className = $classModel ? (is_string($classModel->name) ? $classModel->name : (is_array($classModel->name) ? ($classModel->name[app()->getLocale()] ?? current($classModel->name)) : $classModel->getTranslation('name', app()->getLocale()))) : __('admin.not_specified');
+                                @endphp
+                                <span>التصنيف/الحجم: {{ $className }}</span>
+                            </li>
+                            @endif
                             <li class="d-flex align-items-center">
                                 <i class="ti tabler-calendar text-primary me-2 fs-5"></i>
                                 <span>{{ __('admin.registration_date') }} {{ $provider->created_at->format('Y-m-d') }}</span>

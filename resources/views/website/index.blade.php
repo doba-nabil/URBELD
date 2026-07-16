@@ -140,14 +140,16 @@
                                     <div class="col-md-3">
                                         <select class="form-select select2 border-0 py-3" name="region_id">
                                             <option selected value="">{{ __('website.region') ?? 'المنطقة' }}</option>
-                                            <option value="makkah">{{ __('website.makkah_region') ?? 'منطقة مكة المكرمة' }}</option>
+                                            @foreach (\App\Models\Region::orderBy('name')->get() as $region)
+                                                <option value="{{ $region->id }}">{{ $region->name }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                     <div class="col-md-3">
                                         <select class="form-select select2 border-0 py-3" name="city_id">
                                             <option selected value="">{{ __('website.city') }}</option>
                                             @foreach (\App\Models\City::orderBy('name')->get() as $city)
-                                                <option value="{{ $city->id }}">{{ $city->name }}</option>
+                                                <option value="{{ $city->id }}" data-region="{{ $city->region_id }}">{{ $city->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>

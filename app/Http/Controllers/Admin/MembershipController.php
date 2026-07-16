@@ -163,6 +163,8 @@ class MembershipController extends Controller
             'active' => $newActiveStatus,
             'is_trusted' => $request->has('is_trusted'),
             'classification_id' => $request->input('classification_id'),
+            'representative_name' => $request->input('representative_name'),
+            'company_registration_number' => $request->input('company_registration_number'),
         ]);
         // Send notification if status or type changed
         if ($oldActive !== $newActiveStatus || $oldType !== $newType) {
@@ -184,8 +186,8 @@ class MembershipController extends Controller
         }
         $provider->categories()->sync($allCategoryIds);
         
-        // Sync Delivery Cities if it is a supplier
-        if ($newType === 'supplier') {
+        // Sync Delivery Cities if it is a supplier or company
+        if (in_array($newType, ['supplier', 'company'])) {
             $provider->deliveryCities()->sync($request->input('delivery_cities', []));
         }
 

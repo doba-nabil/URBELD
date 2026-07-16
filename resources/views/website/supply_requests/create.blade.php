@@ -79,7 +79,16 @@
                                         </div>
                                     </div>
                                 @else
-                                    <div class="col-12">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">المنطقة <span class="text-danger">*</span></label>
+                                        <select name="region_id" class="form-select select2" required>
+                                            <option value="" disabled selected>اختر المنطقة</option>
+                                            @foreach($regions as $region)
+                                                <option value="{{ $region->id }}">{{ $region->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
                                         <label class="form-label fw-bold">{{ __('website.city') ?? 'المدينة' }} <span class="text-danger">*</span></label>
                                         <select name="city_id" class="form-select select2" required>
                                             <option value="" disabled selected>{{ __('website.choose_city') ?? 'اختر المدينة' }}</option>
@@ -91,11 +100,9 @@
                                                     }
                                                 @endphp
                                                 @if($citiesInRegion->isNotEmpty())
-                                                    <optgroup label="{{ $region->name }}">
-                                                        @foreach($citiesInRegion as $city)
-                                                            <option value="{{ $city->id }}">{{ $city->name }}</option>
-                                                        @endforeach
-                                                    </optgroup>
+                                                    @foreach($citiesInRegion as $city)
+                                                        <option value="{{ $city->id }}" data-region="{{ $region->id }}">{{ $city->name }}</option>
+                                                    @endforeach
                                                 @endif
                                             @endforeach
                                         </select>

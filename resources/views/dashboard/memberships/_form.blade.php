@@ -107,8 +107,11 @@
                 <select name="classification_id" class="form-select">
                     <option value="">{{ __('admin.none') ?? 'لا يوجد' }}</option>
                     @foreach($classifications ?? [] as $class)
+                        @php
+                            $className = is_string($class->name) ? $class->name : (is_array($class->name) ? ($class->name[app()->getLocale()] ?? $class->name['ar'] ?? '') : $class->getTranslation('name', app()->getLocale()));
+                        @endphp
                         <option value="{{ $class->id }}" {{ old('classification_id', (isset($provider) ? $provider->classification_id : '')) == $class->id ? 'selected' : '' }}>
-                            {{ $class->name }} ({{ $class->type == 'company' ? 'شركة' : 'مورد' }})
+                            {{ $className }} ({{ $class->type == 'company' ? 'شركة' : 'مورد' }})
                         </option>
                     @endforeach
                 </select>
@@ -201,17 +204,21 @@
 
         @php
             $isSupplier = old('type', ($provider->provider_type ?? request('type'))) == 'supplier';
+            $isCompany = old('type', ($provider->provider_type ?? request('type'))) == 'company';
             $selectedDeliveryCities = (isset($provider) && $provider->deliveryCities) ? $provider->deliveryCities->pluck('id')->toArray() : [];
         @endphp
-        @if($isSupplier)
+        @if($isSupplier || $isCompany)
         <div class="col-md-12 mb-3">
-            <label class="form-label">مناطق التوصيل للمورد</label>
+            <label class="form-label">مناطق العمل / التوصيل</label>
             <select name="delivery_cities[]" class="form-select select2" id="delivery_cities" multiple>
                 @if ($isEdit && (($membership && $membership->country_id) || ($provider && $provider->city)))
                     @foreach ($cities ?? [] as $city)
+                        @php
+                            $cityName = is_string($city->name) ? $city->name : (is_array($city->name) ? ($city->name[app()->getLocale()] ?? $city->name['ar'] ?? '') : $city->getTranslation('name', app()->getLocale()));
+                        @endphp
                         <option value="{{ $city->id }}"
                             {{ in_array($city->id, old('delivery_cities', $selectedDeliveryCities)) ? 'selected' : '' }}>
-                            {{ $city->name }}
+                            {{ $cityName }}
                         </option>
                     @endforeach
                 @endif
@@ -219,7 +226,7 @@
             @error('delivery_cities')
                 <span class="text-danger small">{{ $message }}</span>
             @enderror
-            <small class="text-muted">اختر المدن (أو المناطق) التي يوصل إليها المورد (ستظهر بناءً على الدولة المختارة أعلاه).</small>
+            <small class="text-muted">اختر المدن (أو المناطق) التي يقدم فيها خدماته أو يوصل إليها (ستظهر بناءً على الدولة المختارة أعلاه).</small>
         </div>
         @endif
     </div>
@@ -329,7 +336,7 @@
         <h5 class="mb-3 text-primary"><i class="ti tabler-building me-2"></i>{{ __('admin.company_professional_info') }}</h5>
         <div class="row">
             <div class="col-md-7 mb-3">
-                <label class="form-label">{{ __('admin.commercial_registration') }}</label>
+                <label class="form-label">{{ __('admin.commercial_registration') }} (صورة السجل)</label>
                 <div class="dropzone needsclick border-dashed" id="dropzone-commercial" style="min-height: 150px;" 
                      data-image-url="{{ ($membership && $membership->getFirstMediaUrl('commercial_registration')) ? $membership->getFirstMediaUrl('commercial_registration') : (($provider && $provider->getFirstMediaUrl('commercial_registration')) ? $provider->getFirstMediaUrl('commercial_registration') : '') }}">
                     <div class="dz-message needsclick">
@@ -338,6 +345,16 @@
                 </div>
             </div>
             <div class="col-md-5 mb-3">
+                <div class="mb-3">
+                    <label class="form-label">رقم السجل التجاري</label>
+                    <input type="text" name="company_registration_number" class="form-control"
+                        value="{{ old('company_registration_number', isset($provider) ? $provider->company_registration_number : '') }}">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">إسم المفوض</label>
+                    <input type="text" name="representative_name" class="form-control"
+                        value="{{ old('representative_name', isset($provider) ? $provider->representative_name : '') }}">
+                </div>
                 <label class="form-label">{{ __('admin.employees_count') }}</label>
                 <input type="number" name="employees_count" class="form-control" min="1"
                     value="{{ old('employees_count', ($membership ? $membership->employees_count : '')) }}">

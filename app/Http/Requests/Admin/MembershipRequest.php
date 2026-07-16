@@ -37,6 +37,9 @@ class MembershipRequest extends FormRequest
             // For company
             'commercial_registration' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,pdf', 'max:2048'],
             'employees_count' => ['nullable', 'integer', 'min:1'],
+            'representative_name' => ['nullable', 'string', 'max:255'],
+            'company_registration_number' => ['nullable', 'string', 'max:255'],
+            'classification_id' => ['nullable', 'exists:company_classifications,id'],
             'main_category_id' => ['nullable', 'exists:categories,id'],
             'sub_categories' => ['nullable', 'array'],
             'sub_categories.*' => ['exists:categories,id'],

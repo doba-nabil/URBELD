@@ -151,7 +151,7 @@
             <!-- Form Grid -->
             <div class="row g-4 mb-5">
                 
-                <!-- Row 1 -->
+                <!-- Row 1: Categories -->
                 <div class="col-md-6">
                     <div class="">
                         <label class="pd-label"><i class="bi bi-diagram-3 me-1"></i> التصنيف الرئيسي</label>
@@ -161,7 +161,7 @@
                             <select class="pd-input-box text-{{ app()->getLocale() == 'ar' ? 'end' : 'start' }}" id="main_category" name="categories[]" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
                                 <option value="">{{ __('website.choose_main_category') }}</option>
                                 @foreach ($categories as $category)
-                                    <option value="{{ $category->id }}" {{ $userMainCategoryId == $category->id ? 'selected' : '' }} data-subcategories="{{ json_encode($category->children) }}">
+                                    <option value="{{ $category->id }}" {{ $userMainCategoryId == $category->id ? 'selected' : '' }}>
                                         {{ $category->name }}
                                     </option>
                                 @endforeach
@@ -170,6 +170,26 @@
                     </div>
                 </div>
 
+                <div class="col-md-6">
+                    <div class="">
+                        <label class="pd-label">التصنيفات الفرعية</label>
+                        @if($isLocked)
+                            <div class="d-flex flex-wrap gap-2 justify-content-{{ app()->getLocale() == 'ar' ? 'end' : 'start' }} mt-1">
+                                @forelse($userSubCategories as $subcat)
+                                    <span class="pd-subcat-badge">{{ $subcat->name }}</span>
+                                @empty
+                                    <span class="text-muted small">لا يوجد</span>
+                                @endforelse
+                            </div>
+                        @else
+                            <select class="pd-input-box text-{{ app()->getLocale() == 'ar' ? 'end' : 'start' }}" id="sub_categories" name="categories[]" multiple dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}" style="height: auto; min-height: 56px;">
+                                <!-- Options populated by JS -->
+                            </select>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Row 2: Location -->
                 <div class="col-md-6">
                     <div class="">
                         <label class="pd-label"><i class="bi bi-geo-alt me-1"></i> المنطقة</label>
@@ -203,26 +223,7 @@
                     </div>
                 </div>
 
-                <!-- Row 2 -->
-                <div class="col-md-6">
-                    <div class="">
-                        <label class="pd-label">التصنيفات الفرعية</label>
-                        @if($isLocked)
-                            <div class="d-flex flex-wrap gap-2 justify-content-{{ app()->getLocale() == 'ar' ? 'end' : 'start' }} mt-1">
-                                @forelse($userSubCategories as $subcat)
-                                    <span class="pd-subcat-badge">{{ $subcat->name }}</span>
-                                @empty
-                                    <span class="text-muted small">لا يوجد</span>
-                                @endforelse
-                            </div>
-                        @else
-                            <select class="pd-input-box text-{{ app()->getLocale() == 'ar' ? 'end' : 'start' }}" id="sub_categories" name="categories[]" multiple dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}" style="height: auto; min-height: 56px;">
-                                <!-- Options populated by JS -->
-                            </select>
-                        @endif
-                    </div>
-                </div>
-
+                <!-- Row 3: Contact -->
                 <div class="col-md-6">
                     <div class="">
                         <label class="pd-label"><i class="bi bi-envelope me-1"></i> البريد الإلكتروني</label>
@@ -234,18 +235,6 @@
                     </div>
                 </div>
 
-                <!-- Row 3 -->
-                <div class="col-md-6">
-                    <div class="">
-                        <label class="pd-label">سنوات الخبرة</label>
-                        @if($isLocked)
-                            <div class="pd-readonly-box justify-content-end">{{ $user->years_of_experience ?? 0 }} سنة</div>
-                        @else
-                            <input type="number" class="pd-input-box " name="years_of_experience" value="{{ $user->years_of_experience ?? 0 }}">
-                        @endif
-                    </div>
-                </div>
-
                 <div class="col-md-6">
                     <div class="">
                         <label class="pd-label"><i class="bi bi-telephone me-1"></i> رقم التواصل</label>
@@ -253,6 +242,18 @@
                             <div class="pd-readonly-box justify-content-end font-monospace" dir="ltr">{{ $user->phone ?? 'غير متوفر' }}</div>
                         @else
                             <input type="text" class="pd-input-box  font-monospace" disabled value="{{ $user->phone }}" dir="ltr">
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Row 4: Experience -->
+                <div class="col-md-6">
+                    <div class="">
+                        <label class="pd-label">سنوات الخبرة</label>
+                        @if($isLocked)
+                            <div class="pd-readonly-box justify-content-end">{{ $user->years_of_experience ?? 0 }} سنة</div>
+                        @else
+                            <input type="number" class="pd-input-box " name="years_of_experience" value="{{ $user->years_of_experience ?? 0 }}">
                         @endif
                     </div>
                 </div>
@@ -417,6 +418,7 @@
         <script>
             $(document).ready(function() {
                 const userCategoryIds = @json($userCategoryIds);
+                const categoryChildren = @json($categories->mapWithKeys(function($cat) { return [$cat->id => $cat->children]; }));
                 const rawMainCategorySelect = document.getElementById('main_category');
                 const rawSubCategoriesSelect = document.getElementById('sub_categories');
 
@@ -425,14 +427,14 @@
                     const selectedOption = rawMainCategorySelect.options[rawMainCategorySelect.selectedIndex];
 
                     if (selectedOption && selectedOption.value) {
-                        const subcats = JSON.parse(selectedOption.getAttribute('data-subcategories') || '[]');
+                        const subcats = categoryChildren[selectedOption.value] || [];
 
                         if (subcats && subcats.length > 0) {
                             subcats.forEach(sub => {
                                 const option = document.createElement('option');
                                 option.value = sub.id;
                                 option.textContent = (typeof sub.name === 'object' && sub.name !== null) ? (sub.name.ar || sub.name.en) : sub.name;
-                                if (userCategoryIds.includes(sub.id)) {
+                                if (userCategoryIds.includes(parseInt(sub.id)) || userCategoryIds.includes(String(sub.id))) {
                                     option.selected = true;
                                 }
                                 rawSubCategoriesSelect.appendChild(option);
@@ -473,47 +475,6 @@
                 $(document).on('click', '.remove-certificate-btn', function() {
                     $(this).closest('.certificate-group').remove();
                 });
-
-                // Region to City filtering
-                const regionSelect = $('#region_id');
-                const citySelect = $('#city_id');
-                if (regionSelect.length && citySelect.length) {
-                    const originalCities = citySelect.find('option').clone();
-                    
-                    regionSelect.on('change', function() {
-                        const regionId = $(this).val();
-                        const currentCityVal = citySelect.val();
-                        
-                        citySelect.empty();
-                        citySelect.append('<option value="">{{ __('website.choose_city') }}</option>');
-                        
-                        if (regionId) {
-                            originalCities.each(function() {
-                                if ($(this).val() && $(this).data('region') == regionId) {
-                                    citySelect.append($(this).clone());
-                                }
-                            });
-                        } else {
-                            originalCities.each(function() {
-                                if ($(this).val()) {
-                                    citySelect.append($(this).clone());
-                                }
-                            });
-                        }
-                        
-                        // Try to keep selection if valid
-                        if (citySelect.find(`option[value="${currentCityVal}"]`).length) {
-                            citySelect.val(currentCityVal);
-                        }
-                        
-                        citySelect.trigger('change');
-                    });
-                    
-                    // Initial trigger if a region is selected
-                    if (regionSelect.val()) {
-                        regionSelect.trigger('change');
-                    }
-                }
             });
         </script>
         <style>

@@ -32,13 +32,26 @@
         </select>
       </div>
 
+      <!-- Region Filter -->
+      <div class="filter-group">
+        <label>المنطقة</label>
+        <select name="region_id" class="form-select">
+          <option value="">كل المناطق</option>
+          @foreach(\App\Models\Region::all() as $region)
+            <option value="{{ $region->id }}" {{ request('region_id') == $region->id ? 'selected' : '' }}>
+                {{ $region->name }}
+            </option>
+          @endforeach
+        </select>
+      </div>
+
       <!-- City Filter -->
       <div class="filter-group">
         <label>{{ __('tenders.city') }}</label>
         <select name="city_id" class="form-select">
           <option value="">{{ __('tenders.all_cities') }}</option>
           @foreach($cities as $city)
-            <option value="{{ $city->id }}" {{ request('city_id') == $city->id ? 'selected' : '' }}>
+            <option value="{{ $city->id }}" data-region="{{ $city->region_id }}" {{ request('city_id') == $city->id ? 'selected' : '' }}>
                 {{ $city->name }}
             </option>
           @endforeach
