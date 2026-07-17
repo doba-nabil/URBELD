@@ -18,129 +18,67 @@
     </div>
     <!-- Header End -->
     <div class="container py-4">
-        <div class="row">
-            <!-- Request Details -->
-            <div class="col-lg-8">
-                <div class="card shadow-sm border-0 mb-4">
-                    <div class="card-header bg-white p-4">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h4 class="mb-0">{{ $serviceRequest->category->name }}</h4>
-                            <div class="d-flex align-items-center">
-                                @if ($serviceRequest->isTimeExpired() && $serviceRequest->status == 'pending')
-                                    <span class="badge bg-danger me-2">منتهي الوقت</span>
-                                @endif
-                                <span class="badge bg-primary">
-                                    {{ __('admin.' . $serviceRequest->status) }}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
+        <!-- Status Timeline (Horizontal) -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card shadow-sm border-0">
                     <div class="card-body p-4">
-                        <div class="row mb-3">
-                            <div class="col-md-6 mb-2">
-                                <strong>نوع العقار:</strong> {{ $serviceRequest->property_type }}
-                            </div>
-                            <div class="col-md-6 mb-2">
-                                <strong>المساحة:</strong> {{ $serviceRequest->area }} م²
-                            </div>
-                            <div class="col-md-6 mb-2">
-                                <strong>المدينة:</strong> {{ $serviceRequest->city ? $serviceRequest->city->name : 'غير محدد' }}
-                            </div>
-                            <div class="col-md-6 mb-2">
-                                <strong>الحي:</strong> {{ $serviceRequest->neighborhood ?? 'غير محدد' }}
-                            </div>
-                            <div class="col-12 mb-2">
-                                <strong>العنوان التفصيلي:</strong> {{ $serviceRequest->location ?? 'غير محدد' }}
-                            </div>
-                        </div>
+                        <h5 class="card-title mb-4 pb-2 border-bottom">تتبع الطلب</h5>
+                        <div class="d-flex justify-content-between align-items-center flex-wrap position-relative">
+                            <!-- Line connecting steps -->
+                            <div class="position-absolute w-100" style="height: 2px; background: #e9ecef; top: 24px; left: 0; z-index: 1;"></div>
+                            @php
+                                $statuses = [
+                                    'pending' => 'تم تقديم الطلب',
+                                    'provider_accepted' => 'قبول العرض',
+                                    'seeker_confirmed_provider' => 'تأكيد المقدم',
+                                    'inspection_scheduled' => 'موعد المعاينة',
+                                    'inspection_done' => 'إتمام المعاينة',
+                                    'completed' => 'مكتمل',
+                                ];
+                                $activeStatus = $serviceRequest->status;
+                                $foundActive = false;
+                            @endphp
 
-                        @if ($serviceRequest->latitude && $serviceRequest->longitude)
-                            <div class="mb-4">
-                                <h5>الموقع على الخريطة</h5>
-                                <iframe
-                                    width="100%"
-                                    height="300"
-                                    style="border:0; border-radius: 8px;"
-                                    loading="lazy"
-                                    allowfullscreen
-                                    src="https://www.google.com/maps/embed/v1/place?q={{ $serviceRequest->latitude }},{{ $serviceRequest->longitude }}&key={{ config('services.google_maps.key') }}">
-                                </iframe>
-                                <div class="mt-2 text-end">
-                                    <a href="https://www.google.com/maps?q={{ $serviceRequest->latitude }},{{ $serviceRequest->longitude }}"
-                                        target="_blank" class="btn btn-sm btn-outline-info">
-                                        <i class="bi bi-geo-alt"></i> فتح في خرائط جوجل
-                                    </a>
+                            @foreach ($statuses as $key => $label)
+                                @php
+                                    $isCompleted = !$foundActive;
+                                    if ($key == $activeStatus) {
+                                        $foundActive = true;
+                                        $isCurrent = true;
+                                    } else {
+                                        $isCurrent = false;
+                                    }
+                                @endphp
+                                <div class="text-center position-relative" style="z-index: 2; width: 16%;">
+                                    <div class="d-inline-flex justify-content-center align-items-center mb-2 rounded-circle {{ $isCompleted || $isCurrent ? 'bg-primary' : 'bg-light' }}" style="width: 50px; height: 50px; border: 4px solid #fff;">
+                                        @if ($isCompleted && !$isCurrent)
+                                            <i class="bi bi-check text-white fs-3"></i>
+                                        @elseif($isCurrent)
+                                            <i class="bi bi-play-fill text-white fs-3"></i>
+                                        @else
+                                            <i class="bi bi-circle text-muted fs-5"></i>
+                                        @endif
+                                    </div>
+                                    <div class="{{ $isCurrent ? 'text-primary fw-bold' : 'text-muted' }} small" style="line-height: 1.2;">{{ $label }}</div>
                                 </div>
-                            </div>
-                        @endif
-
-                        @php
-                            $upcomingInspection = $serviceRequest->inspections->where('status', 'scheduled')->last();
-                        @endphp
-                        @if ($upcomingInspection)
-                            <div class="alert alert-warning mb-4">
-                                <strong><i class="bi bi-calendar-event"></i> موعد المعاينة القادم:</strong> 
-                                {{ $upcomingInspection->scheduled_at->format('Y-m-d h:i A') }}
-                                @if($upcomingInspection->notes)
-                                    <br><small class="text-muted">ملاحظات: {{ $upcomingInspection->notes }}</small>
-                                @endif
-                            </div>
-                        @endif
-
-                        @if ($serviceRequest->voice_record)
-                            <div class="mb-4">
-                                <h5>تسجيل صوتي</h5>
-                                <audio controls class="w-100">
-                                    <source src="{{ asset('storage/' . $serviceRequest->voice_record) }}" type="audio/webm">
-                                    <source src="{{ asset('storage/' . $serviceRequest->voice_record) }}" type="audio/mpeg">
-                                    متصفحك لا يدعم تشغيل الصوت.
-                                </audio>
-                            </div>
-                        @endif
-
-                        <div class="mb-4">
-                            <h5>وصف الطلب</h5>
-                            <div class="request-description p-3 bg-light border rounded">
-                                {!! $serviceRequest->description !!}
-                            </div>
+                            @endforeach
                         </div>
-
-                        @if ($serviceRequest->hasMedia('blueprints'))
-                            <div class="mb-4">
-                                <h5>الرسم الكروكي</h5>
-                                @foreach ($serviceRequest->getMedia('blueprints') as $media)
-                                    <a href="{{ $media->getUrl() }}" target="_blank" class="btn btn-outline-primary btn-sm">
-                                        <i class="bi bi-file-earmark-pdf"></i> عرض الملف
-                                    </a>
-                                @endforeach
-                            </div>
-                        @endif
-
-                        @if ($serviceRequest->hasMedia('site_photos'))
-                            <div class="mb-4">
-                                <h5>{{ __('website.site_photos_lbl') }}</h5>
-                                <div class="row g-2">
-                                    @foreach ($serviceRequest->getMedia('site_photos') as $media)
-                                        <div class="col-md-3">
-                                            <a href="{{ $media->getUrl() }}" target="_blank">
-                                                <img src="{{ $media->getUrl() }}" class="img-fluid rounded"
-                                                    alt="Site Photo">
-                                            </a>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                        @endif
-
-                        @if ($serviceRequest->neighbors_description)
-                            <div class="mb-4">
-                                <h5>وصف الجيران</h5>
-                                <p class="text-muted">{!! nl2br(e($serviceRequest->neighbors_description)) !!}</p>
-                            </div>
-                        @endif
                     </div>
                 </div>
 
+                @if ($serviceRequest->status == 'time_expired')
+                    <div class="alert alert-danger mt-3">انتهى الوقت المسموح للرد على هذا الطلب.</div>
+                @endif
+
+                @if ($serviceRequest->status == 'cancelled')
+                    <div class="alert alert-secondary mt-3">تم إلغاء هذا الطلب.</div>
+                @endif
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
                 <!-- Responses Section (For Seeker) -->
                 @if (Auth::id() == $serviceRequest->user_id && $serviceRequest->status == 'pending')
                     <h4 class="mb-3">العروض المقدمة</h4>
@@ -244,8 +182,7 @@
 
                 <!-- Response Form (For Provider) -->
                 @if (Auth::id() != $serviceRequest->user_id && !$serviceRequest->responses->where('user_id', Auth::id())->count())
-                    <!-- Check if provider logic needed here -->
-                    <div class="card shadow-sm border-0 mt-4">
+                    <div class="card shadow-sm border-0 mt-4 mb-4">
                         <div class="card-header bg-white p-4">
                             <h5 class="mb-0">تقديم عرض</h5>
                         </div>
@@ -274,16 +211,10 @@
                         </div>
                     </div>
                 @endif
-                <!-- Inspection Section -->
-                @php
-                    $acceptedResponse = $serviceRequest->responses->where('status', 'accepted')->first();
-                    $isProvider = $acceptedResponse && $acceptedResponse->user_id == Auth::id();
-                    $isSeeker = $serviceRequest->user_id == Auth::id();
-                @endphp
 
                 <!-- Inspections History -->
                 @if ($serviceRequest->inspections->count() > 0)
-                    <div class="card shadow-sm border-0 mt-4">
+                    <div class="card shadow-sm border-0 mt-4 mb-4">
                         <div class="card-header bg-white p-4">
                             <h5 class="mb-0">سجل المعاينات</h5>
                         </div>
@@ -307,66 +238,135 @@
                         </div>
                     </div>
                 @endif
-
             </div>
+        </div>
 
-            <!-- Sidebar / Status Timeline -->
-            <div class="col-lg-4">
-                <div class="card shadow-sm border-0">
-                    <div class="card-body">
-                        <h5 class="card-title mb-4 pb-2 border-bottom">تتبع الطلب</h5>
-                        <div class="vertical-timeline">
-                            @php
-                                $statuses = [
-                                    'pending' => 'تم تقديم الطلب',
-                                    'provider_accepted' => 'قبول العرض المبدئي',
-                                    'seeker_confirmed_provider' => 'تأكيد مقدم الخدمة',
-                                    'inspection_scheduled' => 'تحديد موعد المعاينة',
-                                    'inspection_done' => 'إتمام المعاينة',
-                                    'completed' => 'مكتمل',
-                                ];
-                                $activeStatus = $serviceRequest->status;
-                                $foundActive = false;
-                            @endphp
-
-                            @foreach ($statuses as $key => $label)
-                                @php
-                                    $isCompleted = !$foundActive;
-                                    if ($key == $activeStatus) {
-                                        $foundActive = true;
-                                        $isCurrent = true;
-                                    } else {
-                                        $isCurrent = false;
-                                    }
-                                @endphp
-                                <div class="timeline-item d-flex mb-4">
-                                    <div class="timeline-icon me-3">
-                                        @if ($isCompleted && !$isCurrent)
-                                            <i class="bi bi-check-circle-fill text-success fs-5"></i>
-                                        @elseif($isCurrent)
-                                            <i class="bi bi-play-circle-fill text-primary fs-5"></i>
-                                        @else
-                                            <i class="bi bi-circle text-muted fs-5"></i>
-                                        @endif
-                                    </div>
-                                    <div class="timeline-content">
-                                        <h6 class="mb-0 {{ $isCurrent ? 'text-primary' : '' }}">{{ $label }}</h6>
-                                    </div>
-                                </div>
-                            @endforeach
+        <div class="row">
+            <!-- Request Details -->
+            <div class="col-lg-12">
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-white p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="mb-0">{{ $serviceRequest->category->name }}</h4>
+                            <div class="d-flex align-items-center">
+                                @if ($serviceRequest->isTimeExpired() && $serviceRequest->status == 'pending')
+                                    <span class="badge bg-danger me-2">منتهي الوقت</span>
+                                @endif
+                                <span class="badge bg-primary">
+                                    {{ __('admin.' . $serviceRequest->status) }}
+                                </span>
+                            </div>
                         </div>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row mb-3">
+                            <div class="col-md-6 mb-2">
+                                <strong>نوع العقار:</strong> {{ $serviceRequest->property_type }}
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <strong>المساحة:</strong> {{ $serviceRequest->area }} م²
+                            </div>
+                            <div class="col-12 mb-2">
+                                <strong>العنوان التفصيلي:</strong> {{ $serviceRequest->location ?? 'غير محدد' }}
+                            </div>
+                        </div>
+
+                        @if ($serviceRequest->latitude && $serviceRequest->longitude)
+                            <div class="mb-4">
+                                <h5>الموقع على الخريطة</h5>
+                                <iframe 
+                                    width="100%" 
+                                    height="300" 
+                                    style="border:1px solid #e0e0e0; border-radius: 8px;" 
+                                    loading="lazy" 
+                                    src="https://www.openstreetmap.org/export/embed.html?bbox={{ $serviceRequest->longitude - 0.01 }}%2C{{ $serviceRequest->latitude - 0.01 }}%2C{{ $serviceRequest->longitude + 0.01 }}%2C{{ $serviceRequest->latitude + 0.01 }}&amp;layer=mapnik&amp;marker={{ $serviceRequest->latitude }}%2C{{ $serviceRequest->longitude }}">
+                                </iframe>
+                                <div class="mt-2 text-end">
+                                    <a href="https://www.google.com/maps/search/?api=1&query={{ $serviceRequest->latitude }},{{ $serviceRequest->longitude }}" target="_blank" class="btn btn-sm btn-outline-primary"><i class="bi bi-google"></i> فتح في جوجل ماب</a>
+                                </div>
+                            </div>
+                        @endif
+
+                        @php
+                            $upcomingInspection = $serviceRequest->inspections->where('status', 'scheduled')->last();
+                        @endphp
+                        @if ($upcomingInspection)
+                            <div class="alert alert-warning mb-4">
+                                <strong><i class="bi bi-calendar-event"></i> موعد المعاينة القادم:</strong> 
+                                {{ $upcomingInspection->scheduled_at->format('Y-m-d h:i A') }}
+                                @if($upcomingInspection->notes)
+                                    <br><small class="text-muted">ملاحظات: {{ $upcomingInspection->notes }}</small>
+                                @endif
+                            </div>
+                        @endif
+
+                        @if ($serviceRequest->voice_record)
+                            <div class="mb-4">
+                                <h5>تسجيل صوتي</h5>
+                                <audio controls class="w-100">
+                                    <source src="{{ asset('storage/' . $serviceRequest->voice_record) }}" type="audio/webm">
+                                    <source src="{{ asset('storage/' . $serviceRequest->voice_record) }}" type="audio/mpeg">
+                                    متصفحك لا يدعم تشغيل الصوت.
+                                </audio>
+                            </div>
+                        @endif
+
+                        <div class="mb-4">
+                            <h5>وصف الطلب</h5>
+                            <div class="request-description p-3 bg-light border rounded">
+                                {!! $serviceRequest->description !!}
+                            </div>
+                        </div>
+
+                        @if ($serviceRequest->attachment_link)
+                            <div class="mb-4">
+                                <h5>رابط المرفقات</h5>
+                                <a href="{{ $serviceRequest->attachment_link }}" target="_blank" class="btn btn-outline-info">
+                                    <i class="bi bi-link-45deg"></i> فتح رابط المرفقات
+                                </a>
+                            </div>
+                        @endif
+
+                        @if ($serviceRequest->hasMedia('blueprints'))
+                            <div class="mb-4">
+                                <h5>الرسم الكروكي</h5>
+                                @foreach ($serviceRequest->getMedia('blueprints') as $media)
+                                    <a href="{{ $media->getUrl() }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                        <i class="bi bi-file-earmark-pdf"></i> عرض الملف
+                                    </a>
+                                @endforeach
+                            </div>
+                        @endif
+
+                        @if ($serviceRequest->hasMedia('site_photos'))
+                            <div class="mb-4">
+                                <h5>{{ __('website.site_photos_lbl') }}</h5>
+                                <div class="row g-2">
+                                    @foreach ($serviceRequest->getMedia('site_photos') as $media)
+                                        <div class="col-md-3">
+                                            <a href="{{ $media->getUrl() }}" target="_blank">
+                                                <img src="{{ $media->getUrl() }}" class="img-fluid rounded"
+                                                    alt="Site Photo">
+                                            </a>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+
+                        @if ($serviceRequest->neighbors_description)
+                            <div class="mb-4">
+                                <h5>وصف الجيران</h5>
+                                <p class="text-muted">{!! nl2br(e($serviceRequest->neighbors_description)) !!}</p>
+                            </div>
+                        @endif
                     </div>
                 </div>
 
-                @if ($serviceRequest->status == 'time_expired')
-                    <div class="alert alert-danger mt-3">انتهى الوقت المسموح للرد على هذا الطلب.</div>
-                @endif
 
-                @if ($serviceRequest->status == 'cancelled')
-                    <div class="alert alert-secondary mt-3">تم إلغاء هذا الطلب.</div>
-                @endif
+
             </div>
-        </div>
+
     </div>
 
     <!-- Schedule Modal -->

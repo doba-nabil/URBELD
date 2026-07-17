@@ -103,15 +103,15 @@
             </div>
             
             <div class="col-md-3 mb-3">
-                <label class="form-label">{{ __('admin.company_classification') ?? 'التصنيف / الحجم' }}</label>
-                <select name="classification_id" class="form-select">
+                <label class="form-label" id="classification_label">{{ __('admin.company_classification') ?? 'التصنيف / الحجم' }}</label>
+                <select name="classification_id" class="form-select" id="classification_select">
                     <option value="">{{ __('admin.none') ?? 'لا يوجد' }}</option>
                     @foreach($classifications ?? [] as $class)
                         @php
                             $className = is_string($class->name) ? $class->name : (is_array($class->name) ? ($class->name[app()->getLocale()] ?? $class->name['ar'] ?? '') : $class->getTranslation('name', app()->getLocale()));
                         @endphp
-                        <option value="{{ $class->id }}" {{ old('classification_id', (isset($provider) ? $provider->classification_id : '')) == $class->id ? 'selected' : '' }}>
-                            {{ $className }} ({{ $class->type == 'company' ? 'شركة' : 'مورد' }})
+                        <option value="{{ $class->id }}" data-type="{{ $class->type }}" {{ old('classification_id', (isset($provider) ? $provider->classification_id : '')) == $class->id ? 'selected' : '' }}>
+                            {{ $className }}
                         </option>
                     @endforeach
                 </select>

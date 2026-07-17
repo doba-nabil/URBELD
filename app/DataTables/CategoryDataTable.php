@@ -41,7 +41,7 @@ class CategoryDataTable extends DataTable
                 if ($q->parent_id) {
                     return '<span class="text-primary"><i class="ti tabler-arrow-left me-1"></i>' . e($q->parent->name) . '</span>';
                 }
-                return '<span class="text-muted">' . __('admin.main_category') . '</span>';
+                return '<span class="text-muted">' . __('admin.parent_category') . '</span>';
             })
             ->addColumn('children_count', function ($q) {
                 $count = $q->children()->count();
@@ -89,7 +89,7 @@ class CategoryDataTable extends DataTable
             })
             ->rawColumns(['action', 'name', 'parent', 'icon', 'image', 'children_count'])
             ->setRowClass(function ($q) {
-                return $q->parent_id ? 'child-row d-none' : 'parent-row';
+                return $q->parent_id ? 'child-row' : 'parent-row';
             })
             ->setRowId('id')
             ->filterColumn('name', function ($query, $keyword) {
@@ -100,10 +100,9 @@ class CategoryDataTable extends DataTable
 
     public function query(Category $model): QueryBuilder
     {
-        // Show only main categories initially
         return $model->newQuery()
-            ->whereNull('parent_id')
-            ->with(['parent', 'children']);
+            ->with(['parent', 'children'])
+            ->orderByRaw('COALESCE(parent_id, id), parent_id IS NOT NULL, id');
     }
 
     public function html(): HtmlBuilder

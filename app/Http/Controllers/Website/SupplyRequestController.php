@@ -77,6 +77,12 @@ class SupplyRequestController extends Controller
             'delivery_date' => 'nullable|date',
             'category_id' => 'nullable|exists:categories,id',
             'provider_id' => ['nullable', 'exists:users,id', 'not_in:' . auth()->id()],
+            'quantity' => 'required|string|max:255',
+            'sub_category_id' => 'nullable|exists:categories,id',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+            'location' => 'nullable|string|max:500',
+            'voice_record' => 'nullable|file|mimes:mp3,wav,webm,ogg|max:10240',
         ]);
 
         $supplyRequest = new \App\Models\SupplyRequest($validated);
@@ -84,7 +90,15 @@ class SupplyRequestController extends Controller
         $supplyRequest->category_id = $request->input('category_id');
         $supplyRequest->provider_id = $request->input('provider_id');
         $supplyRequest->status = 'open';
+
+        if ($request->hasFile('voice_record')) {
+            $supplyRequest->voice_record = $request->file('voice_record')->store('voice_records', 'public');
+        }
+
         $supplyRequest->save();
+
+        $supplyRequest->request_key = 'SUP-' . date('Ymd') . '-' . str_pad($supplyRequest->id, 4, '0', STR_PAD_LEFT);
+        $supplyRequest->saveQuietly();
 
         // Send notifications
         $title = 'طلب توريد جديد';

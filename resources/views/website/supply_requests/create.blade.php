@@ -51,7 +51,7 @@
                             </h2>
                         @endif
 
-                        <form class="contact-form" action="{{ route('website.supply-requests.store') }}" method="POST">
+                        <form class="contact-form" action="{{ route('website.supply-requests.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             
                             @if(isset($provider))
@@ -62,10 +62,26 @@
                             @endif
 
                             <div class="row g-4">
-                                <div class="col-12">
+                                <div class="col-md-6">
                                     <label class="form-label fw-bold">{{ __('website.request_title') ?? 'عنوان الطلب' }} <span class="text-danger">*</span></label>
                                     <input type="text" name="title" class="form-control" placeholder="{{ __('website.supply_request_title_placeholder') ?? 'مثال: توريد 50 جهاز كمبيوتر مكتبي' }}" required>
                                 </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">الكمية <span class="text-danger">*</span></label>
+                                    <input type="text" name="quantity" class="form-control" placeholder="الكمية المطلوبة (مثال: 50 قطعة)" required>
+                                </div>
+
+                                @if(isset($provider) && $provider->categories->whereNotNull('parent_id')->count() > 0)
+                                    <div class="col-12">
+                                        <label class="form-label fw-bold">القسم المطلوب <span class="text-danger">*</span></label>
+                                        <select name="sub_category_id" class="form-select select2" required>
+                                            <option value="" disabled selected>اختر القسم الفرعي</option>
+                                            @foreach($provider->categories->whereNotNull('parent_id') as $cat)
+                                                <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @endif
 
                                 @if(isset($providerDoesNotDeliver) && $providerDoesNotDeliver)
                                     <!-- No Delivery Logic -->
@@ -124,10 +140,32 @@
                                     <textarea name="description" class="form-control" placeholder="{{ __('website.supply_request_details_placeholder') ?? 'يرجى كتابة كافة المواصفات والكميات المطلوبة بدقة...' }}" style="height: 150px" required></textarea>
                                 </div>
 
+                                <!-- Voice Record -->
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold"><i class="bi bi-mic-fill me-1"></i> تسجيل صوتي لوصف الطلب (اختياري)</label>
+                                    <input type="file" name="voice_record" class="form-control" accept="audio/*" capture>
+                                    <small class="text-muted">يمكنك إرفاق ملف صوتي أو تسجيل صوتك مباشرة.</small>
+                                </div>
+
+                                <!-- Map Location -->
+                                <div class="col-12 mt-4">
+                                    <label class="form-label fw-bold"><i class="bi bi-geo-alt-fill me-1"></i> الموقع الجغرافي (اختياري)</label>
+                                    <div class="mb-3 d-flex gap-2">
+                                        <button type="button" class="btn btn-outline-primary" id="getLocationBtn">
+                                            <i class="bi bi-crosshair me-1"></i> تحديد موقعي الحالي
+                                        </button>
+                                        <div id="locationStatus" class="align-self-center text-muted small"></div>
+                                    </div>
+                                    <input type="hidden" name="latitude" id="latitude">
+                                    <input type="hidden" name="longitude" id="longitude">
+                                    <input type="text" name="location" id="locationAddress" class="form-control mb-2" placeholder="أو أدخل العنوان التفصيلي يدوياً (مثال: الرياض، حي الملقا، شارع 1)">
+                                    <div id="mapPreview" style="height: 250px; display: none; border-radius: 8px; border: 1px solid #dee2e6;"></div>
+                                </div>
+
                                 <div class="col-12 text-center mt-5">
                                     <button type="submit" class="btn btn-primary submit-btn px-5 py-3 rounded-pill fw-bold">
-                                        <span>{{ __('website.publish_request') ?? 'نشر الطلب' }}</span>
-                                        <i class="bi bi-arrow-left ms-2"></i>
+                                        <span>إرسال طلب توريد</span>
+                                        <i class="bi bi-send ms-2"></i>
                                     </button>
                                 </div>
                             </div>
@@ -138,6 +176,38 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+    document.getElementById('getLocationBtn').addEventListener('click', function() {
+        const statusDiv = document.getElementById('locationStatus');
+        const latInput = document.getElementById('latitude');
+        const lngInput = document.getElementById('longitude');
+        const mapPreview = document.getElementById('mapPreview');
+        
+        statusDiv.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> جاري تحديد الموقع...';
+        
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                
+                latInput.value = lat;
+                lngInput.value = lng;
+                statusDiv.innerHTML = '<i class="bi bi-check-circle-fill text-success"></i> تم التحديد بنجاح';
+                
+                // Show OpenStreetMap Preview
+                mapPreview.style.display = 'block';
+                mapPreview.innerHTML = `<iframe width="100%" height="100%" style="border:0; border-radius: 8px;" loading="lazy" src="https://www.openstreetmap.org/export/embed.html?bbox=${lng - 0.01}%2C${lat - 0.01}%2C${lng + 0.01}%2C${lat + 0.01}&layer=mapnik&marker=${lat}%2C${lng}"></iframe>`;
+            }, function(error) {
+                statusDiv.innerHTML = '<i class="bi bi-x-circle-fill text-danger"></i> تعذر الوصول للموقع. يرجى إدخال العنوان يدوياً.';
+            });
+        } else {
+            statusDiv.innerHTML = '<i class="bi bi-x-circle-fill text-danger"></i> المتصفح لا يدعم تحديد الموقع.';
+        }
+    });
+</script>
+@endpush
 @endsection
 
 

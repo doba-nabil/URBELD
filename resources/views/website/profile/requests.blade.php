@@ -20,7 +20,7 @@
         
         <!-- Header Section -->
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h3 class="fw-bold mb-0 text-dark">الطلبات الواردة الجديدة</h3>
+            <h3 class="fw-bold mb-0 text-dark">طلباتي</h3>
             <a href="{{ route('profile.edit') }}" class="text-decoration-none text-muted small fw-bold">
                 العودة للوحة التحكم <i class="bi bi-arrow-left ms-1"></i>
             </a>

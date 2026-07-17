@@ -41,6 +41,7 @@ class CreateWebsiteServiceRequestAction
                 'status' => ServiceRequest::STATUS_UNDER_REVIEW,
                 'is_consultation' => $isConsultation,
                 'response_deadline' => now()->addHours($deadlineHours),
+                'attachment_link' => $data['attachment_link'] ?? null,
             ]);
 
             if ($request->hasFile('voice_record')) {

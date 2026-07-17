@@ -13,6 +13,10 @@ class ServiceRequestObserver
      */
     public function created(ServiceRequest $serviceRequest): void
     {
+        // Generate Request Key based on Date and ID
+        $serviceRequest->request_key = 'REQ-' . date('Ymd') . '-' . str_pad($serviceRequest->id, 4, '0', STR_PAD_LEFT);
+        $serviceRequest->saveQuietly();
+
         // Notify matching providers if the request is created as pending directly.
         if ($serviceRequest->status === ServiceRequest::STATUS_PENDING) {
             $this->notifyMatchingProviders($serviceRequest);

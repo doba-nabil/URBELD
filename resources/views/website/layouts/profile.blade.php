@@ -14,6 +14,7 @@
     <!-- Header End -->
 
     <!-- Profile Header Section -->
+    @if(in_array(request()->route()->getName(), ['profile.edit', 'member.public', 'member.certificates', 'member.services', 'member.works']))
     <div class="profile-header-section">
         <div class="container">
             <div class="row align-items-center">
@@ -110,6 +111,7 @@
             </div>
         </div>
     </div>
+    @endif
 
     <!-- Navigation Tabs -->
     <div class="profile-tabs-section">

@@ -15,6 +15,14 @@ class CompanyClassificationDataTable extends DataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
+            ->addColumn('name', function ($q) {
+                $locale = app()->getLocale();
+                $name = $q->getTranslation('name', $locale, false)
+                    ?: $q->getTranslation('name', 'ar', false)
+                    ?: $q->getTranslation('name', 'en', false)
+                    ?: '-';
+                return e($name);
+            })
             ->addColumn('type', function ($q) {
                 if ($q->type == 'company') {
                     return '<span class="badge bg-label-primary">' . __('admin.company') . '</span>';

@@ -314,20 +314,29 @@
                     <!-- Commercial Registration / ID (Right in visual RTL) -->
                     <div class="col-md-6">
                         @if(auth()->user()->membership_type == 'company')
-                            @if(auth()->user()->getFirstMediaUrl('commercial_registration'))
-                                <div class="pd-doc-box">
-                                    <span class="pd-status-badge pd-status-verified">موثق</span>
-                                    <div class="d-flex align-items-center gap-3">
-                                        <div class="">
-                                            <div class="fw-bold text-dark mb-1">السجل التجاري</div>
-                                            <a href="{{ auth()->user()->getFirstMediaUrl('commercial_registration') }}" target="_blank" class="text-primary text-decoration-underline" style="font-size: 0.85rem;"><i class="bi bi-eye me-1"></i>عرض الملف</a>
+                            @php
+                                $commercialRegNumber = auth()->user()->membership->commercial_registration ?? null;
+                                $commercialRegMedia = auth()->user()->getFirstMediaUrl('commercial_registration');
+                            @endphp
+                            @if($commercialRegMedia || $commercialRegNumber)
+                                <div class="pd-doc-box d-block p-3">
+                                    <span class="pd-status-badge pd-status-verified">{{ __('website.verified') ?? 'موثق' }}</span>
+                                    <div class="d-flex align-items-center gap-3 mt-2">
+                                        <div>
+                                            <div class="fw-bold text-dark mb-1">{{ __('website.commercial_register') ?? 'السجل التجاري' }}</div>
+                                            @if($commercialRegNumber)
+                                                <span class="text-muted" style="font-size: 0.9rem;">{{ __('website.register_number') ?? 'رقم السجل' }}: <strong>{{ $commercialRegNumber }}</strong></span>
+                                            @endif
+                                            @if($commercialRegMedia)
+                                                <br><a href="{{ $commercialRegMedia }}" target="_blank" class="text-primary text-decoration-underline" style="font-size: 0.85rem;"><i class="bi bi-eye me-1"></i>{{ __('website.view_file') ?? 'عرض الملف' }}</a>
+                                            @endif
                                         </div>
                                         <div class="pd-doc-icon" style="background-color: #e6f4ea; color: #1e8e3e;"><i class="bi bi-file-earmark-text fs-4"></i></div>
                                     </div>
                                 </div>
                             @elseif(!$isLocked)
-                                <div class="pd-doc-box d-block  p-3">
-                                    <label class="pd-label mb-2 fw-bold text-dark">رفع السجل التجاري <span class="text-danger">*</span></label>
+                                <div class="pd-doc-box d-block p-3">
+                                    <label class="pd-label mb-2 fw-bold text-dark">{{ __('website.upload_commercial_register') ?? 'رفع السجل التجاري' }} <span class="text-danger">*</span></label>
                                     <input type="file" class="form-control bg-white" name="commercial_registration" required>
                                 </div>
                             @endif

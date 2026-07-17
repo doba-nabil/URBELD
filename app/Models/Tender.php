@@ -10,6 +10,7 @@ class Tender extends Model implements HasMedia
     use HasFactory, SoftDeletes, InteractsWithMedia;
     protected $fillable = [
         'user_id',
+        'request_key',
         'title',
         'description',
         'project_type',
@@ -122,5 +123,11 @@ class Tender extends Model implements HasMedia
     public function getApplicationsCountAttribute(): int
     {
         return $this->applications()->count();
+    }
+
+    public function getRequestKeyAttribute($value)
+    {
+        if ($value) return $value;
+        return 'TEN-' . ($this->created_at ? $this->created_at->format('Ymd') : date('Ymd')) . '-' . str_pad($this->id, 4, '0', STR_PAD_LEFT);
     }
 }

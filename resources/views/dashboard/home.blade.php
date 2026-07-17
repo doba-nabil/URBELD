@@ -3,6 +3,23 @@
 @section('dashboard-main')
     <!-- Content -->
     <div class="container-xxl flex-grow-1 container-p-y">
+        <!-- Clock Widget -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card bg-primary text-white shadow-sm overflow-hidden" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <div class="card-body p-4 d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="text-white mb-1" id="live-time" style="font-family: 'Courier New', Courier, monospace; font-weight: bold; font-size: 2.5rem; letter-spacing: 2px;">00:00:00</h4>
+                            <p class="mb-0 text-white-50" id="live-date" style="font-size: 1.1rem;"></p>
+                        </div>
+                        <div class="text-white-50">
+                            <i class="ti tabler-clock" style="font-size: 4rem; opacity: 0.5;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="row g-6">
             <!-- Website Analytics -->
             <div class="col-xl-6 col">
@@ -1016,5 +1033,34 @@
                 });
             }
         });
+
+        // Clock Widget Logic
+        function updateClock() {
+            const now = new Date();
+            
+            // Time formatting
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            let seconds = now.getSeconds();
+            let ampm = hours >= 12 ? 'PM' : 'AM';
+            
+            hours = hours % 12;
+            hours = hours ? hours : 12; // the hour '0' should be '12'
+            hours = hours < 10 ? '0' + hours : hours;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+            
+            const timeString = hours + ':' + minutes + ':' + seconds + ' ' + ampm;
+            
+            // Date formatting
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateString = now.toLocaleDateString('{{ app()->getLocale() == "ar" ? "ar-EG" : "en-US" }}', options);
+            
+            document.getElementById('live-time').innerText = timeString;
+            document.getElementById('live-date').innerText = dateString;
+        }
+        
+        setInterval(updateClock, 1000);
+        updateClock(); // initial call
     </script>
 @endsection

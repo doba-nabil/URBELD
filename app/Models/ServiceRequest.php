@@ -33,9 +33,11 @@ class ServiceRequest extends Model implements HasMedia, Auditable
         'completed_at',
         'city_id',
         'neighborhood',
+        'request_key',
         'voice_record',
         'service_id',
         'is_consultation',
+        'attachment_link',
     ];
     protected $casts = [
         'dynamic_data' => 'array',
@@ -150,5 +152,11 @@ class ServiceRequest extends Model implements HasMedia, Auditable
     public function scopeByCategory($query, $categoryId)
     {
         return $query->where('category_id', $categoryId);
+    }
+
+    public function getRequestKeyAttribute($value)
+    {
+        if ($value) return $value;
+        return 'REQ-' . ($this->created_at ? $this->created_at->format('Ymd') : date('Ymd')) . '-' . str_pad($this->id, 4, '0', STR_PAD_LEFT);
     }
 }

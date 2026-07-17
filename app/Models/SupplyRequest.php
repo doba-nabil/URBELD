@@ -12,7 +12,16 @@ class SupplyRequest extends Model implements \Spatie\MediaLibrary\HasMedia
     protected $fillable = [
         'user_id',
         'title',
+        'quantity',
+        'category_id',
+        'sub_category_id',
+        'provider_id',
+        'request_key',
         'description',
+        'location',
+        'latitude',
+        'longitude',
+        'voice_record',
         'city_id',
         'status',
         'delivery_date',
@@ -51,5 +60,11 @@ class SupplyRequest extends Model implements \Spatie\MediaLibrary\HasMedia
     public function awardedProvider()
     {
         return $this->belongsTo(User::class, 'awarded_provider_id');
+    }
+
+    public function getRequestKeyAttribute($value)
+    {
+        if ($value) return $value;
+        return 'SUP-' . ($this->created_at ? $this->created_at->format('Ymd') : date('Ymd')) . '-' . str_pad($this->id, 4, '0', STR_PAD_LEFT);
     }
 }

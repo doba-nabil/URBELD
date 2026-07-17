@@ -621,5 +621,10 @@ return [
     'delivery_outside_desc' => 'For delivery outside the specified cities, please contact the administration',
     'financial_report' => 'Financial Report (Last 6 Months)',
     'already_rated' => 'Already Rated',
+    'verified' => 'Verified',
+    'commercial_register' => 'Commercial Registration',
+    'register_number' => 'Registration Number',
+    'view_file' => 'View File',
+    'upload_commercial_register' => 'Upload Commercial Registration',
 ];
 

@@ -12,6 +12,21 @@
         </div>
         <div class="row">
             <div class="col-md-12">
+                @if ($supplyRequest->delivery_date)
+                    @php
+                        $deadline = \Carbon\Carbon::parse($supplyRequest->delivery_date);
+                        $isPast = $deadline->isPast();
+                        $diff = $deadline->diffForHumans();
+                    @endphp
+                    <div class="alert {{ $isPast ? 'alert-danger' : 'alert-info' }} d-flex align-items-center mb-4">
+                        <i class="ti tabler-clock me-2 fs-3"></i>
+                        <div>
+                            <h6 class="alert-heading mb-1 fw-bold">موعد التسليم المطلوب</h6>
+                            <span dir="ltr">{{ $deadline->format('Y-m-d h:i A') }}</span>
+                            <span class="badge {{ $isPast ? 'bg-danger' : 'bg-info' }} ms-2">{{ $isPast ? 'انتهى ' . $diff : 'ينتهي ' . $diff }}</span>
+                        </div>
+                    </div>
+                @endif
                 <div class="card mb-4">
                     <div class="card-header">
                         <h5>معلومات الطلب</h5>

@@ -16,6 +16,21 @@
             @endif
 
             <div class="card-body mt-3">
+                @if ($tender->ends_at)
+                    @php
+                        $deadline = \Carbon\Carbon::parse($tender->ends_at);
+                        $isPast = $deadline->isPast();
+                        $diff = $deadline->diffForHumans();
+                    @endphp
+                    <div class="alert {{ $isPast ? 'alert-danger' : 'alert-info' }} d-flex align-items-center mb-4">
+                        <i class="ti tabler-clock me-2 fs-3"></i>
+                        <div>
+                            <h6 class="alert-heading mb-1 fw-bold">موعد انتهاء الرد</h6>
+                            <span dir="ltr">{{ $deadline->format('Y-m-d h:i A') }}</span>
+                            <span class="badge {{ $isPast ? 'bg-danger' : 'bg-info' }} ms-2">{{ $isPast ? 'انتهى ' . $diff : 'ينتهي ' . $diff }}</span>
+                        </div>
+                    </div>
+                @endif
                 <div class="row">
                     <div class="col-md-8">
                         <h6 class="fw-bold">{{ __('admin.tender_description') }}</h6>

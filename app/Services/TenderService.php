@@ -139,6 +139,9 @@ class TenderService
                 'status' => Tender::STATUS_PENDING_REVIEW,
             ]);
 
+            $tender->request_key = 'TEN-' . date('Ymd') . '-' . str_pad($tender->id, 4, '0', STR_PAD_LEFT);
+            $tender->saveQuietly();
+
             if ($files) {
                 foreach ($files as $index => $file) {
                     $title = $fileTitles[$index] ?? $file->getClientOriginalName();

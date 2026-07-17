@@ -13,18 +13,32 @@ class SupplierController extends Controller
 {
     public function index(Request $request)
     {
-        // 1. Fetch main categories that are designated as supply categories
-        $supplyCategories = Category::with(['children' => function($q) {
-                                        $q->where('is_active', true)->where('supports_supply_requests', true);
-                                    }])
-                                    ->whereNull('parent_id')
-                                    ->where('is_active', true)
-                                    ->where('supports_supply_requests', true)
-                                    ->withCount(['users as providers_count' => function ($query) {
-                                        $query->where('provider_type', 'supplier')
-                                              ->where('active', 'active');
-                                    }])
-                                    ->get();
+        $selectedCategoryId = $request->input('category_id');
+        $selectedCategory = null;
+        if ($selectedCategoryId) {
+            $selectedCategory = Category::find($selectedCategoryId);
+        }
+
+        $baseCategoryQuery = Category::with(['children' => function($q) {
+            $q->where('is_active', true);
+        }])
+        ->where('is_active', true)
+        ->withCount(['users as providers_count' => function ($query) {
+            $query->where('provider_type', 'supplier')->where('active', 'active');
+        }]);
+
+        if ($selectedCategory && $selectedCategory->parent_id === null) {
+            // Selected a main category -> Show its subcategories
+            $supplyCategories = (clone $baseCategoryQuery)->where('parent_id', $selectedCategory->id)->get();
+        } elseif ($selectedCategory && $selectedCategory->parent_id !== null) {
+            // Selected a sub category -> Show siblings
+            $supplyCategories = (clone $baseCategoryQuery)->where('parent_id', $selectedCategory->parent_id)->get();
+        } else {
+            // Show main categories
+            $supplyCategories = (clone $baseCategoryQuery)->whereNull('parent_id')->where('supports_supply_requests', true)->get();
+        }
+
+        // Removed fallback so it accurately shows no subcategories if none exist.
         
         $categoryIds = $supplyCategories->pluck('id');
 
@@ -33,10 +47,14 @@ class SupplierController extends Controller
             ->where('provider_type', 'supplier')
             ->where('users.active', 'active');
             
-        // If specific category is not requested, filter by ANY supply category
-        if ($request->filled('category_id')) {
-            $providersQuery->whereHas('categories', function ($q) use ($request) {
-                $q->where('categories.id', $request->category_id);
+        if ($selectedCategory) {
+            $filterIds = [$selectedCategory->id];
+            if ($selectedCategory->parent_id === null) {
+                // include children in filter
+                $filterIds = array_merge($filterIds, Category::where('parent_id', $selectedCategory->id)->pluck('id')->toArray());
+            }
+            $providersQuery->whereHas('categories', function ($q) use ($filterIds) {
+                $q->whereIn('categories.id', $filterIds);
             });
         } else {
             $providersQuery->whereHas('categories', function ($q) use ($categoryIds) {
@@ -89,10 +107,6 @@ class SupplierController extends Controller
         $regions = \App\Models\Region::all();
         $classifications = CompanyClassification::where('type', 'supplier')->get();
 
-        $selectedCategory = null;
-        if ($request->filled('category_id')) {
-            $selectedCategory = Category::find($request->category_id);
-        }
 
         if ($request->ajax()) {
             return view('website.suppliers.partials._providers_list', [

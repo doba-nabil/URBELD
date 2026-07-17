@@ -66,8 +66,10 @@
             <div class="d-flex flex-wrap align-items-center gap-4 text-muted small mb-2">
                 <span><i class="bi bi-geo-alt me-1"></i> {{ $request->location ?? 'جدة, حي الروضة' }}</span>
                 <span><i class="bi bi-clock me-1"></i> {{ $request->created_at->format('Y/m/d') }}</span>
-                @if(!$request->budget)
-                    <span><i class="bi bi-file-earmark-text me-1"></i> LEG-2026-{{ sprintf('%03d', $request->id) }}</span>
+                @if($request->request_key)
+                    <span><i class="bi bi-file-earmark-text me-1"></i> {{ $request->request_key }}</span>
+                @elseif(!$request->budget)
+                    <span><i class="bi bi-file-earmark-text me-1"></i> REQ-{{ date('Ymd', strtotime($request->created_at)) }}-{{ sprintf('%04d', $request->id) }}</span>
                 @endif
             </div>
 
@@ -100,6 +102,14 @@
             
             @if(str_contains($cat->name, 'قانوني') || $cat->name == 'استشارة قانونية عقارية')
                 <button class="btn btn-outline-danger w-100 rounded-pill mb-2 fw-bold"><i class="bi bi-x-circle me-1"></i> رفض</button>
+            @endif
+
+            @if(!$isProvider && in_array($request->status, ['pending', 'open']))
+                <form action="{{ route('requests.destroy', $request->id) }}" method="POST" class="w-100" onsubmit="return confirm('هل أنت متأكد من إلغاء الطلب؟')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-outline-danger w-100 rounded-pill mb-2 fw-bold"><i class="bi bi-x-circle me-1"></i> إلغاء الطلب</button>
+                </form>
             @endif
 
             <a href="{{ route('requests.show', $request->id) }}" class="btn btn-outline-secondary w-100 rounded-pill fw-bold text-dark border-1">

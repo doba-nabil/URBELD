@@ -22,12 +22,43 @@
                             <span class="badge bg-warning">{{ __('admin.under_review') }}</span>
                         </div>
                         <div class="card-body pt-3">
-                            <p class="mb-4">{{ __('admin.moderation_notice') }}</p>
-                            <div class="d-flex justify-content-center">
-                                <button class="btn btn-warning btn-lg approve-request-btn" data-id="{{ $serviceRequest->id }}">
-                                    <i class="ti tabler-check me-1"></i> {{ __('admin.approve_request') }}
-                                </button>
-                            </div>
+                            @if($serviceRequest->provider_id)
+                                <div class="alert alert-info d-flex align-items-center mb-4" role="alert">
+                                    <i class="ti tabler-building-store me-2 fs-4"></i>
+                                    <div>
+                                        <h6 class="alert-heading mb-1">طلب موجه لشركة/مقدم خدمة محدد</h6>
+                                        <p class="mb-0">هذا الطلب تم توجيهه إلى: <strong>{{ $serviceRequest->provider->name ?? 'غير معروف' }}</strong>. عند الاعتماد سيتم إرساله مباشرة إليهم.</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-center">
+                                    <button class="btn btn-warning btn-lg approve-request-btn" data-id="{{ $serviceRequest->id }}">
+                                        <i class="ti tabler-send me-1"></i> اعتماد الطلب وإرساله للشركة
+                                    </button>
+                                </div>
+                            @else
+                                <p class="mb-4">{{ __('admin.moderation_notice') }}</p>
+                                <div class="d-flex justify-content-center">
+                                    <button class="btn btn-warning btn-lg approve-request-btn" data-id="{{ $serviceRequest->id }}">
+                                        <i class="ti tabler-check me-1"></i> {{ __('admin.approve_request') }}
+                                    </button>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                @endif
+
+                @if ($serviceRequest->response_deadline)
+                    @php
+                        $deadline = \Carbon\Carbon::parse($serviceRequest->response_deadline);
+                        $isPast = $deadline->isPast();
+                        $diff = $deadline->diffForHumans();
+                    @endphp
+                    <div class="alert {{ $isPast ? 'alert-danger' : 'alert-info' }} d-flex align-items-center mb-4">
+                        <i class="ti tabler-clock me-2 fs-3"></i>
+                        <div>
+                            <h6 class="alert-heading mb-1 fw-bold">موعد انتهاء الرد</h6>
+                            <span dir="ltr">{{ $deadline->format('Y-m-d h:i A') }}</span>
+                            <span class="badge {{ $isPast ? 'bg-danger' : 'bg-info' }} ms-2">{{ $isPast ? 'انتهى ' . $diff : 'ينتهي ' . $diff }}</span>
                         </div>
                     </div>
                 @endif
@@ -145,6 +176,13 @@
                                         class="{{ now()->isAfter($serviceRequest->response_deadline) ? 'text-danger' : 'text-success' }}">
                                         {{ $serviceRequest->response_deadline->format('Y-m-d H:i') }}
                                     </p>
+                                    @if(now()->isBefore($serviceRequest->response_deadline))
+                                    <div class="mt-2">
+                                        <span class="badge bg-label-info p-2" id="deadline-counter" data-deadline="{{ $serviceRequest->response_deadline->toIso8601String() }}">
+                                            <i class="ti tabler-clock me-1"></i> <span class="counter-text">جاري حساب الوقت...</span>
+                                        </span>
+                                    </div>
+                                    @endif
                                 </div>
                             </div>
                         @endif
@@ -778,6 +816,37 @@
                     }
                 });
             });
+            
+            // Countdown Timer Logic
+            const counterElement = document.getElementById('deadline-counter');
+            if (counterElement) {
+                const deadline = new Date(counterElement.dataset.deadline).getTime();
+                const textElement = counterElement.querySelector('.counter-text');
+                
+                const timer = setInterval(function() {
+                    const now = new Date().getTime();
+                    const distance = deadline - now;
+                    
+                    if (distance < 0) {
+                        clearInterval(timer);
+                        textElement.innerHTML = 'انتهى الوقت';
+                        counterElement.classList.replace('bg-label-info', 'bg-label-danger');
+                        return;
+                    }
+                    
+                    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                    
+                    let display = '';
+                    if (days > 0) display += days + ' يوم ';
+                    if (hours > 0 || days > 0) display += hours + ' ساعة ';
+                    display += minutes + ' دقيقة ' + seconds + ' ثانية';
+                    
+                    textElement.innerHTML = display;
+                }, 1000);
+            }
         });
     </script>
 @endsection

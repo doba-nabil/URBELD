@@ -14,16 +14,22 @@
     <!-- Header End -->
 
     <!-- BROADCAST BANNER -->
+    @php
+        $bannerCategory = null;
+        if (isset($selectedCategory)) {
+            $bannerCategory = $selectedCategory->parent_id !== null ? $selectedCategory->parent : $selectedCategory;
+        }
+    @endphp
     <div class="bc-wrap">
       <div class="bc-banner">
         <div class="bc-left">
           <div class="bc-icon-wrap"><i class="bi bi-megaphone-fill text-white"></i></div>
           <div>
-            <div class="bc-title">{{ isset($selectedCategory) && $selectedCategory->bulk_request_title ? $selectedCategory->bulk_request_title : __('website.send_request_to_all_providers_at_once') }}</div>
-            <div class="bc-sub">{{ isset($selectedCategory) && $selectedCategory->bulk_request_subtitle ? $selectedCategory->bulk_request_subtitle : __('website.choose_section_and_receive_quotes') }}</div>
+            <div class="bc-title">{{ $bannerCategory && $bannerCategory->bulk_request_title ? $bannerCategory->bulk_request_title : __('website.send_request_to_all_providers_at_once') }}</div>
+            <div class="bc-sub">{{ $bannerCategory && $bannerCategory->bulk_request_subtitle ? $bannerCategory->bulk_request_subtitle : __('website.choose_section_and_receive_quotes') }}</div>
           </div>
         </div>
-        <a href="{{ isset($selectedCategory) ? route('website.supply-requests.create', ['category_id' => $selectedCategory->id]) : route('website.supply-requests.create') }}" class="btn-bc" style="text-decoration: none;"><i class="bi bi-send-fill me-1"></i> {{ isset($selectedCategory) && $selectedCategory->bulk_request_button_text ? $selectedCategory->bulk_request_button_text : (__('website.send_bulk_request') ?? 'طلب توريد عام') }}</a>
+        <a href="{{ $bannerCategory ? route('website.supply-requests.create', ['category_id' => $bannerCategory->id]) : route('website.supply-requests.create') }}" class="btn-bc" style="text-decoration: none;"><i class="bi bi-send-fill me-1"></i> {{ $bannerCategory && $bannerCategory->bulk_request_button_text ? $bannerCategory->bulk_request_button_text : (__('website.send_bulk_request') ?? 'طلب توريد عام') }}</a>
       </div>
     </div>
 
@@ -64,6 +70,19 @@
                 <label>{{ __('website.supply_section') ?? 'قسم التوريد' }}</label>
                 <select name="category_id" id="subFilter" class="select2">
                   <option value="">{{ __('website.all_sections') }}</option>
+                  
+                  @if (isset($selectedCategory))
+                      @if ($selectedCategory->parent_id === null)
+                          <option value="{{ $selectedCategory->id }}" selected>
+                              {{ $selectedCategory->name }} ({{ __('website.all') }})
+                          </option>
+                      @else
+                          <option value="{{ $selectedCategory->parent->id ?? '' }}">
+                              {{ $selectedCategory->parent->name ?? __('website.back_to_main') }} ({{ __('website.all') }})
+                          </option>
+                      @endif
+                  @endif
+
                   @if (isset($supplyCategories))
                       @foreach ($supplyCategories as $cat)
                           <option value="{{ $cat->id }}" {{ request('category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
@@ -132,5 +151,38 @@
           @include('website.suppliers.partials._providers_list')
       </div>
     </div>
-    
+    </div>
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const regionSelect = document.querySelector('select[name="region_id"]');
+        const citySelect = document.querySelector('select[name="city_id"]');
+        
+        if (regionSelect && citySelect) {
+            regionSelect.addEventListener('change', function() {
+                const regionId = this.value;
+                const options = citySelect.querySelectorAll('option');
+                
+                let firstVisible = null;
+                options.forEach(option => {
+                    if (option.value === "") {
+                        option.style.display = '';
+                    } else if (!regionId || option.getAttribute('data-region') === regionId) {
+                        option.style.display = '';
+                        if (!firstVisible) firstVisible = option;
+                    } else {
+                        option.style.display = 'none';
+                    }
+                });
+                
+                citySelect.value = "";
+                if (typeof jQuery !== 'undefined' && $(citySelect).hasClass('select2-hidden-accessible')) {
+                    $(citySelect).trigger('change');
+                }
+            });
+        }
+    });
+</script>
+@endpush
 @endsection

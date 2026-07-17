@@ -15,7 +15,33 @@
         if (membershipType) {
             const toggleFields = function() {
                 const type = $(membershipType).val();
-                if (type === 'individual') {
+                
+                // Filter classification dropdown based on type
+                $('#classification_select option').each(function() {
+                    if ($(this).val() === "") {
+                        $(this).show(); // Always show 'none'
+                        return;
+                    }
+                    if ($(this).data('type') === type) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                        if ($(this).is(':selected')) {
+                            $('#classification_select').val('');
+                        }
+                    }
+                });
+
+                // Change Classification Label
+                if (type === 'company') {
+                    $('#classification_label').text('{{ __("admin.company_size") ?? "حجم الشركة" }}');
+                } else if (type === 'supplier') {
+                    $('#classification_label').text('{{ __("admin.supply_volume") ?? "حجم التوريد" }}');
+                } else {
+                    $('#classification_label').text('{{ __("admin.company_classification") ?? "التصنيف / الحجم" }}');
+                }
+
+                if (type === 'individual' || type === 'supplier') {
                     $('#individual-fields').show();
                     $('#company-fields').hide();
                     
@@ -27,7 +53,7 @@
                         $(subCategoriesSelect).prop('disabled', true).attr('name', '').trigger('change');
                     }
                     
-                    // Enable individual fields
+                    // Enable individual/supplier fields
                     if (individualMainCategorySelect) {
                         $(individualMainCategorySelect).prop('disabled', false).attr('name', 'main_category_id').trigger('change');
                     }

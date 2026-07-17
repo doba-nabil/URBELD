@@ -656,4 +656,9 @@ return [
     'covered_cities' => 'المدن المغطاة',
     'city' => 'المدينة',
     'delivery_outside_desc' => 'للتوصيل خارج المدن المحدده يرجى التواصل مع الاداره',
+    'verified' => 'موثق',
+    'commercial_register' => 'السجل التجاري',
+    'register_number' => 'رقم السجل',
+    'view_file' => 'عرض الملف',
+    'upload_commercial_register' => 'رفع السجل التجاري',
 ];

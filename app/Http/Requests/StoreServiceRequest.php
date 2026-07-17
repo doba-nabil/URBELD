@@ -26,6 +26,7 @@ class StoreServiceRequest extends FormRequest
             'longitude' => ['nullable', 'numeric'],
             'voice_record' => ['nullable', 'file', 'mimes:mp3,wav,ogg,webm', 'max:10240'],
             'service_id' => ['nullable', 'exists:services,id'],
+            'attachment_link' => ['nullable', 'url', 'max:500'],
         ];
 
         return $rules;

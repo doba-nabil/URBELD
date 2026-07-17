@@ -1,5 +1,13 @@
 @extends('dashboard.layout.master')
-@section('title', __('admin.review_service_provider') . ' - ' . $provider->name)
+@php
+    $pageTitle = __('admin.review_service_provider');
+    if ($provider->provider_type === 'supplier') {
+        $pageTitle = __('admin.review_supplier') ?? 'مراجعة بيانات المورد';
+    } elseif ($provider->provider_type === 'company') {
+        $pageTitle = __('admin.review_company') ?? 'مراجعة بيانات الشركة';
+    }
+@endphp
+@section('title', $pageTitle . ' - ' . $provider->name)
 
 @section('dashboard-main')
     <div class="container-xxl flex-grow-1 container-p-y">
@@ -8,7 +16,7 @@
             <div>
                 <h4 class="fw-bold mb-1">
                     <i class="icon-base ti tabler-user-check me-2"></i>
-                    {{ __('admin.review_service_provider') }}
+                    {{ $pageTitle }}
                 </h4>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0">
@@ -35,8 +43,8 @@
                         </div>
                         <h5 class="fw-bold mb-1">{{ $provider->name }}</h5>
                         <span
-                            class="badge {{ $provider->provider_type === 'company' ? 'bg-label-info' : 'bg-label-primary' }} mb-2">
-                            {{ $provider->provider_type === 'company' ? __('admin.company') : __('admin.individual') }}
+                            class="badge {{ $provider->provider_type === 'company' ? 'bg-label-info' : ($provider->provider_type === 'supplier' ? 'bg-label-success' : 'bg-label-primary') }} mb-2">
+                            {{ $provider->provider_type === 'company' ? __('admin.company') : ($provider->provider_type === 'supplier' ? (__('admin.supplier') ?? 'مورد') : __('admin.individual')) }}
                         </span>
 
                         {{-- Status Badge --}}
@@ -75,14 +83,14 @@
                                 <i class="ti tabler-id text-primary me-2 fs-5"></i>
                                 <span>{{ $provider->id_number ?? __('admin.not_specified') }}</span>
                             </li>
-                            @if(in_array($provider->provider_type, ['company', 'supplier']))
+                            @if($provider->provider_type === 'company')
                             <li class="d-flex align-items-center mb-3">
                                 <i class="ti tabler-building-bank text-primary me-2 fs-5"></i>
-                                <span>سجل تجاري: {{ $provider->company_registration_number ?? __('admin.not_specified') }}</span>
+                                <span>{{ __('admin.commercial_registration') }}: {{ $provider->company_registration_number ?? __('admin.not_specified') }}</span>
                             </li>
                             <li class="d-flex align-items-center mb-3">
                                 <i class="ti tabler-users text-primary me-2 fs-5"></i>
-                                <span>المفوض: {{ $provider->representative_name ?? __('admin.not_specified') }}</span>
+                                <span>{{ __('admin.representative_name') }}: {{ $provider->representative_name ?? __('admin.not_specified') }}</span>
                             </li>
                             <li class="d-flex align-items-center mb-3">
                                 <i class="ti tabler-chart-pie text-primary me-2 fs-5"></i>
@@ -90,7 +98,16 @@
                                     $classModel = $provider->classification;
                                     $className = $classModel ? (is_string($classModel->name) ? $classModel->name : (is_array($classModel->name) ? ($classModel->name[app()->getLocale()] ?? current($classModel->name)) : $classModel->getTranslation('name', app()->getLocale()))) : __('admin.not_specified');
                                 @endphp
-                                <span>التصنيف/الحجم: {{ $className }}</span>
+                                <span>{{ __('admin.company_size') ?? 'حجم الشركة' }}: {{ $className }}</span>
+                            </li>
+                            @elseif($provider->provider_type === 'supplier')
+                            <li class="d-flex align-items-center mb-3">
+                                <i class="ti tabler-chart-pie text-primary me-2 fs-5"></i>
+                                @php
+                                    $classModel = $provider->classification;
+                                    $className = $classModel ? (is_string($classModel->name) ? $classModel->name : (is_array($classModel->name) ? ($classModel->name[app()->getLocale()] ?? current($classModel->name)) : $classModel->getTranslation('name', app()->getLocale()))) : __('admin.not_specified');
+                                @endphp
+                                <span>{{ __('admin.supply_volume') ?? 'حجم التوريد' }}: {{ $className }}</span>
                             </li>
                             @endif
                             <li class="d-flex align-items-center">
@@ -192,6 +209,31 @@
                         @endif
                     </div>
                 </div>
+
+                @if(in_array($provider->provider_type, ['company', 'supplier']))
+                {{-- Delivery Cities --}}
+                <div class="card mb-4">
+                    <div class="card-header pb-0">
+                        <h6 class="fw-bold mb-0"><i class="ti tabler-map-pin me-1"></i> مناطق العمل / التوصيل</h6>
+                    </div>
+                    <div class="card-body">
+                        @if ($provider->deliveryCities && $provider->deliveryCities->count() > 0)
+                            <div class="d-flex flex-wrap gap-2">
+                                @foreach ($provider->deliveryCities as $city)
+                                    @php
+                                        $cityName = is_string($city->name) ? $city->name : (is_array($city->name) ? ($city->name[app()->getLocale()] ?? $city->name['ar'] ?? '') : $city->getTranslation('name', app()->getLocale()));
+                                    @endphp
+                                    <span class="badge bg-label-secondary px-3 py-2">
+                                        <i class="ti tabler-map-pin me-1"></i> {{ $cityName }}
+                                    </span>
+                                @endforeach
+                            </div>
+                        @else
+                            <p class="text-muted mb-0">لم يتم تحديد مناطق عمل/توصيل.</p>
+                        @endif
+                    </div>
+                </div>
+                @endif
 
                 {{-- Identity Documents --}}
                 <div class="card mb-4">

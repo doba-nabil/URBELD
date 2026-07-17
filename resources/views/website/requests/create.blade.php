@@ -189,6 +189,11 @@
                                     </div>
 
                                     <div class="col-md-12 mt-4">
+                                        <label class="mb-2 fw-bold">رابط المرفقات (اختياري)</label>
+                                        <input type="url" name="attachment_link" class="form-control contact-input" placeholder="مثال: رابط جوجل درايف أو دروب بوكس يحتوي على الملفات">
+                                    </div>
+
+                                    <div class="col-md-12 mt-4">
                                         <label class="mb-2 fw-bold">{{ __('website.attach_files') }}</label>
                                         <div class="dropzone" id="attachmentsDropzone"
                                             style="border: 2px dashed var(--primary); border-radius: 10px; background: #f8f9fa;">
