@@ -67,7 +67,11 @@ class ProfileController extends Controller
         if ($isSubscriptionEnabled) {
             $packages = \App\Models\SubscriptionPackage::active()->ordered()->get();
         }
-        return view('website.profile.complete', compact('categories', 'packages', 'isSubscriptionEnabled'));
+        
+        $type = ($request->user()->provider_type === 'supplier' || $request->user()->membership_type === 'supplier') ? 'supplier' : 'company';
+        $classifications = \App\Models\CompanyClassification::where('type', $type)->get();
+        
+        return view('website.profile.complete', compact('categories', 'packages', 'isSubscriptionEnabled', 'classifications'));
     }
     public function completeStore(Request $request): RedirectResponse
     {
@@ -85,6 +89,9 @@ class ProfileController extends Controller
             'categories.*' => 'exists:categories,id',
             'company_registration_number' => 'nullable|string|max:255',
             'representative_name' => 'nullable|string|max:255',
+            'delivery_cities' => 'nullable|array',
+            'delivery_cities.*' => 'exists:cities,id',
+            'classification_id' => 'nullable|exists:company_classifications,id',
         ];
         if ($isSubscriptionEnabled) {
             $rules['subscription_package_id'] = 'required|exists:subscription_packages,id';
@@ -97,7 +104,15 @@ class ProfileController extends Controller
             'years_of_experience' => $request->years_of_experience,
             'company_registration_number' => $request->company_registration_number,
             'representative_name' => $request->representative_name,
+            'classification_id' => $request->classification_id,
         ];
+        
+        // Keep id_number and company_registration_number in sync for companies/suppliers
+        if (in_array($user->membership_type, ['company', 'supplier']) || in_array($user->provider_type, ['company', 'supplier'])) {
+            if ($request->filled('company_registration_number')) {
+                $updateData['id_number'] = $request->company_registration_number;
+            }
+        }
         if ($isSubscriptionEnabled && $request->subscription_package_id) {
             $package = \App\Models\SubscriptionPackage::find($request->subscription_package_id);
             $updateData['subscription_package_id'] = $package->id;
@@ -107,6 +122,9 @@ class ProfileController extends Controller
         $user->update($updateData);
         if ($request->has('categories')) {
             $user->categories()->sync($request->categories);
+        }
+        if ($request->has('delivery_cities')) {
+            $user->deliveryCities()->sync($request->delivery_cities);
         }
         if ($request->hasFile('certificates')) {
             foreach ($request->file('certificates') as $index => $file) {

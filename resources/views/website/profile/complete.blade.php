@@ -3,7 +3,7 @@
 @section('profile-content')
     @php
         $user = auth()->user();
-        $hasId = $user->getFirstMediaUrl('id_front') || $user->getFirstMediaUrl('commercial_registration');
+        $hasId = $user->getFirstMediaUrl('id_front') || $user->getFirstMediaUrl('commercial_registration') || !empty($user->id_number) || !empty($user->company_registration_number);
         $isActive = ($user->active === 'active' || $user->active === '1' || $user->active === 1);
         $isPendingWithId = ($user->active === 'pending' || $user->active === '0' || $user->active === 0) && $hasId;
         
@@ -223,25 +223,30 @@
                     </div>
                 </div>
 
-                <!-- Row 2 -->
-                <div class="col-md-6">
+                @if(in_array($user->provider_type, ['supplier']) || in_array($user->membership_type, ['supplier']))
+                <div class="col-md-12 mt-3">
                     <div class="">
-                        <label class="pd-label">التصنيفات الفرعية</label>
+                        <label class="pd-label"><i class="bi bi-map me-1"></i> مناطق العمل / التوصيل</label>
                         @if($isLocked)
                             <div class="d-flex flex-wrap gap-2 justify-content-{{ app()->getLocale() == 'ar' ? 'start' : 'end' }} mt-1">
-                                @forelse($userSubCategories as $subcat)
-                                    <span class="pd-subcat-badge">{{ $subcat->name }}</span>
+                                @forelse($user->deliveryCities as $delCity)
+                                    <span class="pd-subcat-badge">{{ $delCity->name }}</span>
                                 @empty
                                     <span class="text-muted small">لا يوجد</span>
                                 @endforelse
                             </div>
                         @else
-                            <select class="pd-input-box text-{{ app()->getLocale() == 'ar' ? 'end' : 'start' }}" id="sub_categories" name="categories[]" multiple dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}" style="height: auto; min-height: 56px;">
-                                <!-- Options populated by JS -->
+                            <select class="pd-input-box text-{{ app()->getLocale() == 'ar' ? 'end' : 'start' }}" id="delivery_cities" name="delivery_cities[]" multiple dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}" style="height: auto; min-height: 56px;">
+                                @foreach ($cities as $city)
+                                    <option value="{{ $city->id }}" {{ $user->deliveryCities->contains('id', $city->id) ? 'selected' : '' }}>
+                                        {{ $city->name }}
+                                    </option>
+                                @endforeach
                             </select>
                         @endif
                     </div>
                 </div>
+                @endif
 
                 <div class="col-md-6">
                     <div class="">
@@ -258,9 +263,9 @@
                     <div class="">
                         <label class="pd-label"><i class="bi bi-telephone me-1"></i> رقم التواصل</label>
                         @if($isLocked)
-                            <div class="pd-readonly-box justify-content-start">{{ $user->years_of_experience ?? 0 }} سنة</div>
+                            <div class="pd-readonly-box justify-content-start font-monospace" dir="ltr">{{ $user->phone ?? 'غير متوفر' }}</div>
                         @else
-                            <input type="text" class="pd-input-box  font-monospace" disabled value="{{ $user->phone }}" dir="ltr">
+                            <input type="text" class="pd-input-box font-monospace" disabled value="{{ $user->phone }}" dir="ltr">
                         @endif
                     </div>
                 </div>
@@ -270,25 +275,43 @@
                     <div class="">
                         <label class="pd-label">سنوات الخبرة</label>
                         @if($isLocked)
-                            <div class="pd-readonly-box justify-content-start font-monospace" dir="ltr">{{ $user->phone ?? 'غير متوفر' }}</div>
+                            <div class="pd-readonly-box justify-content-start">{{ $user->years_of_experience ?? 0 }} سنة</div>
                         @else
-                            <input type="number" class="pd-input-box " name="years_of_experience" value="{{ $user->years_of_experience ?? 0 }}">
+                            <input type="number" class="pd-input-box" name="years_of_experience" value="{{ $user->years_of_experience ?? 0 }}">
                         @endif
                     </div>
                 </div>
 
             </div>
 
-            <!-- Row 4 (For Companies) -->
-            @if($user->membership_type == 'company')
+            <!-- Row 4 (For Companies and Suppliers) -->
+            @if(in_array($user->membership_type, ['company', 'supplier']) || in_array($user->provider_type, ['company', 'supplier']))
             <div class="row g-4 flex-row-reverse mt-2">
+                <div class="col-md-12">
+                    <div class="">
+                        <label class="pd-label">{{ ($user->provider_type === 'supplier' || $user->membership_type === 'supplier') ? (__('admin.supply_volume') ?? 'حجم التوريد') : (__('admin.company_size') ?? 'حجم الشركة') }}</label>
+                        @if($isLocked)
+                            <div class="pd-readonly-box justify-content-start">{{ $user->classification->name ?? 'غير متوفر' }}</div>
+                        @else
+                            <select class="pd-input-box" name="classification_id" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
+                                <option value="">اختر الحجم/التصنيف...</option>
+                                @foreach ($classifications as $classification)
+                                    <option value="{{ $classification->id }}" {{ $user->classification_id == $classification->id ? 'selected' : '' }}>
+                                        {{ is_array($classification->name) ? ($classification->name[app()->getLocale()] ?? $classification->name['ar']) : $classification->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        @endif
+                    </div>
+                </div>
+
                 <div class="col-md-6">
                     <div class="">
                         <label class="pd-label">رقم السجل التجاري</label>
                         @if($isLocked)
-                            <div class="pd-readonly-box justify-content-start font-monospace">{{ $user->company_registration_number ?? 'غير متوفر' }}</div>
+                            <div class="pd-readonly-box justify-content-start font-monospace">{{ $user->company_registration_number ?? $user->id_number ?? 'غير متوفر' }}</div>
                         @else
-                            <input type="text" class="pd-input-box font-monospace text-end" name="company_registration_number" value="{{ $user->company_registration_number }}">
+                            <input type="text" class="pd-input-box font-monospace text-end" name="company_registration_number" value="{{ $user->company_registration_number ?? $user->id_number }}">
                         @endif
                     </div>
                 </div>
@@ -335,10 +358,8 @@
                                     </div>
                                 </div>
                             @elseif(!$isLocked)
-                                <div class="pd-doc-box d-block p-3">
-                                    <label class="pd-label mb-2 fw-bold text-dark">{{ __('website.upload_commercial_register') ?? 'رفع السجل التجاري' }} <span class="text-danger">*</span></label>
-                                    <input type="file" class="form-control bg-white" name="commercial_registration" required>
-                                </div>
+                                <!-- Commercial Registration upload is hidden per user request, since it is provided as ID Number -->
+
                             @endif
                         @else
                             @if(auth()->user()->getFirstMediaUrl('id_front'))
@@ -439,7 +460,7 @@
     </div>
 @endsection
 
-@push('js')
+@push('scripts')
     @if(!$isLocked)
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -477,6 +498,7 @@
                     $('#main_category').select2({ dir: dir, width: '100%' });
                     $('#sub_categories').select2({ dir: dir, width: '100%' });
                     $('select[name="city_id"]').select2({ dir: dir, width: '100%' });
+                    $('#delivery_cities').select2({ dir: dir, width: '100%', placeholder: "اختر مناطق التوصيل..." });
 
                     if (rawMainCategorySelect.value) {
                         populateSubcategories();

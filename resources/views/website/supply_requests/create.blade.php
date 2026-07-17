@@ -81,6 +81,25 @@
                                             @endforeach
                                         </select>
                                     </div>
+                                @elseif(!isset($provider))
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">القسم الرئيسي <span class="text-danger">*</span></label>
+                                        @php $preselectCat = request('category') ?? ''; @endphp
+                                        <select name="category_id" id="main_category" class="form-select select2" required>
+                                            <option value="" {{ !$preselectCat ? 'selected' : '' }} disabled>اختر القسم الرئيسي</option>
+                                            @foreach (\App\Models\Category::whereNull('parent_id')->get() as $category)
+                                                <option value="{{ $category->id }}" {{ $preselectCat == $category->id ? 'selected' : '' }}>
+                                                    {{ $category->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">القسم الفرعي <span class="text-danger">*</span></label>
+                                        <select name="sub_category_id" id="sub_category_id" class="form-select select2" required>
+                                            <option value="" selected disabled>اختر القسم الفرعي</option>
+                                        </select>
+                                    </div>
                                 @endif
 
                                 @if(isset($providerDoesNotDeliver) && $providerDoesNotDeliver)
@@ -140,26 +159,32 @@
                                     <textarea name="description" class="form-control" placeholder="{{ __('website.supply_request_details_placeholder') ?? 'يرجى كتابة كافة المواصفات والكميات المطلوبة بدقة...' }}" style="height: 150px" required></textarea>
                                 </div>
 
-                                <!-- Voice Record -->
-                                <div class="col-md-6">
-                                    <label class="form-label fw-bold"><i class="bi bi-mic-fill me-1"></i> تسجيل صوتي لوصف الطلب (اختياري)</label>
-                                    <input type="file" name="voice_record" class="form-control" accept="audio/*" capture>
-                                    <small class="text-muted">يمكنك إرفاق ملف صوتي أو تسجيل صوتك مباشرة.</small>
+                                <!-- Voice Recording -->
+                                <div class="col-md-12 mt-3">
+                                    <label class="form-label fw-bold"><i class="bi bi-mic-fill me-1"></i> {{ __('website.voice_record') ?? 'تسجيل صوتي لوصف الطلب (اختياري)' }}</label>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <button type="button" id="startRecordBtn" class="btn btn-outline-primary"><i class="bi bi-mic me-1"></i> {{ __('website.start_recording') ?? 'بدء التسجيل' }}</button>
+                                        <button type="button" id="stopRecordBtn" class="btn btn-danger d-none"><i class="bi bi-stop-circle me-1"></i> {{ __('website.stop_recording') ?? 'إيقاف التسجيل' }}</button>
+                                        <audio id="audioPlayback" controls class="d-none"></audio>
+                                        <button type="button" id="clearRecordBtn" class="btn btn-secondary d-none"><i class="bi bi-trash"></i></button>
+                                    </div>
+                                    <input type="file" name="voice_record" id="voice_record_file" class="d-none" accept="audio/*">
                                 </div>
 
-                                <!-- Map Location -->
-                                <div class="col-12 mt-4">
-                                    <label class="form-label fw-bold"><i class="bi bi-geo-alt-fill me-1"></i> الموقع الجغرافي (اختياري)</label>
-                                    <div class="mb-3 d-flex gap-2">
-                                        <button type="button" class="btn btn-outline-primary" id="getLocationBtn">
-                                            <i class="bi bi-crosshair me-1"></i> تحديد موقعي الحالي
-                                        </button>
-                                        <div id="locationStatus" class="align-self-center text-muted small"></div>
-                                    </div>
+                                <div class="col-md-12 mt-4">
+                                    <input type="hidden" name="location" id="location_address">
+                                    <!-- Hidden lat/lng for map -->
                                     <input type="hidden" name="latitude" id="latitude">
                                     <input type="hidden" name="longitude" id="longitude">
-                                    <input type="text" name="location" id="locationAddress" class="form-control mb-2" placeholder="أو أدخل العنوان التفصيلي يدوياً (مثال: الرياض، حي الملقا، شارع 1)">
-                                    <div id="mapPreview" style="height: 250px; display: none; border-radius: 8px; border: 1px solid #dee2e6;"></div>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <label class="form-label fw-bold"><i class="bi bi-geo-alt-fill me-1"></i> {{ __('website.choose_location_on_map') ?? 'تحديد الموقع على الخريطة (اختياري)' }}</label>
+                                        <button type="button" id="getCurrentLocation" class="btn btn-sm btn-outline-primary shadow-sm bg-white">
+                                            <i class="bi bi-geo-alt-fill me-1"></i> {{ __('website.set_my_current_location') ?? 'تحديد موقعي الحالي' }}
+                                        </button>
+                                    </div>
+                                    <!-- Map Container -->
+                                    <div id="map" style="height: 250px; width: 100%; border-radius: 8px;"></div>
                                 </div>
 
                                 <div class="col-12 text-center mt-5">
@@ -178,32 +203,137 @@
 </div>
 
 @push('scripts')
+<script src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_maps.key') }}&libraries=places&callback=initMap" async defer></script>
 <script>
-    document.getElementById('getLocationBtn').addEventListener('click', function() {
-        const statusDiv = document.getElementById('locationStatus');
-        const latInput = document.getElementById('latitude');
-        const lngInput = document.getElementById('longitude');
-        const mapPreview = document.getElementById('mapPreview');
-        
-        statusDiv.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> جاري تحديد الموقع...';
-        
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function(position) {
-                const lat = position.coords.latitude;
-                const lng = position.coords.longitude;
-                
-                latInput.value = lat;
-                lngInput.value = lng;
-                statusDiv.innerHTML = '<i class="bi bi-check-circle-fill text-success"></i> تم التحديد بنجاح';
-                
-                // Show OpenStreetMap Preview
-                mapPreview.style.display = 'block';
-                mapPreview.innerHTML = `<iframe width="100%" height="100%" style="border:0; border-radius: 8px;" loading="lazy" src="https://www.openstreetmap.org/export/embed.html?bbox=${lng - 0.01}%2C${lat - 0.01}%2C${lng + 0.01}%2C${lat + 0.01}&layer=mapnik&marker=${lat}%2C${lng}"></iframe>`;
-            }, function(error) {
-                statusDiv.innerHTML = '<i class="bi bi-x-circle-fill text-danger"></i> تعذر الوصول للموقع. يرجى إدخال العنوان يدوياً.';
+    let map, marker;
+    function initMap() {
+        const defaultLoc = { lat: 24.7136, lng: 46.6753 }; // Riyadh
+        const mapEl = document.getElementById("map");
+        if(mapEl) {
+            map = new google.maps.Map(mapEl, {
+                center: defaultLoc,
+                zoom: 12,
             });
-        } else {
-            statusDiv.innerHTML = '<i class="bi bi-x-circle-fill text-danger"></i> المتصفح لا يدعم تحديد الموقع.';
+            marker = new google.maps.Marker({
+                position: defaultLoc,
+                map: map,
+                draggable: true
+            });
+
+            map.addListener("click", (mapsMouseEvent) => {
+                marker.setPosition(mapsMouseEvent.latLng);
+                updateLatLng(mapsMouseEvent.latLng);
+            });
+
+            marker.addListener('dragend', function() {
+                updateLatLng(marker.getPosition());
+            });
+        }
+    }
+    function updateLatLng(latLng) {
+        document.getElementById('latitude').value = latLng.lat();
+        document.getElementById('longitude').value = latLng.lng();
+    }
+
+    // Set Current Location Logic
+    const locationBtn = document.getElementById('getCurrentLocation');
+    if (locationBtn) {
+        locationBtn.addEventListener('click', function() {
+            if (navigator.geolocation) {
+                const btn = this;
+                const originalHtml = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> {{ __('website.loading') ?? "جاري التحميل..." }}';
+
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const pos = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+                    if (map && marker) {
+                        map.setCenter(pos);
+                        map.setZoom(15);
+                        marker.setPosition(pos);
+                        updateLatLng(marker.getPosition());
+                    }
+                    
+                    btn.disabled = false;
+                    btn.innerHTML = originalHtml;
+                }, function() {
+                    alert("{{ __('website.location_access_denied') ?? 'عذراً، يرجى السماح بالوصول إلى الموقع.' }}");
+                    btn.disabled = false;
+                    btn.innerHTML = originalHtml;
+                });
+            } else {
+                alert("{{ __('website.geolocation_not_supported') ?? 'المتصفح الخاص بك لا يدعم تحديد الموقع.' }}");
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        let mediaRecorder;
+        let audioChunks = [];
+        
+        const startRecordBtn = document.getElementById('startRecordBtn');
+        const stopRecordBtn = document.getElementById('stopRecordBtn');
+        const audioPlayback = document.getElementById('audioPlayback');
+        const clearRecordBtn = document.getElementById('clearRecordBtn');
+        const voiceRecordFileInput = document.getElementById('voice_record_file');
+
+        if(startRecordBtn) {
+            startRecordBtn.addEventListener('click', async () => {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    audioChunks = [];
+
+                    mediaRecorder.ondataavailable = event => {
+                        if (event.data.size > 0) {
+                            audioChunks.push(event.data);
+                        }
+                    };
+
+                    mediaRecorder.onstop = () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                        const audioUrl = URL.createObjectURL(audioBlob);
+                        audioPlayback.src = audioUrl;
+                        audioPlayback.classList.remove('d-none');
+                        clearRecordBtn.classList.remove('d-none');
+                        
+                        const file = new File([audioBlob], "voice_record_" + Date.now() + ".webm", {
+                            type: "audio/webm",
+                        });
+                        const dataTransfer = new DataTransfer();
+                        dataTransfer.items.add(file);
+                        voiceRecordFileInput.files = dataTransfer.files;
+                        
+                        stream.getTracks().forEach(track => track.stop());
+                    };
+
+                    mediaRecorder.start();
+                    startRecordBtn.classList.add('d-none');
+                    stopRecordBtn.classList.remove('d-none');
+                } catch (err) {
+                    alert("{{ __('website.microphone_access_denied', [], app()->getLocale(), 'عفوا، يرجى السماح بالوصول إلى الميكروفون.') }}");
+                }
+            });
+
+            stopRecordBtn.addEventListener('click', () => {
+                if(mediaRecorder && mediaRecorder.state !== 'inactive') {
+                    mediaRecorder.stop();
+                    stopRecordBtn.classList.add('d-none');
+                    startRecordBtn.classList.remove('d-none');
+                    startRecordBtn.innerHTML = '<i class="bi bi-mic me-1"></i> {{ __('website.record_again', [], app()->getLocale(), 'تسجيل مرة أخرى') }}';
+                }
+            });
+
+            clearRecordBtn.addEventListener('click', () => {
+                audioPlayback.src = "";
+                audioPlayback.classList.add('d-none');
+                clearRecordBtn.classList.add('d-none');
+                voiceRecordFileInput.value = "";
+                startRecordBtn.innerHTML = '<i class="bi bi-mic me-1"></i> {{ __('website.start_recording') ?? "بدء التسجيل" }}';
+            });
         }
     });
 </script>

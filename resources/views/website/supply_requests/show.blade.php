@@ -2,6 +2,15 @@
 @section('title', $supplyRequest->title)
 
 @section('content')
+<!-- Header Start -->
+<div class="category-header-section text-center services-header-section without-search">
+    <div class="container" style="max-width: 1320px;">
+        <h1 class="fw-bold mb-3 wow fadeInUp" data-wow-delay="0.1s">{{ $supplyRequest->title }}</h1>
+        <p class="mb-0 wow fadeInUp" data-wow-delay="0.2s">تفاصيل طلب التوريد</p>
+    </div>
+</div>
+<!-- Header End -->
+
 <div class="container-xxl py-5">
     <div class="container">
         <div class="row g-5">
@@ -16,10 +25,18 @@
                             <span class="text-muted"><i class="bi bi-clock me-1"></i> {{ $supplyRequest->created_at->diffForHumans() }}</span>
                         </div>
                         
-                        <h2 class="fw-bold mb-4">{{ $supplyRequest->title }}</h2>
+                        <h2 class="fw-bold mb-3">{{ $supplyRequest->title }}</h2>
                         
-                        <div class="d-flex gap-4 mb-4 pb-4 border-bottom">
-                            <div class="d-flex align-items-center text-muted">
+                        <div class="d-flex align-items-center mb-4 pb-4 border-bottom">
+                            <img src="{{ $supplyRequest->user->getFirstMediaUrl('personal_photo') ?: asset('website/assets/img/logo.png') }}" class="rounded-circle me-3 border" width="50" height="50" style="object-fit:cover;" alt="صاحب الطلب">
+                            <div>
+                                <small class="text-muted d-block">صاحب الطلب</small>
+                                <a href="{{ route('member.public', $supplyRequest->user_id) }}" class="fw-bold text-dark text-decoration-none fs-5">{{ $supplyRequest->user->name }}</a>
+                            </div>
+                        </div>
+                        
+                        <div class="row g-4 mb-4 pb-4 border-bottom">
+                            <div class="col-md-6 d-flex align-items-center text-muted">
                                 <div class="bg-light rounded-circle p-2 me-2">
                                     <i class="bi bi-geo-alt-fill text-primary"></i>
                                 </div>
@@ -29,7 +46,7 @@
                                 </div>
                             </div>
                             @if($supplyRequest->delivery_date)
-                            <div class="d-flex align-items-center text-muted">
+                            <div class="col-md-6 d-flex align-items-center text-muted">
                                 <div class="bg-light rounded-circle p-2 me-2">
                                     <i class="bi bi-calendar-check text-danger"></i>
                                 </div>
@@ -39,7 +56,61 @@
                                 </div>
                             </div>
                             @endif
+                            @if($supplyRequest->quantity)
+                            <div class="col-md-6 d-flex align-items-center text-muted">
+                                <div class="bg-light rounded-circle p-2 me-2">
+                                    <i class="bi bi-box-seam text-success"></i>
+                                </div>
+                                <div>
+                                    <small class="d-block">الكمية المطلوبة</small>
+                                    <span class="fw-bold text-dark">{{ $supplyRequest->quantity }}</span>
+                                </div>
+                            </div>
+                            @endif
+                            @if($supplyRequest->category_id)
+                            <div class="col-md-6 d-flex align-items-center text-muted">
+                                <div class="bg-light rounded-circle p-2 me-2">
+                                    <i class="bi bi-tags text-warning"></i>
+                                </div>
+                                <div>
+                                    <small class="d-block">التصنيف</small>
+                                    <span class="fw-bold text-dark">
+                                        {{ \App\Models\Category::find($supplyRequest->category_id)->name ?? 'غير محدد' }}
+                                        @if($supplyRequest->sub_category_id)
+                                            - {{ \App\Models\Category::find($supplyRequest->sub_category_id)->name ?? '' }}
+                                        @endif
+                                    </span>
+                                </div>
+                            </div>
+                            @endif
                         </div>
+
+                        <h5 class="fw-bold mb-3 border-top pt-4">تفاصيل ومواصفات الطلب:</h5>
+                        <div class="mb-4 text-dark" style="line-height: 1.8; font-size: 1.05rem;">
+                            {!! nl2br(e($supplyRequest->description)) !!}
+                        </div>
+
+                        @if($supplyRequest->voice_record)
+                            <div class="mb-4 p-3 bg-light rounded-3 border">
+                                <h6 class="fw-bold mb-2"><i class="bi bi-mic-fill text-primary me-2"></i> التسجيل الصوتي المرفق:</h6>
+                                <audio controls class="w-100 mt-2">
+                                    <source src="{{ asset('storage/' . $supplyRequest->voice_record) }}" type="audio/webm">
+                                    <source src="{{ asset('storage/' . $supplyRequest->voice_record) }}" type="audio/mp3">
+                                    <source src="{{ asset('storage/' . $supplyRequest->voice_record) }}" type="audio/ogg">
+                                    متصفحك لا يدعم تشغيل الملفات الصوتية.
+                                </audio>
+                            </div>
+                        @endif
+
+                        @if($supplyRequest->latitude && $supplyRequest->longitude)
+                            <div class="mb-4">
+                                <h6 class="fw-bold mb-3"><i class="bi bi-map-fill text-primary me-2"></i> الموقع الجغرافي:</h6>
+                                @if($supplyRequest->location)
+                                    <p class="text-muted small mb-2"><i class="bi bi-geo me-1"></i> {{ $supplyRequest->location }}</p>
+                                @endif
+                                <div id="mapPreview" style="height: 300px; width: 100%; border-radius: 10px; border: 1px solid #dee2e6;"></div>
+                            </div>
+                        @endif
 
                         @if(auth()->id() == $supplyRequest->user_id)
                             <!-- Owner View: Show Responses -->
@@ -98,10 +169,7 @@
                             @endforelse
                         @endif
 
-                        <h5 class="fw-bold mb-3 border-top pt-4">تفاصيل الطلب:</h5>
-                        <div class="mb-5 text-muted" style="line-height: 1.8;">
-                            {!! nl2br(e($supplyRequest->description)) !!}
-                        </div>
+
                     </div>
                 </div>
             </div>
@@ -113,12 +181,31 @@
                     <div class="card-body p-4">
                             @php
                                 $hasApplied = $supplyRequest->responses()->where('user_id', auth()->id())->exists();
+                                $isAwarded = ($supplyRequest->awarded_provider_id === auth()->id());
+                                $isCompleted = ($supplyRequest->status === \App\Models\SupplyRequest::STATUS_COMPLETED);
+                                $isClosedOrInProgress = in_array($supplyRequest->status, [\App\Models\SupplyRequest::STATUS_CLOSED, \App\Models\SupplyRequest::STATUS_IN_PROGRESS]);
                             @endphp
 
-                            @if($hasApplied)
+                            @if($isAwarded && $isCompleted)
+                                <div class="alert alert-success text-center mb-0">
+                                    <i class="bi bi-trophy-fill d-block fs-1 mb-2 text-warning"></i>
+                                    <h5 class="fw-bold">تهانينا!</h5>
+                                    لقد تم الانتهاء من هذا الطلب وأنت من قمت بتنفيذه بنجاح.
+                                </div>
+                            @elseif($isAwarded && $isClosedOrInProgress)
+                                <div class="alert alert-primary text-center mb-0">
+                                    <i class="bi bi-star-fill d-block fs-3 mb-2 text-warning"></i>
+                                    لقد تم قبول عرضك! الطلب الآن قيد التنفيذ من قبلك.
+                                </div>
+                            @elseif($supplyRequest->status !== 'open' && $supplyRequest->status !== 'pending')
+                                <div class="alert alert-secondary text-center mb-0">
+                                    <i class="bi bi-lock-fill d-block fs-3 mb-2"></i>
+                                    هذا الطلب مغلق أو تم الانتهاء منه.
+                                </div>
+                            @elseif($hasApplied)
                                 <div class="alert alert-success text-center mb-0">
                                     <i class="bi bi-check-circle-fill d-block fs-3 mb-2"></i>
-                                    لقد قمت بتقديم عرض لهذا الطلب مسبقاً
+                                    لقد قمت بتقديم عرض لهذا الطلب مسبقاً بانتظار رد العميل.
                                 </div>
                             @else
                                 <h5 class="fw-bold mb-3">تقديم عرض أسعار</h5>
@@ -213,5 +300,28 @@
   </div>
 </div>
 @endif
+
+@push('scripts')
+@if($supplyRequest->latitude && $supplyRequest->longitude)
+<script src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_maps.key') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const lat = {{ $supplyRequest->latitude }};
+        const lng = {{ $supplyRequest->longitude }};
+        const loc = { lat: lat, lng: lng };
+        
+        const map = new google.maps.Map(document.getElementById("mapPreview"), {
+            zoom: 14,
+            center: loc,
+        });
+        
+        new google.maps.Marker({
+            position: loc,
+            map: map,
+        });
+    });
+</script>
+@endif
+@endpush
 
 @endsection

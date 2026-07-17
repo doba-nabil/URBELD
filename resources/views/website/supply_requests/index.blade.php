@@ -2,12 +2,17 @@
 @section('title', 'طلبات التوريد')
 
 @section('content')
+<!-- Header Start -->
+<div class="category-header-section text-center services-header-section without-search">
+    <div class="container" style="max-width: 1320px;">
+        <h1 class="fw-bold mb-3 wow fadeInUp" data-wow-delay="0.1s">طلبات التوريد</h1>
+        <p class="mb-0 wow fadeInUp" data-wow-delay="0.2s">تصفح وتفاعل مع أحدث طلبات التوريد المتاحة</p>
+    </div>
+</div>
+<!-- Header End -->
+
 <div class="container-xxl py-5">
     <div class="container">
-        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-            <h6 class="section-title text-center text-primary text-uppercase">تصفح وتفاعل</h6>
-            <h1 class="mb-5">أحدث <span class="text-primary text-uppercase">طلبات التوريد</span></h1>
-        </div>
 
         <div class="d-flex justify-content-end mb-4">
             <a href="{{ route('website.supply-requests.create') }}" class="btn btn-primary rounded-pill px-4">
@@ -47,7 +52,7 @@
                         </div>
                         <div class="card-footer bg-white border-0 p-4 pt-0">
                             <a href="{{ route('website.supply-requests.show', $req->id) }}" class="btn btn-outline-primary w-100 rounded-pill">
-                                التفاصيل وتقديم عرض
+                                {{ auth()->check() && auth()->id() == $req->user_id ? 'تصفح الطلب' : 'التفاصيل وتقديم عرض' }}
                             </a>
                         </div>
                     </div>

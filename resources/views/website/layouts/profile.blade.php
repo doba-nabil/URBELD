@@ -122,7 +122,8 @@
                 $tabProfileIncomplete = false;
                 if ($tabIsProvider && $tabUser->id === auth()->id()) {
                     $tabHasId =
-                        $tabUser->getFirstMediaUrl('id_front') || $tabUser->getFirstMediaUrl('commercial_registration');
+                        $tabUser->getFirstMediaUrl('id_front') || $tabUser->getFirstMediaUrl('commercial_registration') ||
+                        !empty($tabUser->id_number) || !empty($tabUser->company_registration_number);
                     $tabHasCategory = $tabUser->categories()->exists();
                     $tabHasCity = !empty($tabUser->city_id);
                     $tabHasExperience = !is_null($tabUser->years_of_experience);

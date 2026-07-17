@@ -43,6 +43,14 @@ class SupplyRequestController extends Controller
     public function show($id)
     {
         $supplyRequest = \App\Models\SupplyRequest::with(['user', 'city', 'responses.user'])->findOrFail($id);
+
+        if (auth()->check()) {
+            \App\Models\Notification::where('user_id', auth()->id())
+                ->where('link', 'like', '%/supply-requests/' . $id)
+                ->where('is_read', false)
+                ->update(['is_read' => true, 'read_at' => now()]);
+        }
+
         return view('website.supply_requests.show', compact('supplyRequest'));
     }
 

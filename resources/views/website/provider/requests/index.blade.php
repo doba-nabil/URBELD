@@ -143,10 +143,12 @@
                     </div>
                 @endif
             @empty
+                @if(!in_array(auth()->user()->provider_type, ['supplier']) && !in_array(auth()->user()->membership_type, ['supplier']))
                 <div class="text-center py-5">
                     <i class="bi bi-inbox text-muted" style="font-size: 4rem;"></i>
                     <h5 class="mt-3 text-muted">لا توجد طلبات واردة جديدة.</h5>
                 </div>
+                @endif
             @endforelse
 
             {{-- طلبات التوريد المفتوحة - للموردين فقط --}}
@@ -238,6 +240,11 @@
                 </div>
                 @endif
             @endforeach
+            @elseif(in_array(auth()->user()->provider_type, ['supplier']) || in_array(auth()->user()->membership_type, ['supplier']))
+                <div class="text-center py-5">
+                    <i class="bi bi-box-seam text-muted" style="font-size: 4rem;"></i>
+                    <h5 class="mt-3 text-muted">لا توجد طلبات توريد واردة جديدة.</h5>
+                </div>
             @endif
 
             <!-- Tabs for Active and Completed -->

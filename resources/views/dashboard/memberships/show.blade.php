@@ -210,7 +210,7 @@
                     </div>
                 </div>
 
-                @if(in_array($provider->provider_type, ['company', 'supplier']))
+                @if(in_array($provider->provider_type, ['supplier']) || in_array($provider->membership_type, ['supplier']))
                 {{-- Delivery Cities --}}
                 <div class="card mb-4">
                     <div class="card-header pb-0">

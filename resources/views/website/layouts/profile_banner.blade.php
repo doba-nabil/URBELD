@@ -6,7 +6,9 @@
         if ($isProvider) {
             $hasId =
                 $authUser->getFirstMediaUrl('id_front') ||
-                $authUser->getFirstMediaUrl('commercial_registration');
+                $authUser->getFirstMediaUrl('commercial_registration') ||
+                !empty($authUser->id_number) ||
+                !empty($authUser->company_registration_number);
             $hasCategory = $authUser->categories()->exists();
             $hasCity = !empty($authUser->city_id);
             $hasExperience = !is_null($authUser->years_of_experience);
