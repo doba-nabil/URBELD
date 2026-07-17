@@ -58,11 +58,6 @@
         </select>
       </div>
 
-      <!-- Keyword Filter -->
-      <div class="filter-group">
-        <label>{{ __('tenders.keywords') }}</label>
-        <input type="text" name="keyword" class="form-control" placeholder="{{ __('tenders.search_placeholder') }}" value="{{ request('keyword') }}">
-      </div>
 
       <!-- Sorting -->
       <div class="filter-group">

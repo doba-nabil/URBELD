@@ -93,16 +93,16 @@
                         <!-- Action Buttons -->
                         @if($tender->status === \App\Models\Tender::STATUS_PENDING_REVIEW)
                         <div class="mt-4 d-grid gap-2">
-                            <form action="{{ route('tenders.approve', $tender->id) }}" method="POST">
+                            <form action="{{ route('tenders.approve', $tender->id) }}" method="POST" id="approveForm">
                                 @csrf
-                                <button type="submit" class="btn btn-success w-100" onclick="return confirm('{{ __('admin.confirm_approve_tender') }}')">
+                                <button type="button" class="btn btn-success w-100" onclick="confirmAction('approveForm', '{{ __('admin.confirm_approve_tender') }}', 'success')">
                                     <i class="ti tabler-check"></i> {{ __('admin.approve_publish_tender') }}
                                 </button>
                             </form>
                             
-                            <form action="{{ route('tenders.reject', $tender->id) }}" method="POST">
+                            <form action="{{ route('tenders.reject', $tender->id) }}" method="POST" id="rejectForm">
                                 @csrf
-                                <button type="submit" class="btn btn-danger w-100" onclick="return confirm('{{ __('admin.confirm_reject_tender') }}')">
+                                <button type="button" class="btn btn-danger w-100" onclick="confirmAction('rejectForm', '{{ __('admin.confirm_reject_tender') }}', 'error')">
                                     <i class="ti tabler-x"></i> {{ __('admin.reject_tender') }}
                                 </button>
                             </form>
@@ -147,4 +147,26 @@
         @endif
 
     </div>
+@endsection
+
+@section('dashboard-footer')
+@parent
+<script>
+function confirmAction(formId, message, icon) {
+    Swal.fire({
+        title: 'تأكيد العملية',
+        text: message,
+        icon: icon == 'error' ? 'warning' : 'question',
+        showCancelButton: true,
+        confirmButtonColor: icon == 'error' ? '#d33' : '#28a745',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'نعم، متأكد!',
+        cancelButtonText: 'إلغاء'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById(formId).submit();
+        }
+    });
+}
+</script>
 @endsection

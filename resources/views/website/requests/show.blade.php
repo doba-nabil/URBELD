@@ -20,26 +20,27 @@
     <div class="container py-4">
         <!-- Status Timeline (Horizontal) -->
         <div class="row mb-4">
-            <div class="col-12">
-                <div class="card shadow-sm border-0">
+            <div class="{{ (Auth::id() == $serviceRequest->user_id && $serviceRequest->status == 'pending') ? 'col-lg-8' : 'col-12' }}">
+                <div class="card border-0 shadow-sm root-radius">
                     <div class="card-body p-4">
                         <h5 class="card-title mb-4 pb-2 border-bottom">تتبع الطلب</h5>
-                        <div class="d-flex justify-content-between align-items-center flex-wrap position-relative">
-                            <!-- Line connecting steps -->
-                            <div class="position-absolute w-100" style="height: 2px; background: #e9ecef; top: 24px; left: 0; z-index: 1;"></div>
+                        <div class="status-tracker mb-4">
+                            <ul class="list-unstyled d-flex justify-content-between align-items-center mb-0 text-center overflow-auto pb-2">
                             @php
                                 $statuses = [
-                                    'pending' => 'تم تقديم الطلب',
-                                    'provider_accepted' => 'قبول العرض',
-                                    'seeker_confirmed_provider' => 'تأكيد المقدم',
+                                    'under_review' => 'قيد المراجعة',
+                                    'pending' => 'طلب جديد',
+                                    'provider_accepted' => 'تم قبول العرض',
+                                    'seeker_confirmed_provider' => 'تم تأكيد مقدم الخدمة',
                                     'inspection_scheduled' => 'موعد المعاينة',
-                                    'inspection_done' => 'إتمام المعاينة',
-                                    'completed' => 'مكتمل',
+                                    'inspection_done' => 'تمت المعاينة',
+                                    'completed' => 'اكتمل العمل / التقييم',
                                 ];
                                 $activeStatus = $serviceRequest->status;
+                                if ($activeStatus == 'work_completed') $activeStatus = 'completed';
                                 $foundActive = false;
+                                $step = 1;
                             @endphp
-
                             @foreach ($statuses as $key => $label)
                                 @php
                                     $isCompleted = !$foundActive;
@@ -49,23 +50,39 @@
                                     } else {
                                         $isCurrent = false;
                                     }
+                                    $isPast = $isCompleted && !$isCurrent;
+                                    $bgColor = ($isPast || $isCurrent) ? 'bg-primary text-white' : 'bg-light text-muted border';
+                                    $textColor = ($isPast || $isCurrent) ? 'fw-bold text-primary' : 'text-muted';
                                 @endphp
-                                <div class="text-center position-relative" style="z-index: 2; width: 16%;">
-                                    <div class="d-inline-flex justify-content-center align-items-center mb-2 rounded-circle {{ $isCompleted || $isCurrent ? 'bg-primary' : 'bg-light' }}" style="width: 50px; height: 50px; border: 4px solid #fff;">
-                                        @if ($isCompleted && !$isCurrent)
-                                            <i class="bi bi-check text-white fs-3"></i>
-                                        @elseif($isCurrent)
-                                            <i class="bi bi-play-fill text-white fs-3"></i>
-                                        @else
-                                            <i class="bi bi-circle text-muted fs-5"></i>
-                                        @endif
-                                    </div>
-                                    <div class="{{ $isCurrent ? 'text-primary fw-bold' : 'text-muted' }} small" style="line-height: 1.2;">{{ $label }}</div>
-                                </div>
+                                    <li class="flex-fill px-2">
+                                        <div class="rounded-circle mx-auto mb-2 d-flex align-items-center justify-content-center {{ $bgColor }}" style="width: 35px; height: 35px;">
+                                            @if($isPast)
+                                                <i class="bi bi-check"></i>
+                                            @else
+                                                {{ $step }}
+                                            @endif
+                                        </div>
+                                        <small class="d-block {{ $textColor }}" style="white-space: nowrap;">{{ $label }}</small>
+                                    </li>
+                                @php $step++; @endphp
                             @endforeach
+                            </ul>
                         </div>
                     </div>
                 </div>
+            </div>
+
+            @if(Auth::id() == $serviceRequest->user_id && $serviceRequest->status == 'pending')
+            <div class="col-lg-4">
+                <div class="card shadow-sm border-0 root-radius bg-primary text-white mb-4">
+                    <div class="card-body p-4 text-center">
+                        <i class="bi bi-hourglass-top display-4 d-block mb-3"></i>
+                        <h5 class="fw-bold">بانتظار العروض</h5>
+                        <p class="small mb-0">سيتم تنبيهك فور وصول عروض جديدة من مقدمي الخدمات المعتمدين.</p>
+                    </div>
+                </div>
+            </div>
+            @endif
 
                 @if ($serviceRequest->status == 'time_expired')
                     <div class="alert alert-danger mt-3">انتهى الوقت المسموح للرد على هذا الطلب.</div>
@@ -259,17 +276,7 @@
                         </div>
                     </div>
                     <div class="card-body p-4">
-                        <div class="row mb-3">
-                            <div class="col-md-6 mb-2">
-                                <strong>نوع العقار:</strong> {{ $serviceRequest->property_type }}
-                            </div>
-                            <div class="col-md-6 mb-2">
-                                <strong>المساحة:</strong> {{ $serviceRequest->area }} م²
-                            </div>
-                            <div class="col-12 mb-2">
-                                <strong>العنوان التفصيلي:</strong> {{ $serviceRequest->location ?? 'غير محدد' }}
-                            </div>
-                        </div>
+
 
                         @if ($serviceRequest->latitude && $serviceRequest->longitude)
                             <div class="mb-4">

@@ -177,6 +177,15 @@ class TenderController extends Controller
             'accepted_at' => now(),
         ]);
 
+        \App\Services\NotificationService::createNotification(
+            $application->user_id,
+            'tender_awarded',
+            'تم قبول عرضك!',
+            "لقد تم قبول عرضك للمناقصة: {$tender->title}، يرجى البدء في التنفيذ.",
+            route('website.tenders.show', $tender->id),
+            true
+        );
+
         return back()->with('success', __('website.offer_accepted_successfully') ?? 'تم قبول العرض بنجاح وتحويل المناقصة إلى قيد التنفيذ');
     }
 
@@ -200,6 +209,17 @@ class TenderController extends Controller
             'status' => Tender::STATUS_COMPLETED,
             'completed_at' => now(),
         ]);
+
+        if ($tender->awarded_provider_id) {
+            \App\Services\NotificationService::createNotification(
+                $tender->awarded_provider_id,
+                'tender_completed',
+                'اكتملت المناقصة',
+                "قام صاحب المناقصة: {$tender->title} بإنهاء العمل وتأكيد الإستلام.",
+                route('website.tenders.show', $tender->id),
+                true
+            );
+        }
 
         return back()->with('success', __('website.work_completed_successfully') ?? 'تم تأكيد الانتهاء بنجاح. يرجى تقييم المورد.');
     }

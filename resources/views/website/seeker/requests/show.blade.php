@@ -5,6 +5,183 @@
 @section('profile-content')
     <div class="order-requests-section">
         <div class="container">
+            
+            {{-- Workflow Actions Container --}}
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm root-radius">
+                        <div class="card-body p-4">
+                            {{-- Status Tracker --}}
+                            <div class="status-tracker mb-4">
+                                <ul class="list-unstyled d-flex justify-content-between align-items-center mb-0 text-center overflow-auto pb-2">
+                                    @php
+                                        $statuses = [
+                                            'under_review' => __('website.under_review'),
+                                            'pending' => __('website.status_new'),
+                                            'provider_accepted' => __('website.status_offer_accepted'),
+                                            'seeker_confirmed_provider' => __('website.status_seeker_confirmed'),
+                                            'inspection_scheduled' => __('website.status_inspection_scheduled'),
+                                            'inspection_done' => __('website.status_inspection_done'),
+                                            'work_completed' => __('website.status_work_completed')
+                                        ];
+                                        $currentIndex = array_search($serviceRequest->status, array_keys($statuses));
+                                        if ($currentIndex === false) $currentIndex = -1;
+                                    @endphp
+                                    @foreach($statuses as $key => $label)
+                                        <li class="flex-fill px-2">
+                                            <div class="rounded-circle mx-auto mb-2 d-flex align-items-center justify-content-center {{ array_search($key, array_keys($statuses)) <= $currentIndex ? 'bg-primary text-white' : 'bg-light text-muted border' }}" style="width: 35px; height: 35px;">
+                                                @if(array_search($key, array_keys($statuses)) < $currentIndex)
+                                                    <i class="bi bi-check-lg"></i>
+                                                @else
+                                                    {{ $loop->iteration }}
+                                                @endif
+                                            </div>
+                                            <small class="d-block {{ array_search($key, array_keys($statuses)) <= $currentIndex ? 'fw-bold text-primary' : 'text-muted' }}" style="white-space: nowrap;">{{ $label }}</small>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+
+                            <div class="actions-content text-center py-3 bg-light rounded-4">
+                                {{-- SEEKER ACTIONS --}}
+                                @if (auth()->id() == $serviceRequest->user_id)
+                                    @if ($serviceRequest->status === 'pending')
+                                        <h5 class="fw-bold mb-0">{{ __('website.review_offers_below') }}</h5>
+                                    @elseif ($serviceRequest->status === 'provider_accepted')
+                                        <h5 class="fw-bold mb-3">{{ __('website.provider_accepted_msg') }}</h5>
+                                        <form action="{{ route('requests.confirm-seeker', $serviceRequest->id) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="btn btn-primary px-5 py-2">
+                                                <i class="bi bi-person-check me-1"></i> {{ __('website.confirm_provider_btn') }}
+                                            </button>
+                                        </form>
+                                    @elseif ($serviceRequest->status === 'seeker_confirmed_provider')
+                                        <div class="text-primary">
+                                            <i class="bi bi-calendar2-range display-4 d-block mb-2"></i>
+                                            <h5>{{ __('website.waiting_provider_schedule') }}</h5>
+                                        </div>
+                                    @elseif ($serviceRequest->status === 'inspection_scheduled')
+                                        <div class="text-warning">
+                                            <i class="bi bi-calendar-check display-4 d-block mb-2"></i>
+                                            <h5>{{ __('website.inspection_done_msg') }}</h5>
+                                            <p class="fs-5 fw-bold mb-0">{{ \Carbon\Carbon::parse($serviceRequest->inspection_date)->format('Y-m-d h:i A') }}</p>
+                                        </div>
+                                    @elseif ($serviceRequest->status === 'inspection_done')
+                                        <h5 class="fw-bold mb-3">{{ __('website.inspection_complete_question') }}</h5>
+                                        <form action="{{ route('requests.agree', $serviceRequest->id) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="btn btn-success px-5 py-2">
+                                                <i class="bi bi-play-circle me-1"></i> {{ __('website.confirm_start_work_btn') }}
+                                            </button>
+                                        </form>
+                                    @elseif ($serviceRequest->status === 'work_completed')
+                                        <div class="text-success">
+                                            <i class="bi bi-check-all display-4 d-block mb-2"></i>
+                                            <h5>{{ __('website.work_completed_success') }}</h5>
+                                        </div>
+                                    @endif
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8">
+                    {{-- Offers Section (Only for seeker and only in pending) --}}
+                    @if (auth()->id() == $serviceRequest->user_id && $serviceRequest->status === 'pending')
+                        <h4 class="fw-bold mb-4 mt-2 px-2"><i class="bi bi-briefcase text-primary me-2"></i>{{ __('website.submitted_offers_count', ['count' => $serviceRequest->responses->where('status', 'accepted')->count()]) }}</h4>
+                        @forelse($serviceRequest->responses->where('status', 'accepted') as $offer)
+                            <div class="card shadow-sm border-0 root-radius mb-4 hover-shadow transition">
+                                <div class="card-body p-4">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <img src="{{ $offer->user->getFirstMediaUrl('avatar') ?: asset('website/assets/img/logo.png') }}" class="rounded-circle border" style="width: 50px; height: 50px; object-fit: cover;">
+                                            <div>
+                                                <h6 class="fw-bold mb-0">{{ $offer->user->name }}</h6>
+                                                <small class="text-muted">{{ $offer->user->isCompany() ? __('website.company_office') : __('website.freelance_engineer') }}</small>
+                                            </div>
+                                        </div>
+                                        <div class="text-end">
+                                            <span class="fw-bold text-primary fs-5">{{ $offer->proposed_price }} {{ __('website.rs') }}</span>
+                                            <small class="text-muted d-block small">{{ __('website.expected_timeline') }}: {{ $offer->proposed_timeline }}</small>
+                                        </div>
+                                    </div>
+                                    <p class="text-muted small mb-3">{{ $offer->message }}</p>
+                                    <div class="text-end">
+                                        <form action="{{ route('requests.accept-provider', [$serviceRequest->id, $offer->user_id]) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="btn btn-outline-primary btn-sm rounded-pill px-4">{{ __('website.accepted_offer_btn') }}</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="alert alert-light border text-center py-4 rounded-4 mb-4">
+                                <p class="text-muted mb-0">{{ __('website.no_offers_yet') }}</p>
+                            </div>
+                        @endforelse
+                    @endif
+                </div>
+
+                <div class="col-lg-4">
+                    {{-- Provider Info Sidebar --}}
+                    @if ($serviceRequest->awardedProvider)
+                        <div class="card shadow-sm border-0 root-radius mb-4">
+                            <div class="card-body p-4 text-center">
+                                <h6 class="fw-bold border-bottom pb-2 mb-3">{{ __('website.selected_provider') }}</h6>
+                                <img src="{{ $serviceRequest->awardedProvider->getFirstMediaUrl('avatar') ?: asset('website/assets/img/logo.png') }}" 
+                                     class="rounded-circle border mb-2" style="width: 80px; height: 80px; object-fit: cover;">
+                                <h5 class="fw-bold mb-1">{{ $serviceRequest->awardedProvider->name }}</h5>
+                                <div class="text-warning small mb-3">
+                                    @php $avg = $serviceRequest->awardedProvider->average_rating; @endphp
+                                    @for($i=1; $i<=5; $i++)
+                                        <i class="bi bi-star{{ $i <= $avg ? '-fill' : '' }}"></i>
+                                    @endfor
+                                    ({{ number_format($avg, 1) }})
+                                </div>
+                                @if ($chat)
+                                    <div class="d-grid">
+                                        <a href="{{ route('dashboard.chat.show', ['chat' => $chat->id]) }}" class="btn btn-primary rounded-pill">
+                                            <i class="bi bi-chat-dots me-1"></i> {{ __('website.instant_chat') }}
+                                        </a>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    @else
+                        @if (auth()->id() == $serviceRequest->user_id)
+                            <div class="card shadow-sm border-0 root-radius bg-primary text-white mb-4">
+                                <div class="card-body p-4 text-center">
+                                    <i class="bi bi-hourglass-top display-4 d-block mb-3"></i>
+                                    <h5 class="fw-bold">{{ __('website.waiting_offers') }}</h5>
+                                    <p class="small mb-0">{{ __('website.waiting_offers_desc') }}</p>
+                                </div>
+                            </div>
+                        @elseif($serviceRequest->awarded_provider_id == auth()->id())
+                             <div class="card shadow-sm border-0 root-radius bg-success text-white mb-4">
+                                <div class="card-body p-4 text-center">
+                                    <i class="bi bi-trophy display-4 d-block mb-3"></i>
+                                    <h5 class="fw-bold">{{ __('website.provider_chosen_congrats') }}</h5>
+                                    <p class="small mb-0">{{ __('website.provider_chosen_desc') }}</p>
+                                </div>
+                            </div>
+                        @endif
+                    @endif
+                </div>
+            </div>
+
+            @if ($serviceRequest->inspection_date)
+                <div class="alert alert-warning border-0 shadow-sm mb-4 d-flex align-items-center">
+                    <div class="fs-1 me-3 text-warning"><i class="bi bi-calendar-check"></i></div>
+                    <div>
+                        <h6 class="fw-bold mb-1">{{ __('website.scheduled_inspection_lbl') }}</h6>
+                        <span class="fs-5">{{ \Carbon\Carbon::parse($serviceRequest->inspection_date)->format('Y-m-d h:i A') }}</span>
+                    </div>
+                </div>
+            @endif
+
             <div class="card shadow-sm border-0 root-radius mb-4">
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -36,18 +213,7 @@
                                 </span>
                             </div>
                         </div>
-                         <div class="col-md-6 col-lg-3">
-                            <div class="p-3 border rounded bg-light h-100">
-                                <small class="text-muted d-block mb-1">{{ __('website.city_lbl') }}</small>
-                                <span class="fw-bold">{{ $serviceRequest->city->name ?? __('website.none') }}</span>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-lg-3">
-                            <div class="p-3 border rounded bg-light h-100">
-                                <small class="text-muted d-block mb-1">{{ __('website.neighborhood_lbl') }}</small>
-                                <span class="fw-bold">{{ $serviceRequest->neighborhood ?? __('website.none') }}</span>
-                            </div>
-                        </div>
+
                         <div class="col-md-6 col-lg-3">
                             <div class="p-3 border rounded bg-light h-100">
                                 <small class="text-muted d-block mb-1">{{ __('website.detailed_address_lbl') }}</small>
@@ -142,15 +308,7 @@
                         </div>
                     @endif
 
-                    @if ($serviceRequest->inspection_date)
-                        <div class="alert alert-warning border-0 shadow-sm mt-4 d-flex align-items-center">
-                            <div class="fs-1 me-3 text-warning"><i class="bi bi-calendar-check"></i></div>
-                            <div>
-                                <h6 class="fw-bold mb-1">{{ __('website.scheduled_inspection_lbl') }}</h6>
-                                <span class="fs-5">{{ \Carbon\Carbon::parse($serviceRequest->inspection_date)->format('Y-m-d h:i A') }}</span>
-                            </div>
-                        </div>
-                    @endif
+
 
                     @if ($serviceRequest->status === 'work_completed')
                         @php
@@ -262,179 +420,7 @@
                 </div>
             </div>
 
-            {{-- Workflow Actions Container --}}
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="card border-0 shadow-sm root-radius">
-                        <div class="card-body p-4">
-                            {{-- Status Tracker --}}
-                            <div class="status-tracker mb-4">
-                                <ul class="list-unstyled d-flex justify-content-between align-items-center mb-0 text-center overflow-auto pb-2">
-                                    @php
-                                        $statuses = [
-                                            'under_review' => __('website.under_review'),
-                                            'pending' => __('website.status_new'),
-                                            'provider_accepted' => __('website.status_offer_accepted'),
-                                            'seeker_confirmed_provider' => __('website.status_seeker_confirmed'),
-                                            'inspection_scheduled' => __('website.status_inspection_scheduled'),
-                                            'inspection_done' => __('website.status_inspection_done'),
-                                            'work_completed' => __('website.status_work_completed')
-                                        ];
-                                        $currentIndex = array_search($serviceRequest->status, array_keys($statuses));
-                                        if ($currentIndex === false) $currentIndex = -1;
-                                    @endphp
-                                    @foreach($statuses as $key => $label)
-                                        <li class="flex-fill px-2">
-                                            <div class="rounded-circle mx-auto mb-2 d-flex align-items-center justify-content-center {{ array_search($key, array_keys($statuses)) <= $currentIndex ? 'bg-primary text-white' : 'bg-light text-muted border' }}" style="width: 35px; height: 35px;">
-                                                @if(array_search($key, array_keys($statuses)) < $currentIndex)
-                                                    <i class="bi bi-check-lg"></i>
-                                                @else
-                                                    {{ $loop->iteration }}
-                                                @endif
-                                            </div>
-                                            <small class="d-block {{ array_search($key, array_keys($statuses)) <= $currentIndex ? 'fw-bold text-primary' : 'text-muted' }}" style="white-space: nowrap;">{{ $label }}</small>
-                                        </li>
-                                    @endforeach
-                                </ul>
-                            </div>
 
-                            <div class="actions-content text-center py-3 bg-light rounded-4">
-                               
-
-                                {{-- SEEKER ACTIONS --}}
-                                @if (auth()->id() == $serviceRequest->user_id)
-                                    @if ($serviceRequest->status === 'pending')
-                                        <h5 class="fw-bold mb-0">{{ __('website.review_offers_below') }}</h5>
-                                    @elseif ($serviceRequest->status === 'provider_accepted')
-                                        <h5 class="fw-bold mb-3">{{ __('website.provider_accepted_msg') }}</h5>
-                                        <form action="{{ route('requests.confirm-seeker', $serviceRequest->id) }}" method="POST">
-                                            @csrf
-                                            <button type="submit" class="btn btn-primary px-5 py-2">
-                                                <i class="bi bi-person-check me-1"></i> {{ __('website.confirm_provider_btn') }}
-                                            </button>
-                                        </form>
-                                    @elseif ($serviceRequest->status === 'seeker_confirmed_provider')
-                                        <div class="text-primary">
-                                            <i class="bi bi-calendar2-range display-4 d-block mb-2"></i>
-                                            <h5>{{ __('website.waiting_provider_schedule') }}</h5>
-                                        </div>
-                                    @elseif ($serviceRequest->status === 'inspection_scheduled')
-                                        <div class="text-warning">
-                                            <i class="bi bi-calendar-check display-4 d-block mb-2"></i>
-                                            <h5>{{ __('website.inspection_done_msg') }}</h5>
-                                            <p class="fs-5 fw-bold mb-0">{{ \Carbon\Carbon::parse($serviceRequest->inspection_date)->format('Y-m-d h:i A') }}</p>
-                                        </div>
-                                    @elseif ($serviceRequest->status === 'inspection_done')
-                                        <h5 class="fw-bold mb-3">{{ __('website.inspection_complete_question') }}</h5>
-                                        <form action="{{ route('requests.agree', $serviceRequest->id) }}" method="POST">
-                                            @csrf
-                                            <button type="submit" class="btn btn-success px-5 py-2">
-                                                <i class="bi bi-play-circle me-1"></i> {{ __('website.confirm_start_work_btn') }}
-                                            </button>
-                                        </form>
-                                    @elseif ($serviceRequest->status === 'work_completed')
-                                        <div class="text-success">
-                                            <i class="bi bi-check-all display-4 d-block mb-2"></i>
-                                            <h5>{{ __('website.work_completed_success') }}</h5>
-                                        </div>
-                                    @endif
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {{-- This section was a duplicate and has been removed --}}
-
-                <div class="col-lg-4">
-                    {{-- Provider Info Sidebar --}}
-                    @if ($serviceRequest->awardedProvider)
-                        <div class="card shadow-sm border-0 root-radius mb-4">
-                            <div class="card-body p-4 text-center">
-                                <h6 class="fw-bold border-bottom pb-2 mb-3">{{ __('website.selected_provider') }}</h6>
-                                <img src="{{ $serviceRequest->awardedProvider->getFirstMediaUrl('avatar') ?: asset('website/assets/img/logo.png') }}" 
-                                     class="rounded-circle border mb-2" style="width: 80px; height: 80px; object-fit: cover;">
-                                <h5 class="fw-bold mb-1">{{ $serviceRequest->awardedProvider->name }}</h5>
-                                <div class="text-warning small mb-3">
-                                    @php $avg = $serviceRequest->awardedProvider->average_rating; @endphp
-                                    @for($i=1; $i<=5; $i++)
-                                        <i class="bi bi-star{{ $i <= $avg ? '-fill' : '' }}"></i>
-                                    @endfor
-                                    ({{ number_format($avg, 1) }})
-                                </div>
-                                @if ($chat)
-                                    <div class="d-grid">
-                                        <a href="{{ route('dashboard.chat.show', ['chat' => $chat->id]) }}" class="btn btn-primary rounded-pill">
-                                            <i class="bi bi-chat-dots me-1"></i> {{ __('website.instant_chat') }}
-                                        </a>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-                    @else
-                        @if (auth()->id() == $serviceRequest->user_id)
-                            <div class="card shadow-sm border-0 root-radius bg-primary text-white mb-4">
-                                <div class="card-body p-4 text-center">
-                                    <i class="bi bi-hourglass-top display-4 d-block mb-3"></i>
-                                    <h5 class="fw-bold">{{ __('website.waiting_offers') }}</h5>
-                                    <p class="small mb-0">{{ __('website.waiting_offers_desc') }}</p>
-                                </div>
-                            </div>
-                        @elseif($serviceRequest->awarded_provider_id == auth()->id())
-                             {{-- Awarded Provider sidebar info --}}
-                             <div class="card shadow-sm border-0 root-radius bg-success text-white mb-4">
-                                <div class="card-body p-4 text-center">
-                                    <i class="bi bi-trophy display-4 d-block mb-3"></i>
-                                    <h5 class="fw-bold">{{ __('website.provider_chosen_congrats') }}</h5>
-                                    <p class="small mb-0">{{ __('website.provider_chosen_desc') }}</p>
-                                </div>
-                            </div>
-                        @endif
-                    @endif
-                </div>
-            </div>
-
-            {{-- Offers Section (Only for seeker and only in pending) --}}
-            @if (auth()->id() == $serviceRequest->user_id && $serviceRequest->status === 'pending')
-                <div class="container">
-                    <div class="row">
-                    <div class="col-12">
-                        <h4 class="fw-bold mb-4 mt-2 px-2"><i class="bi bi-briefcase text-primary me-2"></i>{{ __('website.submitted_offers_count', ['count' => $serviceRequest->responses->where('status', 'accepted')->count()]) }}</h4>
-                        @forelse($serviceRequest->responses->where('status', 'accepted') as $offer)
-                            <div class="card shadow-sm border-0 root-radius mb-4 hover-shadow transition">
-                                <div class="card-body p-4">
-                                    <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <div class="d-flex align-items-center gap-3">
-                                            <img src="{{ $offer->user->getFirstMediaUrl('avatar') ?: asset('website/assets/img/logo.png') }}" class="rounded-circle border" style="width: 50px; height: 50px; object-fit: cover;">
-                                            <div>
-                                                <h6 class="fw-bold mb-0">{{ $offer->user->name }}</h6>
-                                                <small class="text-muted">{{ $offer->user->isCompany() ? __('website.company_office') : __('website.freelance_engineer') }}</small>
-                                            </div>
-                                        </div>
-                                        <div class="text-end">
-                                            <span class="fw-bold text-primary fs-5">{{ $offer->proposed_price }} {{ __('website.rs') }}</span>
-                                            <small class="text-muted d-block small">{{ __('website.expected_timeline') }}: {{ $offer->proposed_timeline }}</small>
-                                        </div>
-                                    </div>
-                                    <p class="text-muted small mb-3">{{ $offer->message }}</p>
-                                    <div class="text-end">
-                                        <form action="{{ route('requests.accept-provider', [$serviceRequest->id, $offer->user_id]) }}" method="POST">
-                                            @csrf
-                                            <button type="submit" class="btn btn-outline-primary btn-sm rounded-pill px-4">{{ __('website.accepted_offer_btn') }}</button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        @empty
-                            <div class="alert alert-light border text-center py-4 rounded-4">
-                                <p class="text-muted mb-0">{{ __('website.no_offers_yet') }}</p>
-                            </div>
-                        @endforelse
-                    </div>
-                </div>
-                </div>
-            @endif
         </div>
     </div>
 

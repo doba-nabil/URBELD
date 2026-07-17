@@ -39,6 +39,10 @@ class TenderService
             });
         }
 
+        if (auth()->check()) {
+            $query->where('user_id', '!=', auth()->id());
+        }
+
         if ($request->filled('category_id')) {
             $query->where('category_id', $request->category_id);
         }
@@ -73,6 +77,9 @@ class TenderService
     public function getStats(Request $request = null)
     {
         $applyFilters = function ($q) use ($request) {
+            if (auth()->check()) {
+                $q->where('user_id', '!=', auth()->id());
+            }
             if ($request) {
                 if ($request->filled('category_id')) {
                     $q->where('category_id', $request->category_id);
@@ -197,12 +204,14 @@ class TenderService
             
             // Notify tender owner
             if ($tender->user) {
-                $tender->user->notify(new \App\Notifications\GenericNotification(
-                    __('tenders.new_offer_title'),
-                    __('tenders.new_offer_desc', ['user' => $user->name, 'tender' => $tender->title]),
+                \App\Services\NotificationService::createNotification(
+                    $tender->user->id,
+                    'tender_application',
+                    __('tenders.new_offer_title') ?? 'عرض جديد على مناقصتك',
+                    __('tenders.new_offer_desc', ['user' => $user->name, 'tender' => $tender->title]) ?? "قام {$user->name} بتقديم عرض على مناقصتك: {$tender->title}",
                     route('website.tenders.show', $tender->id),
-                    ['tender_id' => $tender->id, 'application_id' => $application->id]
-                ));
+                    true
+                );
             }
 
             return $application;

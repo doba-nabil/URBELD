@@ -19,8 +19,8 @@
                 <div class="card border-0 shadow-sm rounded-4 mb-4">
                     <div class="card-body p-5">
                         <div class="d-flex justify-content-between align-items-center mb-4">
-                            <span class="badge bg-primary rounded-pill px-3 py-2 fs-6">
-                                {{ $supplyRequest->status == 'open' ? 'مفتوح' : ($supplyRequest->status == 'closed' ? 'مغلق' : 'مكتمل') }}
+                            <span class="badge {{ $supplyRequest->status == 'open' ? 'bg-primary' : ($supplyRequest->status == 'in_progress' ? 'bg-warning' : ($supplyRequest->status == 'completed' ? 'bg-success' : 'bg-secondary')) }} rounded-pill px-3 py-2 fs-6">
+                                {{ $supplyRequest->status == 'open' ? 'مفتوح' : ($supplyRequest->status == 'in_progress' ? 'قيد التنفيذ' : ($supplyRequest->status == 'completed' ? 'مكتمل' : 'مغلق')) }}
                             </span>
                             <span class="text-muted"><i class="bi bi-clock me-1"></i> {{ $supplyRequest->created_at->diffForHumans() }}</span>
                         </div>
@@ -176,7 +176,72 @@
 
             <!-- Sidebar / Apply Form -->
             <div class="col-lg-4">
-                @if(auth()->check() && auth()->id() != $supplyRequest->user_id && auth()->user()->isServiceProvider())
+                @if(auth()->check() && auth()->id() == $supplyRequest->user_id)
+                <div class="card border-0 shadow-sm rounded-4 sticky-top mb-4" style="top: 100px;">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-3"><i class="bi bi-info-circle text-primary me-2"></i> حالة الطلب</h5>
+                        
+                        @if($supplyRequest->status == 'open' || $supplyRequest->status == 'pending')
+                            <div class="alert alert-info text-center mb-0">
+                                <i class="bi bi-hourglass-split d-block fs-1 mb-2 text-info"></i>
+                                طلبك متاح حالياً للموردين لتقديم عروضهم.
+                                <br><small>عدد العروض المقدمة: {{ $supplyRequest->responses->count() }}</small>
+                            </div>
+                        @else
+                            @php
+                                $awardedSupplier = $supplyRequest->awardedProvider;
+                            @endphp
+                            @if($awardedSupplier)
+                                <h6 class="fw-bold text-muted mb-3 mt-2">المورد المنفذ:</h6>
+                                <div class="d-flex align-items-center mb-3 p-3 border rounded-3 bg-light">
+                                    <img src="{{ $awardedSupplier->getFirstMediaUrl('personal_photo') ?: asset('website/assets/img/logo.png') }}" class="rounded-circle me-3 border" width="60" height="60" style="object-fit:cover;" alt="المورد">
+                                    <div>
+                                        <a href="{{ route('member.public', $awardedSupplier->id) }}" class="fw-bold text-dark text-decoration-none d-block">{{ $awardedSupplier->name }}</a>
+                                        <small class="text-muted"><i class="bi bi-telephone me-1"></i> {{ $awardedSupplier->phone ?? 'غير متوفر' }}</small>
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if($supplyRequest->status == \App\Models\SupplyRequest::STATUS_IN_PROGRESS)
+                                <div class="alert alert-primary text-center mb-0 mt-3">
+                                    <i class="bi bi-gear-fill d-block fs-3 mb-2 text-primary"></i>
+                                    الطلب قيد التنفيذ حالياً من قبل المورد.
+                                </div>
+                            @elseif($supplyRequest->status == \App\Models\SupplyRequest::STATUS_COMPLETED || $supplyRequest->status == \App\Models\SupplyRequest::STATUS_CLOSED)
+                                <div class="alert alert-success text-center mb-3 mt-3">
+                                    <i class="bi bi-check2-circle d-block fs-3 mb-2 text-success"></i>
+                                    تم الانتهاء من هذا الطلب.
+                                </div>
+
+                                @php
+                                    $rating = \App\Models\Rating::where('supply_request_id', $supplyRequest->id)
+                                                ->where('rater_id', auth()->id())
+                                                ->first();
+                                @endphp
+
+                                @if($rating)
+                                    <div class="p-3 border rounded-3 mt-3 bg-white shadow-sm">
+                                        <h6 class="fw-bold mb-2 text-warning"><i class="bi bi-star-fill me-1"></i> تقييمك للمورد:</h6>
+                                        <div class="d-flex align-items-center mb-2">
+                                            @for($i = 1; $i <= 5; $i++)
+                                                <i class="bi bi-star-fill {{ $i <= $rating->rating ? 'text-warning' : 'text-muted' }}"></i>
+                                            @endfor
+                                            <span class="ms-2 fw-bold" style="direction: ltr;">{{ $rating->rating }} / 5</span>
+                                        </div>
+                                        @if($rating->comment)
+                                            <p class="text-muted small mb-0" style="font-style: italic;">"{{ $rating->comment }}"</p>
+                                        @endif
+                                    </div>
+                                @else
+                                    <button type="button" class="btn btn-warning w-100 mt-2 fw-bold" data-bs-toggle="modal" data-bs-target="#ratingModal">
+                                        <i class="bi bi-star"></i> {{ __('website.rate_provider') ?? 'تقييم المورد' }}
+                                    </button>
+                                @endif
+                            @endif
+                        @endif
+                    </div>
+                </div>
+                @elseif(auth()->check() && auth()->id() != $supplyRequest->user_id && auth()->user()->isServiceProvider())
                 <div class="card border-0 shadow-sm rounded-4 sticky-top" style="top: 100px;">
                     <div class="card-body p-4">
                             @php

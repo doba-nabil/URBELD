@@ -9,7 +9,15 @@
         <h1 class="fw-bold mb-3 wow fadeInUp" data-wow-delay="0.1s">{{ $tender->title }}</h1>
         
         <div class="d-flex justify-content-center gap-2 flex-wrap wow fadeInUp" data-wow-delay="0.2s">
-            @if($tender->isExpired())
+            @if($tender->status === \App\Models\Tender::STATUS_COMPLETED)
+                <span class="badge" style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); padding: 8px 15px; font-size: 13px; font-weight: 500; border-radius: 20px;">
+                    <i class="bi bi-check-circle-fill" style="font-size: 10px; color: #10b981;"></i> {{ __('website.completed_tender') ?? 'مناقصة مكتملة' }}
+                </span>
+            @elseif($tender->status === \App\Models\Tender::STATUS_IN_PROGRESS)
+                <span class="badge" style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); padding: 8px 15px; font-size: 13px; font-weight: 500; border-radius: 20px;">
+                    <i class="bi bi-gear-fill" style="font-size: 10px; color: #3b82f6;"></i> {{ __('website.in_progress_tender') ?? 'قيد التنفيذ' }}
+                </span>
+            @elseif($tender->status === \App\Models\Tender::STATUS_CLOSED || $tender->isExpired())
                 <span class="badge" style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); padding: 8px 15px; font-size: 13px; font-weight: 500; border-radius: 20px;">
                     <i class="bi bi-circle-fill" style="font-size: 10px; color: #ef4444;"></i> {{ __('tenders.status_closed') }}
                 </span>
@@ -273,7 +281,15 @@
     <div class="deadline-card">
       <div class="dl-title"><i class="bi bi-hourglass-split"></i> {{ __('tenders.time_remaining') }}</div>
       <div class="dl-timer" id="countdown-timer">
-        @if($tender->isExpired())
+        @if($tender->status === \App\Models\Tender::STATUS_COMPLETED)
+            <div style="text-align: center; width: 100%; color: #10b981; font-weight: bold; font-size: 1.1rem; padding: 10px 0;">
+                {{ __('website.work_completed_successfully') ?? 'تم الإنتهاء من العمل بنجاح' }}
+            </div>
+        @elseif($tender->status === \App\Models\Tender::STATUS_IN_PROGRESS)
+            <div style="text-align: center; width: 100%; color: #3b82f6; font-weight: bold; font-size: 1.1rem; padding: 10px 0;">
+                {{ __('website.work_in_progress') ?? 'العمل جاري حالياً' }}
+            </div>
+        @elseif($tender->status === \App\Models\Tender::STATUS_CLOSED || $tender->isExpired())
             <div style="text-align: center; width: 100%; color: #ef4444; font-weight: bold; font-size: 1.1rem; padding: 10px 0;">
                 {{ __('tenders.time_ended') }}
             </div>

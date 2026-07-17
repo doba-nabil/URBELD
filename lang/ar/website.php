@@ -297,6 +297,9 @@ return [
     'rating' => 'تقييم',
     'member_since' => 'عضو منذ',
     'offer_submitted_status' => 'تم تقديم العرض',
+    'in_progress_tender' => 'المناقصة قيد التنفيذ',
+    'work_in_progress' => 'العمل قيد التنفيذ',
+    'completed_tender' => 'المناقصة مكتملة',
 
     'active_requests' => 'الطلبات النشطة',
     'completed_requests' => 'الطلبات المكتملة',

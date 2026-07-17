@@ -166,6 +166,17 @@ class SupplyRequestController extends Controller
         $response->status = 'pending';
         $response->save();
 
+        if ($supplyRequest->user) {
+            \App\Services\NotificationService::createNotification(
+                $supplyRequest->user_id,
+                'supply_application',
+                'عرض جديد على طلب التوريد',
+                "قام " . auth()->user()->name . " بتقديم عرض على طلب التوريد الخاص بك: {$supplyRequest->title}",
+                route('website.supply-requests.show', $supplyRequest->id),
+                true
+            );
+        }
+
         return redirect()->route('website.supply-requests.show', $supplyRequest->id)->with('success', 'تم تقديم العرض بنجاح');
     }
 
@@ -184,6 +195,15 @@ class SupplyRequestController extends Controller
             'status' => \App\Models\SupplyRequest::STATUS_IN_PROGRESS,
             'accepted_at' => now(),
         ]);
+
+        \App\Services\NotificationService::createNotification(
+            $application->user_id,
+            'supply_awarded',
+            'تم قبول عرض التوريد!',
+            "لقد تم قبول عرضك لطلب التوريد: {$supplyRequest->title}، يرجى البدء في التنفيذ.",
+            route('website.supply-requests.show', $supplyRequest->id),
+            true
+        );
 
         return back()->with('success', __('website.offer_accepted_successfully') ?? 'تم قبول العرض بنجاح وتحويل الطلب إلى قيد التنفيذ');
     }
@@ -204,6 +224,17 @@ class SupplyRequestController extends Controller
             'status' => \App\Models\SupplyRequest::STATUS_COMPLETED,
             'completed_at' => now(),
         ]);
+
+        if ($supplyRequest->awarded_provider_id) {
+            \App\Services\NotificationService::createNotification(
+                $supplyRequest->awarded_provider_id,
+                'supply_completed',
+                'اكتمل طلب التوريد',
+                "قام صاحب الطلب: {$supplyRequest->title} بإنهاء العمل وتأكيد الإستلام.",
+                route('website.supply-requests.show', $supplyRequest->id),
+                true
+            );
+        }
 
         return back()->with('success', __('website.work_completed_successfully') ?? 'تم تأكيد الانتهاء بنجاح. يرجى تقييم المورد.');
     }
