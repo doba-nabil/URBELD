@@ -36,7 +36,7 @@
         <div class="login-left-section">
             <div class="login-background-overlay">
                 <img src="{{ asset('website/assets/img/auth-img.png') }}" alt="Background" class="login-background-image">
-                <div class="login-text-overlay">ERSAA</div>
+                <div class="login-text-overlay">{{ \App\Models\Setting::getValue('site_name', app()->getLocale(), config('app.name')) }}</div>
             </div>
         </div>
 

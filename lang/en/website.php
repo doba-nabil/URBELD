@@ -626,5 +626,17 @@ return [
     'register_number' => 'Registration Number',
     'view_file' => 'View File',
     'upload_commercial_register' => 'Upload Commercial Registration',
+    'request_under_review' => 'Request Under Review',
+    'request_under_review_desc' => 'Your request is still under review by the platform administration to ensure it meets the conditions. It will be published and start receiving offers upon approval.',
+    'inspection_done' => 'Inspection Completed',
+    'work_completed' => 'Work Completed / Evaluation',
+    'no_incoming_tenders' => 'No incoming tenders in your category yet',
+    'no_incoming_tenders_desc' => 'Tenders related to your professional category will appear here once published.',
+    'no_posted_tenders' => 'You have not posted any tenders yet',
+    'no_posted_tenders_desc' => 'Post a new tender from the tenders page to receive offers from service providers.',
+    'no_applied_tenders' => 'You have not submitted any offers yet',
+    'no_applied_tenders_desc' => 'Browse available tenders and submit your offers to win projects.',
+    'no_saved_tenders' => 'No saved tenders',
+    'no_saved_tenders_desc' => 'Save tenders that interest you so you can review them and apply later.',
 ];
 

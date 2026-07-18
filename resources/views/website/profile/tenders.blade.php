@@ -56,7 +56,13 @@
                             </div>
                         </div>
                     @empty
-                        <div class="col-12"><div class="alert alert-info text-center rounded-3 border-0">لا توجد مناقصات واردة في تصنيفك حالياً</div></div>
+                        <div class="col-12">
+                            <div class="text-center py-5 rounded-4 my-2" style="background-color: #f8f9fa; border: 1px dashed #dee2e6;">
+                                <i class="bi bi-receipt text-muted mb-3 d-block" style="font-size: 3rem; opacity: 0.5;"></i>
+                                <h5 class="fw-bold text-dark mb-1">{{ __('website.no_incoming_tenders') }}</h5>
+                                <p class="text-muted small mb-0">{{ __('website.no_incoming_tenders_desc') }}</p>
+                            </div>
+                        </div>
                     @endforelse
                 </div>
                 <div class="d-flex justify-content-center mt-3">
@@ -88,7 +94,13 @@
                             </div>
                         </div>
                     @empty
-                        <div class="col-12"><div class="alert alert-light text-center rounded-3 border-0 text-muted">لم تقم بطرح أي مناقصات بعد</div></div>
+                        <div class="col-12">
+                            <div class="text-center py-5 rounded-4 my-2" style="background-color: #f8f9fa; border: 1px dashed #dee2e6;">
+                                <i class="bi bi-megaphone text-muted mb-3 d-block" style="font-size: 3rem; opacity: 0.5;"></i>
+                                <h5 class="fw-bold text-dark mb-1">{{ __('website.no_posted_tenders') }}</h5>
+                                <p class="text-muted small mb-0">{{ __('website.no_posted_tenders_desc') }}</p>
+                            </div>
+                        </div>
                     @endforelse
                 </div>
 
@@ -114,7 +126,13 @@
                         </div>
                         @endif
                     @empty
-                        <div class="col-12"><div class="alert alert-light text-center rounded-3 border-0 text-muted">لم تقم بتقديم أي عروض حتى الآن</div></div>
+                        <div class="col-12">
+                            <div class="text-center py-5 rounded-4 my-2" style="background-color: #f8f9fa; border: 1px dashed #dee2e6;">
+                                <i class="bi bi-send text-muted mb-3 d-block" style="font-size: 3rem; opacity: 0.5;"></i>
+                                <h5 class="fw-bold text-dark mb-1">{{ __('website.no_applied_tenders') }}</h5>
+                                <p class="text-muted small mb-0">{{ __('website.no_applied_tenders_desc') }}</p>
+                            </div>
+                        </div>
                     @endforelse
                 </div>
             </div>
@@ -139,7 +157,13 @@
                             </div>
                         </div>
                     @empty
-                        <div class="col-12"><div class="alert alert-info text-center rounded-3 border-0">لا توجد مناقصات محفوظة</div></div>
+                        <div class="col-12">
+                            <div class="text-center py-5 rounded-4 my-2" style="background-color: #f8f9fa; border: 1px dashed #dee2e6;">
+                                <i class="bi bi-bookmark text-muted mb-3 d-block" style="font-size: 3rem; opacity: 0.5;"></i>
+                                <h5 class="fw-bold text-dark mb-1">{{ __('website.no_saved_tenders') }}</h5>
+                                <p class="text-muted small mb-0">{{ __('website.no_saved_tenders_desc') }}</p>
+                            </div>
+                        </div>
                     @endforelse
                 </div>
             </div>

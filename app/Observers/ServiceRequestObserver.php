@@ -65,9 +65,10 @@ class ServiceRequestObserver
 
         $query = User::serviceProviders()->where('active', 'active');
 
-        $query->where(function ($q) use ($serviceRequest, $matchCategoryIds) {
-            // Option A: Matches category and provider_type
-            $q->where(function ($sub) use ($serviceRequest, $matchCategoryIds) {
+        if ($serviceRequest->provider_id) {
+            $query->where('id', $serviceRequest->provider_id);
+        } else {
+            $query->where(function ($sub) use ($serviceRequest, $matchCategoryIds) {
                 $sub->whereHas('categories', function ($catQ) use ($matchCategoryIds) {
                     $catQ->whereIn('categories.id', $matchCategoryIds);
                 });
@@ -78,12 +79,7 @@ class ServiceRequestObserver
                     $sub->where('provider_type', 'company');
                 }
             });
-
-            // Option B: Specifically targeted provider
-            if ($serviceRequest->provider_id) {
-                $q->orWhere('id', $serviceRequest->provider_id);
-            }
-        });
+        }
 
         $providers = $query->get();
         \Log::info("Found " . $providers->count() . " matching providers for Request #{$serviceRequest->id}");

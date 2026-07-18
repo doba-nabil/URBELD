@@ -134,8 +134,10 @@
                             });
                         }
 
-                        $(document).on('click', '.mark-as-read', function() {
+                        $(document).on('click', '.mark-as-read', function(e) {
+                            e.preventDefault();
                             const id = $(this).data('id');
+                            const href = $(this).attr('href');
                             const $item = $(this).closest('.notification-item');
                             
                             // Immediately decrement badge count
@@ -155,7 +157,12 @@
                                     $('#notificationList').html('<div class="text-center p-4 text-muted small">{{ __('website.nav_no_notifications') }}</div>');
                                 }
                             });
-                            $.post(`/notifications/${id}/mark-as-read`, { _token: csrfToken });
+                            
+                            $.post(`/notifications/${id}/mark-as-read`, { _token: csrfToken }).always(function() {
+                                if (href && href !== '#' && href !== 'javascript:void(0)') {
+                                    window.location.href = href;
+                                }
+                            });
                         });
 
                         $('#markAllReadBtn').on('click', function(e) {

@@ -61,6 +61,10 @@ class ServiceRequest extends Model implements HasMedia, Auditable
     {
         return $this->belongsTo(User::class);
     }
+    public function provider()
+    {
+        return $this->belongsTo(User::class, 'provider_id');
+    }
     public function awardedProvider()
     {
         return $this->belongsTo(User::class, 'awarded_provider_id');

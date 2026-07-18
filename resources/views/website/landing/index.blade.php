@@ -182,7 +182,7 @@
                 @endif
             </div>
             <div class="footer-copyright border-top pt-4">
-                <span class="opacity-75">{!! __('website.footer_copyright', ['site_name' => 'ERSAA']) !!}</span>
+                <span class="opacity-75">{!! __('website.footer_copyright', ['site_name' => $siteName ?? \App\Models\Setting::getValue('site_name', app()->getLocale(), config('app.name'))]) !!}</span>
             </div>
         </div>
     </footer>

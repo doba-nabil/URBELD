@@ -19,9 +19,16 @@
                 <div class="card border-0 shadow-sm rounded-4 mb-4">
                     <div class="card-body p-5">
                         <div class="d-flex justify-content-between align-items-center mb-4">
-                            <span class="badge {{ $supplyRequest->status == 'open' ? 'bg-primary' : ($supplyRequest->status == 'in_progress' ? 'bg-warning' : ($supplyRequest->status == 'completed' ? 'bg-success' : 'bg-secondary')) }} rounded-pill px-3 py-2 fs-6">
-                                {{ $supplyRequest->status == 'open' ? 'مفتوح' : ($supplyRequest->status == 'in_progress' ? 'قيد التنفيذ' : ($supplyRequest->status == 'completed' ? 'مكتمل' : 'مغلق')) }}
-                            </span>
+                            <div>
+                                <span class="badge {{ $supplyRequest->status == 'open' ? 'bg-primary' : ($supplyRequest->status == 'in_progress' ? 'bg-warning' : ($supplyRequest->status == 'completed' ? 'bg-success' : 'bg-secondary')) }} rounded-pill px-3 py-2 fs-6">
+                                    {{ $supplyRequest->status == 'open' ? 'مفتوح' : ($supplyRequest->status == 'in_progress' ? 'قيد التنفيذ' : ($supplyRequest->status == 'completed' ? 'مكتمل' : 'مغلق')) }}
+                                </span>
+                                @if($supplyRequest->request_key)
+                                    <span class="badge bg-light text-dark border rounded-pill px-3 py-2 fs-6 ms-2">
+                                        <i class="bi bi-hash"></i> {{ $supplyRequest->request_key }}
+                                    </span>
+                                @endif
+                            </div>
                             <span class="text-muted"><i class="bi bi-clock me-1"></i> {{ $supplyRequest->created_at->diffForHumans() }}</span>
                         </div>
                         
@@ -390,3 +397,4 @@
 @endpush
 
 @endsection
+

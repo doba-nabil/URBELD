@@ -15,12 +15,12 @@
 @endphp
 
 <div class="incoming-requests-wrapper mt-4 mb-5" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
-    @if(auth()->user()->user_type != 'supplier')
+    @if(!auth()->user()->isSupplier())
     <div class="container bg-light rounded-4 p-4 shadow-sm" style="background-color: #f8f9fa !important;">
         
         <!-- Header Section -->
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h3 class="fw-bold mb-0 text-dark">طلباتي</h3>
+            <h3 class="fw-bold mb-0 text-dark">{{ $pageTitle ?? 'طلباتي' }}</h3>
             <a href="{{ route('profile.edit') }}" class="text-decoration-none text-muted small fw-bold">
                 العودة للوحة التحكم <i class="bi bi-arrow-left ms-1"></i>
             </a>
@@ -51,11 +51,11 @@
         </div>
 
         <!-- Tabs Section -->
-        <div class="d-flex justify-content-start mb-4 border-bottom">
-            <button class="btn border fw-bold px-5 py-2 ir-tab-active bg-white" id="new-tab" data-bs-toggle="pill" data-bs-target="#new-requests" type="button" role="tab" aria-selected="true" style="border-bottom: none !important; border-bottom-left-radius: 0; border-bottom-right-radius: 0; color: #1f2937;">
+        <div class="nav nav-pills d-flex justify-content-start mb-4 border-bottom" role="tablist">
+            <button class="nav-link active btn border fw-bold px-5 py-2 ir-tab-active bg-white" id="new-tab" data-bs-toggle="pill" data-bs-target="#new-requests" type="button" role="tab" aria-selected="true" style="border-bottom: none !important; border-bottom-left-radius: 0; border-bottom-right-radius: 0; color: #1f2937;">
                 الجديدة ({{ $newRequests->count() }})
             </button>
-            <button class="btn border-0 fw-bold px-5 py-2 text-muted" id="processing-tab" data-bs-toggle="pill" data-bs-target="#processing-requests" type="button" role="tab" aria-selected="false">
+            <button class="nav-link btn border-0 fw-bold px-5 py-2 text-muted" id="processing-tab" data-bs-toggle="pill" data-bs-target="#processing-requests" type="button" role="tab" aria-selected="false">
                 المعالجة ({{ $processingRequests->count() }})
             </button>
         </div>
@@ -68,7 +68,11 @@
                     @forelse($newRequests as $request)
                         @include('website.profile.partials.order-card', ['request' => $request])
                     @empty
-                        <div class="alert alert-info text-center rounded-3 border-0">لا توجد طلبات جديدة حالياً</div>
+                        <div class="text-center py-5 rounded-4 my-3" style="background-color: #f8f9fa; border: 1px dashed #dee2e6;">
+                            <i class="bi bi-inbox text-muted mb-3 d-block" style="font-size: 3rem; opacity: 0.5;"></i>
+                            <h5 class="fw-bold text-dark mb-1">لا توجد طلبات جديدة حالياً</h5>
+                            <p class="text-muted small mb-0">بمجرد إضافة طلبات جديدة ستظهر لك هنا لتتمكن من متابعتها بسهولة.</p>
+                        </div>
                     @endforelse
                 </div>
             </div>
@@ -79,7 +83,11 @@
                     @forelse($processingRequests as $request)
                         @include('website.profile.partials.order-card', ['request' => $request])
                     @empty
-                        <div class="alert alert-info text-center rounded-3 border-0">لا توجد طلبات قيد المعالجة حالياً</div>
+                        <div class="text-center py-5 rounded-4 my-3" style="background-color: #f8f9fa; border: 1px dashed #dee2e6;">
+                            <i class="bi bi-kanban text-muted mb-3 d-block" style="font-size: 3rem; opacity: 0.5;"></i>
+                            <h5 class="fw-bold text-dark mb-1">لا توجد طلبات قيد المعالجة حالياً</h5>
+                            <p class="text-muted small mb-0">الطلبات التي تم البدء في معالجتها ستظهر في هذا القسم لمتابعة تقدمها.</p>
+                        </div>
                     @endforelse
                 </div>
             </div>
@@ -96,7 +104,7 @@
             <span class="badge ms-2" style="background: #d97706;">{{ $supplyRequests->count() }}</span>
         </h5>
 
-        @if(auth()->user()->user_type == 'supplier')
+        @if(auth()->user()->isSupplier())
             @php
                 $activeSupplyRequests = $supplyRequests->whereNotIn('status', ['completed', 'closed', 'cancelled']);
                 $completedSupplyRequests = $supplyRequests->whereIn('status', ['completed', 'closed', 'cancelled']);

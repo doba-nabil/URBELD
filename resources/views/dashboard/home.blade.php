@@ -6,7 +6,7 @@
         <!-- Clock Widget -->
         <div class="row mb-4">
             <div class="col-12">
-                <div class="card bg-primary text-white shadow-sm overflow-hidden" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card text-white shadow-sm overflow-hidden" style="background: var(--bs-primary)!important;">
                     <div class="card-body p-4 d-flex justify-content-between align-items-center">
                         <div>
                             <h4 class="text-white mb-1" id="live-time" style="font-family: 'Courier New', Courier, monospace; font-weight: bold; font-size: 2.5rem; letter-spacing: 2px;">00:00:00</h4>

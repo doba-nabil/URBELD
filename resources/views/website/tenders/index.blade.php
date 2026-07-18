@@ -159,8 +159,10 @@
       {{ $tenders->links() }}
     </div>
   @else
-    <div class="alert alert-info text-center mt-4">
-        {{ __('tenders.no_tenders') }}
+    <div class="text-center py-5 rounded-4 mt-4" style="background-color: #f8f9fa; border: 1px dashed #dee2e6;">
+        <i class="bi bi-folder-x text-muted mb-3 d-block" style="font-size: 3rem; opacity: 0.5;"></i>
+        <h5 class="fw-bold text-dark mb-1">{{ __('tenders.no_tenders') }}</h5>
+        <p class="text-muted small mb-0">يمكنك العودة لاحقاً أو تعديل معايير البحث لاستكشاف مناقصات جديدة.</p>
     </div>
   @endif
 

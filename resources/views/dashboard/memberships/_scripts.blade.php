@@ -41,6 +41,12 @@
                     $('#classification_label').text('{{ __("admin.company_classification") ?? "التصنيف / الحجم" }}');
                 }
 
+                if (type === 'supplier') {
+                    $('#delivery-regions-container').show();
+                } else {
+                    $('#delivery-regions-container').hide();
+                }
+
                 if (type === 'individual' || type === 'supplier') {
                     $('#individual-fields').show();
                     $('#company-fields').hide();

@@ -42,7 +42,8 @@ class SupplyRequestController extends Controller
 
     public function show($id)
     {
-        $supplyRequest = \App\Models\SupplyRequest::with(['user', 'city', 'responses.user'])->findOrFail($id);
+        $supplyRequest = \App\Models\SupplyRequest::with(['user', 'city', 'responses.user'])
+            ->where('request_key', $id)->orWhere('id', $id)->firstOrFail();
 
         if (auth()->check()) {
             \App\Models\Notification::where('user_id', auth()->id())

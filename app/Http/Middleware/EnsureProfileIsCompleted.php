@@ -46,7 +46,7 @@ class EnsureProfileIsCompleted
         
         // Service Provider Profile Completion Check
         if ($user->user_type === 'service_provider') {
-            $hasId = $user->getFirstMediaUrl('id_front') || $user->getFirstMediaUrl('commercial_registration');
+            $hasId = $user->getFirstMediaUrl('id_front') || $user->getFirstMediaUrl('commercial_registration') || !empty($user->id_number) || !empty($user->company_registration_number);
             $hasCategory = $user->categories()->exists();
             $hasCity = !empty($user->city_id);
             $hasExperience = !is_null($user->years_of_experience);

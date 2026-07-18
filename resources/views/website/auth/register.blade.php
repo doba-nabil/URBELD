@@ -3,10 +3,10 @@
 
 <head>
     <meta charset="utf-8">
-    <title>{{ __('website.register_title') }} - {{ $settings['site_name'] ?? 'اوربلد' }}</title>
+    <title>{{ __('website.register_title') }} - {{ $settings['site_name'] ?? \App\Models\Setting::getValue('site_name', app()->getLocale(), config('app.name')) }}</title>
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="إنشاء حساب، تسجيل، اوربلد" name="keywords">
-    <meta content="اوربلد - نبدع في تصميم المساحات التي تُلهم وتُبتكر وتدوم" name="description">
+    <meta content="{{ $settings['site_name'] ?? \App\Models\Setting::getValue('site_name', app()->getLocale(), config('app.name')) }} - نبدع في تصميم المساحات التي تُلهم وتُبتكر وتدوم" name="description">
 
     <!-- Favicon -->
     <link href="{{ \App\Models\Setting::getMediaUrl('favicon') ?: asset('website/assets/img/fav.png') }}" rel="icon">

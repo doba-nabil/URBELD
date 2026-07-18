@@ -103,7 +103,7 @@ class ServiceRequestController extends Controller
      */
     public function show(Request $httpRequest, $id)
     {
-        $serviceRequest = ServiceRequest::findOrFail($id);
+        $serviceRequest = ServiceRequest::where('request_key', $id)->orWhere('id', $id)->firstOrFail();
         $user = Auth::user();
 
         // Authorization: Check if the user can view this request
@@ -159,7 +159,7 @@ class ServiceRequestController extends Controller
 
     public function respond(Request $request, $id)
     {
-        $serviceRequest = ServiceRequest::findOrFail($id);
+        $serviceRequest = ServiceRequest::where('request_key', $id)->orWhere('id', $id)->firstOrFail();
 
         $request->validate([
             'proposed_price' => 'required|numeric',
@@ -171,9 +171,20 @@ class ServiceRequestController extends Controller
             return back()->with('error', __('admin.cannot_respond_own_request'));
         }
 
-        // Prevent duplicate responses
-        if ($serviceRequest->responses()->where('user_id', Auth::id())->exists()) {
-            return back()->with('error', __('admin.already_responded'));
+        $existingResponse = $serviceRequest->responses()->where('user_id', Auth::id())->first();
+
+        if ($existingResponse) {
+            if ($existingResponse->status === 'pending') {
+                $existingResponse->update([
+                    'proposed_price' => $request->proposed_price,
+                    'proposed_timeline' => $request->proposed_timeline,
+                    'message' => $request->message,
+                    'status' => ServiceRequestResponse::STATUS_ACCEPTED,
+                ]);
+                return redirect()->route('requests.show', $serviceRequest->request_key ?? $serviceRequest->id)->with('success', __('admin.offer_submitted_success'));
+            } else {
+                return redirect()->route('requests.show', $serviceRequest->request_key ?? $serviceRequest->id)->with('error', __('admin.already_responded'));
+            }
         }
 
         $response = $serviceRequest->responses()->create([
@@ -181,12 +192,10 @@ class ServiceRequestController extends Controller
             'proposed_price' => $request->proposed_price,
             'proposed_timeline' => $request->proposed_timeline,
             'message' => $request->message,
-            'status' => ServiceRequestResponse::STATUS_UNDER_REVIEW,
+            'status' => ServiceRequestResponse::STATUS_ACCEPTED,
         ]);
 
-        // Seeker notification moved to ServiceRequestResponseObserver::updated
-
-        return back()->with('success', __('admin.offer_submitted_success'));
+        return redirect()->route('requests.show', $serviceRequest->request_key ?? $serviceRequest->id)->with('success', __('admin.offer_submitted_success'));
     }
 
     /**
@@ -247,6 +256,24 @@ class ServiceRequestController extends Controller
             ->with('success', __('admin.provider_accepted_success'));
     }
 
+    public function rejectOffer($serviceRequestId, \App\Models\User $provider)
+    {
+        $serviceRequest = ServiceRequest::findOrFail($serviceRequestId);
+
+        if ($serviceRequest->user_id != Auth::id()) {
+            abort(403);
+        }
+
+        $acceptedResponse = $serviceRequest->responses()
+            ->where('user_id', $provider->id)
+            ->where('status', 'accepted')
+            ->firstOrFail();
+
+        $acceptedResponse->update(['status' => 'rejected']);
+
+        return back()->with('success', 'تم رفض العرض بنجاح');
+    }
+
     public function confirmSeeker($id)
     {
         $serviceRequest = ServiceRequest::findOrFail($id);
@@ -279,8 +306,10 @@ class ServiceRequestController extends Controller
 
     public function completeInspection(\App\Models\ServiceRequestInspection $inspection)
     {
-        // Authorization: Only the provider who scheduled it
-        if ($inspection->user_id != Auth::id()) {
+        $serviceRequest = $inspection->serviceRequest;
+
+        // Authorization: Allow the awarded provider OR the seeker to complete it
+        if ($serviceRequest->user_id != Auth::id() && $serviceRequest->awarded_provider_id != Auth::id()) {
             abort(403);
         }
 

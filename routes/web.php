@@ -113,6 +113,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/requests/{serviceRequest}/agree', [\App\Http\Controllers\Website\ServiceRequestController::class , 'confirmAgreement'])->name('requests.agree');
     // User / Seeker Specific Routes
     Route::post('/requests/{serviceRequest}/accept-provider/{provider}', [\App\Http\Controllers\Website\ServiceRequestController::class , 'acceptProvider'])->name('requests.accept-provider');
+    Route::post('/requests/{serviceRequest}/reject-provider/{provider}', [\App\Http\Controllers\Website\ServiceRequestController::class , 'rejectOffer'])->name('requests.reject-provider');
     // Chat Routes (Accessible by both seeker and provider if they are participants)
     Route::get('/chats', [\App\Http\Controllers\Website\ChatController::class , 'index'])->name('chat.index');
     Route::get('chat/start/{user}', [\App\Http\Controllers\Website\ChatController::class , 'startChat'])->name('chat.start');

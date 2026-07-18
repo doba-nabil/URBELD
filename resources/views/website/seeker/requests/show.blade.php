@@ -1,6 +1,6 @@
 @extends('website.layouts.profile')
 
-@section('title', __('website.request_details_id') . $serviceRequest->id)
+@section('title', __('website.request_details_id') . ($serviceRequest->request_key ?? $serviceRequest->id))
 
 @section('profile-content')
     <div class="order-requests-section">
@@ -31,7 +31,7 @@
                                         <li class="flex-fill px-2">
                                             <div class="rounded-circle mx-auto mb-2 d-flex align-items-center justify-content-center {{ array_search($key, array_keys($statuses)) <= $currentIndex ? 'bg-primary text-white' : 'bg-light text-muted border' }}" style="width: 35px; height: 35px;">
                                                 @if(array_search($key, array_keys($statuses)) < $currentIndex)
-                                                    <i class="bi bi-check-lg"></i>
+                                                    <i class="fa fa-check"></i>
                                                 @else
                                                     {{ $loop->iteration }}
                                                 @endif
@@ -61,11 +61,13 @@
                                             <h5>{{ __('website.waiting_provider_schedule') }}</h5>
                                         </div>
                                     @elseif ($serviceRequest->status === 'inspection_scheduled')
-                                        <div class="text-warning">
-                                            <i class="bi bi-calendar-check display-4 d-block mb-2"></i>
-                                            <h5>{{ __('website.inspection_done_msg') }}</h5>
-                                            <p class="fs-5 fw-bold mb-0">{{ \Carbon\Carbon::parse($serviceRequest->inspection_date)->format('Y-m-d h:i A') }}</p>
-                                        </div>
+                                        <h5 class="fw-bold mb-3">المعاينة المجدولة: {{ \Carbon\Carbon::parse($serviceRequest->inspection_date)->format('Y-m-d h:i A') }}</h5>
+                                        <form action="{{ route('requests.inspections.complete', $serviceRequest->inspections->last()->id ?? 0) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="btn btn-success px-5 py-2 rounded-pill">
+                                                <i class="fa fa-check-circle me-1"></i> تأكيد إتمام المعاينة
+                                            </button>
+                                        </form>
                                     @elseif ($serviceRequest->status === 'inspection_done')
                                         <h5 class="fw-bold mb-3">{{ __('website.inspection_complete_question') }}</h5>
                                         <form action="{{ route('requests.agree', $serviceRequest->id) }}" method="POST">
@@ -76,9 +78,64 @@
                                         </form>
                                     @elseif ($serviceRequest->status === 'work_completed')
                                         <div class="text-success">
-                                            <i class="bi bi-check-all display-4 d-block mb-2"></i>
+                                            <i class="fa fa-check display-4 d-block mb-2"></i>
                                             <h5>{{ __('website.work_completed_success') }}</h5>
                                         </div>
+                                    @endif
+                                @else
+                                    {{-- PROVIDER ACTIONS --}}
+                                    @php
+                                        $myResponseTracker = null;
+                                        if (auth()->check()) {
+                                            $myResponseTracker = $serviceRequest->responses->where('user_id', auth()->id())->first();
+                                        }
+                                        $isProvider = $serviceRequest->awarded_provider_id == auth()->id();
+                                    @endphp
+
+                                    @if($myResponseTracker && $myResponseTracker->status === 'rejected')
+                                        <div class="text-danger text-center">
+                                            <i class="bi bi-x-circle display-4 d-block mb-2"></i>
+                                            <h5 class="fw-bold mb-1">لقد قمت بالاعتذار عن هذا الطلب</h5>
+                                            @if($myResponseTracker->message)
+                                                <p class="mb-0 mt-2">السبب: {{ $myResponseTracker->message }}</p>
+                                            @endif
+                                        </div>
+                                    @elseif((!$myResponseTracker || $myResponseTracker->status === 'pending') && in_array($serviceRequest->status, ['pending', 'open']))
+                                        <div class="d-flex gap-2 justify-content-center">
+                                            <button type="button" class="btn btn-success fw-bold py-2 px-4 rounded-pill shadow-sm" data-bs-toggle="modal" data-bs-target="#offerModal">
+                                                <i class="bi bi-currency-dollar me-1"></i> {{ __('website.submit_offer') }}
+                                            </button>
+                                            
+
+                                        </div>
+                                    @elseif($myResponseTracker && in_array($myResponseTracker->status, ['under_review', 'accepted', 'provider_accepted']))
+                                        <div class="text-center p-3 rounded" style="background-color: #f8f9fa; border: 1px dashed #ccc;">
+                                            <h6 class="fw-bold text-success mb-2"><i class="bi bi-check-circle-fill me-1"></i> لقد قمت بتقديم عرض</h6>
+                                            <div class="text-muted small mb-2">السعر: <strong class="text-dark">{{ number_format($myResponseTracker->proposed_price, 2) }} ر.س</strong></div>
+                                            <div class="text-muted small mb-2">المدة: <strong class="text-dark">{{ $myResponseTracker->proposed_timeline }}</strong></div>
+                                            <div class="text-muted small">الرسالة: {{ Str::limit($myResponseTracker->message, 50) }}</div>
+                                        </div>
+                                    @endif
+                                    
+                                    @if($isProvider || ($myResponseTracker && in_array($myResponseTracker->status, ['accepted', 'provider_accepted'])))
+                                        <a href="{{ route('chat.start', $serviceRequest->user_id) }}" class="btn btn-outline-secondary fw-bold py-2 px-5 mt-2 rounded-pill shadow-sm border-1">
+                                            <i class="bi bi-chat-dots me-1"></i> {{ (str_contains($serviceRequest->category->name ?? '', 'قانوني') || ($serviceRequest->category->name ?? '') == 'استشارة قانونية عقارية') ? 'مراسلة العميل' : 'التواصل مع العميل' }}
+                                        </a>
+                                    @endif
+
+                                    @if($isProvider && in_array($serviceRequest->status, ['provider_accepted', 'seeker_confirmed_provider']))
+                                        <button type="button" class="btn btn-primary fw-bold py-2 px-5 rounded-pill shadow-sm" data-bs-toggle="modal" data-bs-target="#scheduleModal">
+                                            <i class="bi bi-calendar-plus me-1"></i> {{ __('website.schedule_inspection') }}
+                                        </button>
+                                    @endif
+
+                                    @if($isProvider && $serviceRequest->status === 'inspection_scheduled')
+                                        <form action="{{ route('requests.inspections.complete', $serviceRequest->inspections->last()->id ?? 0) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="btn btn-success px-5 fw-bold py-2 rounded-pill shadow-sm">
+                                                <i class="fa fa-check-circle me-1"></i> تأكيد إتمام المعاينة
+                                            </button>
+                                        </form>
                                     @endif
                                 @endif
                             </div>
@@ -88,7 +145,7 @@
             </div>
 
             <div class="row">
-                <div class="col-lg-8">
+                <div class="col-12">
                     {{-- Offers Section (Only for seeker and only in pending) --}}
                     @if (auth()->id() == $serviceRequest->user_id && $serviceRequest->status === 'pending')
                         <h4 class="fw-bold mb-4 mt-2 px-2"><i class="bi bi-briefcase text-primary me-2"></i>{{ __('website.submitted_offers_count', ['count' => $serviceRequest->responses->where('status', 'accepted')->count()]) }}</h4>
@@ -109,10 +166,14 @@
                                         </div>
                                     </div>
                                     <p class="text-muted small mb-3">{{ $offer->message }}</p>
-                                    <div class="text-end">
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <form action="{{ route('requests.reject-provider', [$serviceRequest->id, $offer->user_id]) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-4" onclick="return confirm('هل أنت متأكد من رفض هذا العرض؟')"><i class="bi bi-x-circle me-1"></i> رفض العرض</button>
+                                        </form>
                                         <form action="{{ route('requests.accept-provider', [$serviceRequest->id, $offer->user_id]) }}" method="POST">
                                             @csrf
-                                            <button type="submit" class="btn btn-outline-primary btn-sm rounded-pill px-4">{{ __('website.accepted_offer_btn') }}</button>
+                                            <button type="submit" class="btn btn-outline-primary btn-sm rounded-pill px-4"><i class="bi bi-check-circle me-1"></i> {{ __('website.accepted_offer_btn') }}</button>
                                         </form>
                                     </div>
                                 </div>
@@ -125,46 +186,71 @@
                     @endif
                 </div>
 
-                <div class="col-lg-4">
-                    {{-- Provider Info Sidebar --}}
+                <div class="col-12 mt-4">
+                    {{-- Sidebar Info --}}
                     @if ($serviceRequest->awardedProvider)
-                        <div class="card shadow-sm border-0 root-radius mb-4">
-                            <div class="card-body p-4 text-center">
-                                <h6 class="fw-bold border-bottom pb-2 mb-3">{{ __('website.selected_provider') }}</h6>
-                                <img src="{{ $serviceRequest->awardedProvider->getFirstMediaUrl('avatar') ?: asset('website/assets/img/logo.png') }}" 
-                                     class="rounded-circle border mb-2" style="width: 80px; height: 80px; object-fit: cover;">
-                                <h5 class="fw-bold mb-1">{{ $serviceRequest->awardedProvider->name }}</h5>
-                                <div class="text-warning small mb-3">
-                                    @php $avg = $serviceRequest->awardedProvider->average_rating; @endphp
-                                    @for($i=1; $i<=5; $i++)
-                                        <i class="bi bi-star{{ $i <= $avg ? '-fill' : '' }}"></i>
-                                    @endfor
-                                    ({{ number_format($avg, 1) }})
-                                </div>
-                                @if ($chat)
-                                    <div class="d-grid">
-                                        <a href="{{ route('dashboard.chat.show', ['chat' => $chat->id]) }}" class="btn btn-primary rounded-pill">
-                                            <i class="bi bi-chat-dots me-1"></i> {{ __('website.instant_chat') }}
-                                        </a>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-                    @else
                         @if (auth()->id() == $serviceRequest->user_id)
+                            {{-- Show Provider Info to Seeker --}}
+                            <div class="card shadow-sm border-0 root-radius mb-4">
+                                <div class="card-body p-4 text-center">
+                                    <h6 class="fw-bold border-bottom pb-2 mb-3">{{ __('website.selected_provider') }}</h6>
+                                    <img src="{{ $serviceRequest->awardedProvider->getFirstMediaUrl('avatar') ?: asset('website/assets/img/logo.png') }}" 
+                                         class="rounded-circle border mb-2" style="width: 80px; height: 80px; object-fit: cover;">
+                                    <h5 class="fw-bold mb-1">{{ $serviceRequest->awardedProvider->name }}</h5>
+                                    <div class="text-warning small mb-3">
+                                        @php $avg = $serviceRequest->awardedProvider->average_rating; @endphp
+                                        @for($i=1; $i<=5; $i++)
+                                            <i class="bi bi-star{{ $i <= $avg ? '-fill' : '' }}"></i>
+                                        @endfor
+                                        ({{ number_format($avg, 1) }})
+                                    </div>
+                                    @if ($chat)
+                                        <div class="d-grid">
+                                            <a href="{{ route('dashboard.chat.show', ['chat' => $chat->id]) }}" class="btn btn-primary rounded-pill">
+                                                <i class="bi bi-chat-dots me-1"></i> {{ __('website.instant_chat') }}
+                                            </a>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        @elseif (auth()->id() == $serviceRequest->awarded_provider_id)
+                            {{-- Show Seeker Info to Awarded Provider --}}
+                            <div class="card shadow-sm border-0 root-radius mb-4">
+                                <div class="card-body p-4 text-center">
+                                    <h6 class="fw-bold border-bottom pb-2 mb-3">معلومات العميل</h6>
+                                    <img src="{{ $serviceRequest->user->getFirstMediaUrl('avatar') ?: asset('website/assets/img/logo.png') }}" 
+                                         class="rounded-circle border mb-2" style="width: 80px; height: 80px; object-fit: cover;">
+                                    <h5 class="fw-bold mb-1">{{ $serviceRequest->user->name }}</h5>
+                                    <div class="text-muted small mb-3">
+                                        طالب الخدمة
+                                    </div>
+                                    @if ($chat)
+                                        <div class="d-grid">
+                                            <a href="{{ route('dashboard.chat.show', ['chat' => $chat->id]) }}" class="btn btn-primary rounded-pill">
+                                                <i class="bi bi-chat-dots me-1"></i> {{ __('website.instant_chat') }}
+                                            </a>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        @else
+                            {{-- Show Awarded Provider Info to Other Providers --}}
+                            <div class="card shadow-sm border-0 root-radius mb-4">
+                                <div class="card-body p-4 text-center">
+                                    <h6 class="fw-bold border-bottom pb-2 mb-3">{{ __('website.selected_provider') }}</h6>
+                                    <img src="{{ $serviceRequest->awardedProvider->getFirstMediaUrl('avatar') ?: asset('website/assets/img/logo.png') }}" 
+                                         class="rounded-circle border mb-2" style="width: 80px; height: 80px; object-fit: cover;">
+                                    <h5 class="fw-bold mb-1">{{ $serviceRequest->awardedProvider->name }}</h5>
+                                </div>
+                            </div>
+                        @endif
+                    @else
+                        @if (auth()->id() == $serviceRequest->user_id && $serviceRequest->responses->where('status', 'accepted')->count() == 0)
                             <div class="card shadow-sm border-0 root-radius bg-primary text-white mb-4">
                                 <div class="card-body p-4 text-center">
                                     <i class="bi bi-hourglass-top display-4 d-block mb-3"></i>
                                     <h5 class="fw-bold">{{ __('website.waiting_offers') }}</h5>
                                     <p class="small mb-0">{{ __('website.waiting_offers_desc') }}</p>
-                                </div>
-                            </div>
-                        @elseif($serviceRequest->awarded_provider_id == auth()->id())
-                             <div class="card shadow-sm border-0 root-radius bg-success text-white mb-4">
-                                <div class="card-body p-4 text-center">
-                                    <i class="bi bi-trophy display-4 d-block mb-3"></i>
-                                    <h5 class="fw-bold">{{ __('website.provider_chosen_congrats') }}</h5>
-                                    <p class="small mb-0">{{ __('website.provider_chosen_desc') }}</p>
                                 </div>
                             </div>
                         @endif
@@ -189,7 +275,7 @@
                             <a href="{{ route('profile.requests') }}" class="btn btn-sm btn-outline-secondary me-3 rounded-pill">
                                 <i class="bi bi-arrow-right"></i> {{ __('website.back') }}
                             </a>
-                            <i class="bi bi-file-earmark-text text-primary me-2"></i>{{ __('website.request_details_id') }}{{ $serviceRequest->id }}
+                            <i class="bi bi-file-earmark-text text-primary me-2"></i>{{ __('website.request_details_id') }}{{ $serviceRequest->request_key ?? $serviceRequest->id }}
                         </h4>
                         <div>
                             <span class="badge bg-primary px-3 py-2 fs-6">{{ __('website.'.$serviceRequest->status) }}</span>
@@ -365,7 +451,7 @@
                             </div>
                         @else
                             <div class="alert alert-success border-0 shadow-sm mt-4 text-center">
-                                <i class="bi bi-check-circle-fill me-2"></i> {{ __('website.rating_success_msg') }}
+                                <i class="fa fa-check-circle-fill me-2"></i> {{ __('website.rating_success_msg') }}
                             </div>
                         @endif
                     @endif
@@ -434,7 +520,7 @@
                     <h5 class="fw-bold">{{ __('website.submit_offer') }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{ route('requests.respond', $serviceRequest->id) }}" method="POST">
+                <form action="{{ route('requests.respond', $serviceRequest->request_key ?? $serviceRequest->id) }}" method="POST">
                     @csrf
                     <div class="modal-body p-4">
                         <div class="mb-3">
@@ -523,3 +609,5 @@
     });
 </script>
 @endpush
+
+

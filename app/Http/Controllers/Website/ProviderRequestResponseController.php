@@ -10,40 +10,45 @@ use Illuminate\Support\Facades\Auth;
 
 class ProviderRequestResponseController extends Controller
 {
-    /**
-     * Display a listing of pending service requests for the provider.
-     */
     public function index()
     {
-        $responses = ServiceRequestResponse::with(['serviceRequest.user', 'serviceRequest.category', 'serviceRequest.media'])
-            ->where('user_id', Auth::id())
-            ->where('status', 'pending')
-            ->get();
-
-        $activeResponses = ServiceRequestResponse::with(['serviceRequest.user', 'serviceRequest.category', 'serviceRequest.awardedProvider', 'serviceRequest.chat'])
-            ->where('user_id', Auth::id())
-            ->where('status', 'accepted')
-            ->whereHas('serviceRequest', function ($query) {
-            $query->whereIn('status', ['provider_accepted', 'inspection_scheduled', 'inspection_done', 'work_completed', 'completed']);
-        })
-            ->get();
-
-        // Supply requests: only for suppliers
+        $user = Auth::user();
+        $isSupplier = $user->isSupplier();
+        $isProvider = $user->isServiceProvider();
+        
+        $requests = collect();
         $supplyRequests = collect();
-        if (Auth::user()->isSupplier()) {
-            $supplyRequests = \App\Models\SupplyRequest::with(['user', 'city', 'responses' => function($q) {
-                $q->where('user_id', Auth::id());
-            }])
-            ->where(function($q) {
-                $q->whereDoesntHave('responses', function($sq) {
-                    $sq->where('user_id', Auth::id())->where('status', 'accepted');
-                })->where('status', 'open');
-            })
-            ->latest()
-            ->get();
+
+        if ($isProvider && !$isSupplier) {
+            $requests = ServiceRequest::where('user_id', '!=', $user->id)
+                ->whereHas('responses', function($q) use ($user) {
+                    $q->where('user_id', $user->id);
+                })
+                ->with(['category', 'subCategory', 'awardedProvider', 'user'])
+                ->with(['responses' => function($q) use ($user) {
+                    $q->where('user_id', $user->id);
+                }])
+                ->latest()
+                ->get();
         }
 
-        return view('website.provider.requests.index', compact('responses', 'activeResponses', 'supplyRequests'));
+        if ($isSupplier) {
+            $supplyRequests = \App\Models\SupplyRequest::where('user_id', '!=', $user->id)
+                ->where(function($q) use ($user) {
+                    $q->whereHas('responses', function($sq) use ($user) {
+                        $sq->where('user_id', $user->id);
+                    })->orWhere('status', 'open');
+                })
+                ->with(['city', 'user', 'responses' => function($q) use ($user) {
+                    $q->where('user_id', $user->id);
+                }])
+                ->latest()
+                ->get();
+        }
+
+        $pageTitle = 'الطلبات الواردة';
+        $isIncomingPage = true;
+        return view('website.profile.requests', compact('requests', 'supplyRequests', 'pageTitle', 'isIncomingPage'));
     }
 
     /**
@@ -118,16 +123,24 @@ class ProviderRequestResponseController extends Controller
     {
         $request->validate([
             'inspection_date' => 'required|date|after:now',
+            'notes' => 'nullable|string',
         ]);
 
         // Ensure this provider is the awarded provider
-        if ($serviceRequest->awarded_provider_id !== Auth::id() || $serviceRequest->status !== 'provider_accepted') {
+        if ($serviceRequest->awarded_provider_id !== Auth::id() || !in_array($serviceRequest->status, ['provider_accepted', 'seeker_confirmed_provider'])) {
             abort(403, 'Unauthorized to schedule inspection for this request.');
         }
 
+        $serviceRequest->inspections()->create([
+            'user_id' => Auth::id(),
+            'scheduled_at' => $request->inspection_date,
+            'notes' => $request->notes,
+            'status' => 'scheduled',
+        ]);
+
         $serviceRequest->update([
             'inspection_date' => $request->inspection_date,
-            'status' => ServiceRequest::STATUS_INSPECTION_SCHEDULED,
+            'status' => \App\Models\ServiceRequest::STATUS_INSPECTION_SCHEDULED,
         ]);
 
         // Notify Seeker
@@ -141,7 +154,7 @@ class ProviderRequestResponseController extends Controller
     /**
      * Provider ignores/rejects a request without submitting an offer.
      */
-    public function ignore(ServiceRequest $serviceRequest)
+    public function ignore(Request $request, ServiceRequest $serviceRequest)
     {
         ServiceRequestResponse::updateOrCreate(
             [
@@ -150,6 +163,7 @@ class ProviderRequestResponseController extends Controller
             ],
             [
                 'status' => 'rejected',
+                'message' => $request->input('message', ''),
                 'responded_at' => now(),
             ]
         );

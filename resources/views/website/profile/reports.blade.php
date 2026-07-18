@@ -200,20 +200,20 @@
                                         @foreach ($recentActivity as $activity)
                                             @php
                                                 $statusClass = match ($activity['status_code'] ?? '') {
-                                                    'pending' => 'bg-primary border border-primary text-primary',
+                                                    'pending' => 'bg-primary',
                                                     'provider_accepted',
                                                     'inspection_scheduled',
                                                     'inspection_done'
-                                                        => 'bg-info border border-info text-info',
+                                                        => 'bg-info',
                                                     'work_completed',
                                                     'completed',
                                                     'seeker_confirmed'
-                                                        => 'bg-success border border-success text-success',
+                                                        => 'bg-success',
                                                     'cancelled',
                                                     'rejected',
                                                     'timeout'
-                                                        => 'bg-danger border border-danger text-danger',
-                                                    default => 'bg-secondary border border-secondary text-secondary',
+                                                        => 'bg-danger',
+                                                    default => 'bg-secondary',
                                                 };
                                             @endphp
                                             <tr>
@@ -223,7 +223,7 @@
                                                 </td>
                                                 <td>{{ $activity['date'] }}</td>
                                                 <td>
-                                                    <span class="badge {{ $statusClass }} bg-opacity-10 px-3 py-2 rounded-pill">
+                                                    <span class="badge {{ $statusClass }} text-white px-3 py-2 rounded-pill">
                                                         {{ $activity['status'] }}
                                                     </span>
                                                 </td>
@@ -287,11 +287,16 @@
                                         @foreach ($recentTenderActivity as $activity)
                                             @php
                                                 $statusClass = match ($activity['status_code'] ?? '') {
-                                                    'pending', 'pending_review' => 'bg-primary border border-primary text-primary',
-                                                    'active' => 'bg-info border border-info text-info',
-                                                    'closed', 'accepted' => 'bg-success border border-success text-success',
-                                                    'rejected' => 'bg-danger border border-danger text-danger',
-                                                    default => 'bg-secondary border border-secondary text-secondary',
+                                                    'pending_review' => 'bg-warning',
+                                                    'active'         => 'bg-info',
+                                                    'in_progress'    => 'bg-primary',
+                                                    'completed'      => 'bg-success',
+                                                    'closed'         => 'bg-success',
+                                                    'accepted'       => 'bg-success',
+                                                    'rejected'       => 'bg-danger',
+                                                    'not_selected'   => 'bg-secondary',
+                                                    'pending'        => 'bg-warning',
+                                                    default          => 'bg-secondary',
                                                 };
                                             @endphp
                                             <tr>
@@ -301,7 +306,7 @@
                                                 </td>
                                                 <td>{{ $activity['date'] }}</td>
                                                 <td>
-                                                    <span class="badge {{ $statusClass }} bg-opacity-10 px-3 py-2 rounded-pill">
+                                                    <span class="badge {{ $statusClass }} text-white px-3 py-2 rounded-pill">
                                                         {{ $activity['status'] }}
                                                     </span>
                                                 </td>

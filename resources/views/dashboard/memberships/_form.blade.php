@@ -207,8 +207,8 @@
             $isCompany = old('type', ($provider->provider_type ?? request('type'))) == 'company';
             $selectedDeliveryCities = (isset($provider) && $provider->deliveryCities) ? $provider->deliveryCities->pluck('id')->toArray() : [];
         @endphp
-        @if($isSupplier || $isCompany)
-        <div class="col-md-12 mb-3">
+        
+        <div class="col-md-12 mb-3" id="delivery-regions-container" style="display: {{ $isSupplier ? 'block' : 'none' }};">
             <label class="form-label">مناطق العمل / التوصيل</label>
             <select name="delivery_cities[]" class="form-select select2" id="delivery_cities" multiple>
                 @if ($isEdit && (($membership && $membership->country_id) || ($provider && $provider->city)))
@@ -228,7 +228,6 @@
             @enderror
             <small class="text-muted">اختر المدن (أو المناطق) التي يقدم فيها خدماته أو يوصل إليها (ستظهر بناءً على الدولة المختارة أعلاه).</small>
         </div>
-        @endif
     </div>
 </div>
 

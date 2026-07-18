@@ -63,6 +63,10 @@
         });
     });
 </script>
+
+<link rel="stylesheet" href="{{ asset('dashboard') }}/assets/vendor/libs/sweetalert2/sweetalert2.css" />
+<script src="{{ asset('dashboard') }}/assets/vendor/libs/sweetalert2/sweetalert2.js"></script>
+
 @section('dashboard-footer')
 
 @show

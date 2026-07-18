@@ -166,34 +166,22 @@ class ProfileController extends Controller
     public function requests(Request $request): View
     {
         $user = $request->user();
-        if ($user->isServiceProvider()) {
-            // For providers, show requests where they have a response (including invitations)
-            $requests = ServiceRequest::whereHas('responses', function($q) use ($user) {
-                $q->where('user_id', $user->id);
-            })
-            ->with(['category', 'subCategory', 'awardedProvider', 'user'])
-            ->with(['responses' => function($q) use ($user) {
-                $q->where('user_id', $user->id);
-            }])
+        
+        // For ALL users (seekers and providers), 'requests' page shows requests THEY created.
+        $requests = $user->serviceRequests()
+            ->with(['category', 'subCategory', 'awardedProvider'])
             ->withCount('responses')
             ->latest()
             ->get();
-        } else {
-            // For seekers, show requests they created
-            $requests = $user->serviceRequests()
-                ->with(['category', 'subCategory', 'awardedProvider'])
-                ->withCount('responses')
-                ->latest()
-                ->get();
-        }
 
-        // Supply requests created by the user (طلبات التوريد بتاعتهم)
+        // Supply requests created by the user
         $supplyRequests = \App\Models\SupplyRequest::with(['city', 'responses'])
             ->where('user_id', $user->id)
             ->latest()
             ->get();
 
-        return view('website.profile.requests', compact('requests', 'supplyRequests'));
+        $pageTitle = 'طلباتي';
+        return view('website.profile.requests', compact('requests', 'supplyRequests', 'pageTitle'));
     }
     public function reports(Request $request): View
     {
@@ -201,76 +189,144 @@ class ProfileController extends Controller
         $kpis = [];
         $recentActivity = [];
         if ($user->user_type === 'service_provider') {
-            // Provider Reports
-            $totalResponses = $user->serviceRequestResponses()->count();
-            $completedProjects = $user->serviceRequestResponses()->where('status', \App\Models\ServiceRequestResponse::STATUS_ACCEPTED)
-                ->whereHas('serviceRequest', function($q) {
-                    $q->whereIn('status', [\App\Models\ServiceRequest::STATUS_COMPLETED, 'work_completed']);
-                })->count();
-            $totalRevenue = $user->serviceRequestResponses()->where('status', \App\Models\ServiceRequestResponse::STATUS_ACCEPTED)
-                ->whereHas('serviceRequest', function($q) {
-                    $q->whereIn('status', [\App\Models\ServiceRequest::STATUS_COMPLETED, \App\Models\ServiceRequest::STATUS_SEEKER_CONFIRMED]);
-                })->sum('proposed_price');
-            
-            $avgServiceRating = \App\Models\Rating::where('rated_id', $user->id)->whereNotNull('service_request_id')->avg('rating') ?? 0.0;
-            
-            $kpis = [
-                ['title' => __('admin.total_responses_submitted'), 'value' => $totalResponses, 'icon' => 'fas fa-briefcase', 'color' => 'primary'],
-                ['title' => __('admin.completed_projects'), 'value' => $completedProjects, 'icon' => 'fas fa-check', 'color' => 'success'],
-                ['title' => __('admin.total_revenue'), 'value' => number_format($totalRevenue, 2) . ' ' . __('admin.currency'), 'icon' => 'fas fa-money-bill', 'color' => 'info'],
-                ['title' => __('admin.average_rating'), 'value' => number_format($avgServiceRating, 1) . ' / 5', 'icon' => 'fas fa-star', 'color' => 'warning'],
-            ];
-            // Recent Completed Projects
-            $recentActivity = $user->serviceRequestResponses()
-                ->where('status', \App\Models\ServiceRequestResponse::STATUS_ACCEPTED)
-                ->with(['serviceRequest.category'])
-                ->latest()
-                ->take(10)
-                ->get()
-                ->map(function($response) {
-                    return [
-                        'request_id' => $response->serviceRequest->id,
-                        'title'       => $response->serviceRequest->category->name ?? __('admin.service_request'),
-                        'date' => $response->created_at->format('Y-m-d'),
-                        'status' => __('admin.' . $response->serviceRequest->status),
-                        'status_code' => $response->serviceRequest->status,
-                        'amount' => number_format($response->proposed_price, 2) . ' ' . __('admin.currency'),
-                        'route' => route('requests.show', $response->serviceRequest->id)
-                    ];
-                });
-            // Provider Tender Reports
-            $totalTenderResponses = $user->tenderApplications()->count();
-            $completedTenderProjects = $user->tenderApplications()->where('status', \App\Models\TenderApplication::STATUS_ACCEPTED)
-                ->whereHas('tender', function($q) {
-                    $q->where('status', \App\Models\Tender::STATUS_COMPLETED);
-                })->count();
-            $totalTenderRevenue = $user->tenderApplications()->where('status', \App\Models\TenderApplication::STATUS_ACCEPTED)
-                ->whereHas('tender', function($q) {
-                    $q->where('status', \App\Models\Tender::STATUS_COMPLETED);
-                })->sum('price');
-            $avgTenderRating = \App\Models\Rating::where('rated_id', $user->id)->whereNotNull('tender_id')->avg('rating') ?? 0.0;
-            
-            $tenderKpis = [
-                ['title' => __('website.tenders_submitted') ?? 'عروض مقدمة', 'value' => $totalTenderResponses, 'icon' => 'fas fa-briefcase', 'color' => 'primary'],
-                ['title' => __('website.tenders_accepted') ?? 'عروض مقبولة', 'value' => $completedTenderProjects, 'icon' => 'fas fa-check', 'color' => 'success'],
-                ['title' => __('website.expected_revenue') ?? 'إيرادات محتملة', 'value' => number_format($totalTenderRevenue, 2) . ' ' . __('admin.currency'), 'icon' => 'fas fa-money-bill', 'color' => 'info'],
-                ['title' => __('admin.average_rating') ?? 'متوسط التقييم', 'value' => number_format($avgTenderRating, 1) . ' / 5', 'icon' => 'fas fa-star', 'color' => 'warning'],
-            ];
-            $recentTenderActivity = $user->tenderApplications()->with('tender')
-                ->latest()
-                ->take(10)
-                ->get()
-                ->map(function($app) {
-                    return [
-                        'request_id' => $app->tender_id,
-                        'title' => $app->tender->title ?? 'مناقصة',
-                        'date' => $app->created_at->format('Y-m-d'),
-                        'status' => __('admin.' . $app->status) ?? $app->status,
-                        'status_code' => $app->status,
-                        'amount' => number_format($app->price, 2) . ' ' . __('admin.currency'),
-                        'route' => route('website.tenders.show', $app->tender_id)
-                    ];
-                });
+
+            if ($user->isSupplier()) {
+                // ==================== Supplier Reports ====================
+                $totalResponses        = $user->supplyRequestResponses()->count();
+                $acceptedResponses     = $user->supplyRequestResponses()->where('status', 'accepted');
+                $completedProjects     = $acceptedResponses->clone()
+                    ->whereHas('supplyRequest', fn($q) => $q->where('status', \App\Models\SupplyRequest::STATUS_COMPLETED))
+                    ->count();
+                $totalRevenue          = $acceptedResponses->clone()
+                    ->whereHas('supplyRequest', fn($q) => $q->where('status', \App\Models\SupplyRequest::STATUS_COMPLETED))
+                    ->sum('proposed_price');
+                $avgRating             = \App\Models\Rating::where('rated_id', $user->id)->avg('rating') ?? 0.0;
+
+                $kpis = [
+                    ['title' => 'إجمالي العروض المقدمة',    'value' => $totalResponses,                                              'icon' => 'fas fa-briefcase',   'color' => 'primary'],
+                    ['title' => 'مشاريع مكتملة',             'value' => $completedProjects,                                          'icon' => 'fas fa-check',       'color' => 'success'],
+                    ['title' => 'إجمالي الإيرادات',          'value' => number_format($totalRevenue, 2) . ' ' . __('admin.currency'), 'icon' => 'fas fa-money-bill',  'color' => 'info'],
+                    ['title' => __('admin.average_rating'),  'value' => number_format($avgRating, 1) . ' / 5',                       'icon' => 'fas fa-star',        'color' => 'warning'],
+                ];
+
+                $recentActivity = $user->supplyRequestResponses()
+                    ->with(['supplyRequest'])
+                    ->latest()
+                    ->take(10)
+                    ->get()
+                    ->map(function($response) {
+                        $req = $response->supplyRequest;
+                        return [
+                            'request_id'  => $req->id ?? null,
+                            'title'       => $req->title ?? __('admin.supply_request'),
+                            'date'        => $response->created_at->format('Y-m-d'),
+                            'status'      => match($response->status) {
+                                'pending'  => 'معلق',
+                                'accepted' => 'مقبول',
+                                'rejected' => 'مرفوض',
+                                default    => $response->status,
+                            },
+                            'status_code' => $response->status,
+                            'amount'      => number_format($response->proposed_price, 2) . ' ' . __('admin.currency'),
+                            'route'       => $req ? route('supply-requests.show', $req->id) : '#',
+                        ];
+                    });
+
+                // No tenders section for suppliers
+                $tenderKpis           = [];
+                $recentTenderActivity = collect();
+
+            } else {
+                // ==================== Regular Provider Reports ====================
+                $totalResponses = $user->serviceRequestResponses()->count();
+                $completedProjects = $user->serviceRequestResponses()->where('status', \App\Models\ServiceRequestResponse::STATUS_ACCEPTED)
+                    ->whereHas('serviceRequest', function($q) {
+                        $q->whereIn('status', [\App\Models\ServiceRequest::STATUS_COMPLETED, 'work_completed']);
+                    })->count();
+                $totalRevenue = $user->serviceRequestResponses()->where('status', \App\Models\ServiceRequestResponse::STATUS_ACCEPTED)
+                    ->whereHas('serviceRequest', function($q) {
+                        $q->whereIn('status', [\App\Models\ServiceRequest::STATUS_COMPLETED, \App\Models\ServiceRequest::STATUS_SEEKER_CONFIRMED]);
+                    })->sum('proposed_price');
+
+                $avgServiceRating = \App\Models\Rating::where('rated_id', $user->id)->whereNotNull('service_request_id')->avg('rating') ?? 0.0;
+
+                $kpis = [
+                    ['title' => __('admin.total_responses_submitted'), 'value' => $totalResponses,                                              'icon' => 'fas fa-briefcase',  'color' => 'primary'],
+                    ['title' => __('admin.completed_projects'),         'value' => $completedProjects,                                          'icon' => 'fas fa-check',      'color' => 'success'],
+                    ['title' => __('admin.total_revenue'),              'value' => number_format($totalRevenue, 2) . ' ' . __('admin.currency'), 'icon' => 'fas fa-money-bill', 'color' => 'info'],
+                    ['title' => __('admin.average_rating'),             'value' => number_format($avgServiceRating, 1) . ' / 5',                'icon' => 'fas fa-star',       'color' => 'warning'],
+                ];
+
+                $recentActivity = $user->serviceRequestResponses()
+                    ->where('status', \App\Models\ServiceRequestResponse::STATUS_ACCEPTED)
+                    ->with(['serviceRequest.category'])
+                    ->latest()
+                    ->take(10)
+                    ->get()
+                    ->map(function($response) {
+                        return [
+                            'request_id'  => $response->serviceRequest->id,
+                            'title'       => $response->serviceRequest->category->name ?? __('admin.service_request'),
+                            'date'        => $response->created_at->format('Y-m-d'),
+                            'status'      => __('admin.' . $response->serviceRequest->status),
+                            'status_code' => $response->serviceRequest->status,
+                            'amount'      => number_format($response->proposed_price, 2) . ' ' . __('admin.currency'),
+                            'route'       => route('requests.show', $response->serviceRequest->id),
+                        ];
+                    });
+
+                // Provider Tender Reports
+                $totalTenderResponses    = $user->tenderApplications()->count();
+                $completedTenderProjects = $user->tenderApplications()->where('status', \App\Models\TenderApplication::STATUS_ACCEPTED)
+                    ->whereHas('tender', fn($q) => $q->where('status', \App\Models\Tender::STATUS_COMPLETED))->count();
+                $totalTenderRevenue = $user->tenderApplications()->where('status', \App\Models\TenderApplication::STATUS_ACCEPTED)
+                    ->whereHas('tender', fn($q) => $q->where('status', \App\Models\Tender::STATUS_COMPLETED))->sum('price');
+                $avgTenderRating = \App\Models\Rating::where('rated_id', $user->id)->whereNotNull('tender_id')->avg('rating') ?? 0.0;
+
+                $tenderKpis = [
+                    ['title' => __('website.tenders_submitted') ?? 'عروض مقدمة',   'value' => $totalTenderResponses,                                              'icon' => 'fas fa-briefcase',  'color' => 'primary'],
+                    ['title' => __('website.tenders_accepted') ?? 'عروض مقبولة',   'value' => $completedTenderProjects,                                          'icon' => 'fas fa-check',      'color' => 'success'],
+                    ['title' => __('website.expected_revenue') ?? 'إيرادات محتملة', 'value' => number_format($totalTenderRevenue, 2) . ' ' . __('admin.currency'), 'icon' => 'fas fa-money-bill', 'color' => 'info'],
+                    ['title' => __('admin.average_rating'),                          'value' => number_format($avgTenderRating, 1) . ' / 5',                       'icon' => 'fas fa-star',       'color' => 'warning'],
+                ];
+
+                $recentTenderActivity = $user->tenderApplications()->with('tender')
+                    ->latest()->take(10)->get()
+                    ->map(function($app) {
+                        $tender = $app->tender;
+                        $tenderDone = $tender && in_array($tender->status, [
+                            \App\Models\Tender::STATUS_COMPLETED,
+                            \App\Models\Tender::STATUS_IN_PROGRESS,
+                            \App\Models\Tender::STATUS_CLOSED,
+                        ]);
+
+                        // تحديد الحالة الحقيقية للتطبيق
+                        if ($app->status === 'accepted') {
+                            $statusLabel = 'مقبول ✓';
+                            $statusCode  = 'accepted';
+                        } elseif ($app->status === 'rejected') {
+                            $statusLabel = 'مرفوض';
+                            $statusCode  = 'rejected';
+                        } elseif ($tenderDone && $app->status === 'pending') {
+                            // المناقصة أُغلقت واختاروا شخص آخر
+                            $statusLabel = 'لم يتم اختياره';
+                            $statusCode  = 'not_selected';
+                        } else {
+                            $statusLabel = 'قيد الانتظار';
+                            $statusCode  = 'pending';
+                        }
+
+                        return [
+                            'request_id'  => $app->tender_id,
+                            'title'       => $tender->title ?? 'مناقصة',
+                            'date'        => $app->created_at->format('Y-m-d'),
+                            'status'      => $statusLabel,
+                            'status_code' => $statusCode,
+                            'amount'      => number_format($app->price, 2) . ' ' . __('admin.currency'),
+                            'route'       => route('website.tenders.show', $app->tender_id),
+                        ];
+                    });
+            }
         } else {
             // Seeker Reports
             $totalRequests = $user->serviceRequests()->count();

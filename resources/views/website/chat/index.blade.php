@@ -60,7 +60,7 @@
                                                 <div class="text-end">
                                                     <small class="text-muted d-block mb-1">{{ $chat->updated_at->diffForHumans() }}</small>
                                                     @if($chat->serviceRequest)
-                                                        <span class="badge bg-primary-subtle text-primary rounded-pill">طلب #{{ $chat->serviceRequest->id }}</span>
+                                                        <span class="badge bg-primary-subtle text-primary rounded-pill">طلب #{{ $chat->serviceRequest->request_key ?? $chat->serviceRequest->id }}</span>
                                                     @endif
                                                 </div>
                                             </div>
@@ -82,3 +82,4 @@
     </div>
     <!-- Chats Section End -->
 @endsection
+

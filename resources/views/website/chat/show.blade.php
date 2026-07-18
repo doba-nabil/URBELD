@@ -54,7 +54,7 @@
                         <div class="chat-header-actions">
                             @if($chat->serviceRequest)
                             <div class="text-end">
-                                <small class="text-muted d-block">{{ __('website.request_number') }} #{{ $chat->serviceRequest->id }}</small>
+                                <small class="text-muted d-block">{{ __('website.request_number') }} #{{ $chat->serviceRequest->request_key ?? $chat->serviceRequest->id }}</small>
                                 <span
                                     class="badge bg-primary text-white">{{ $chat->serviceRequest->category->name ?? __('website.service') }}</span>
                             </div>
@@ -293,3 +293,4 @@
         });
     </script>
 @endpush
+

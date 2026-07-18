@@ -16,6 +16,7 @@ class ChatController extends Controller
     public function index()
     {
         $chats = Auth::user()->chats()
+            ->has('messages')
             ->with(['serviceRequest', 'participants' => function($query) {
                 $query->where('users.id', '!=', Auth::id());
             }, 'messages' => function($query) {

@@ -31,14 +31,14 @@
                                     </div>
                                 </div>
                                 <div class="d-flex justify-content-center">
-                                    <button class="btn btn-warning btn-lg approve-request-btn" data-id="{{ $serviceRequest->id }}">
+                                    <button class="btn btn-warning btn-lg approve-request-btn" data-id="{{ $serviceRequest->id }}" data-is-directed="true" data-provider-name="{{ $serviceRequest->provider->name ?? '' }}">
                                         <i class="ti tabler-send me-1"></i> اعتماد الطلب وإرساله للشركة
                                     </button>
                                 </div>
                             @else
                                 <p class="mb-4">{{ __('admin.moderation_notice') }}</p>
                                 <div class="d-flex justify-content-center">
-                                    <button class="btn btn-warning btn-lg approve-request-btn" data-id="{{ $serviceRequest->id }}">
+                                    <button class="btn btn-warning btn-lg approve-request-btn" data-id="{{ $serviceRequest->id }}" data-is-directed="false">
                                         <i class="ti tabler-check me-1"></i> {{ __('admin.approve_request') }}
                                     </button>
                                 </div>
@@ -700,12 +700,19 @@
             });
             $(document).on('click', '.approve-request-btn', function() {
                 const requestId = $(this).data('id');
+                const isDirected = $(this).data('is-directed');
+                const providerName = $(this).data('provider-name');
+                
+                const title = isDirected ? 'اعتماد الطلب وإرساله للشركة' : '{{ __('admin.approve_request') }}';
+                const text = isDirected ? `بمجرد الاعتماد، سيتم إرسال الطلب مباشرة إلى شركة: ${providerName}.` : '{{ __('admin.approve_confirm_text') }}';
+                const confirmBtn = isDirected ? 'اعتماد وإرسال' : '{{ __('admin.approve_request') }}';
+
                 Swal.fire({
-                    title: '{{ __('admin.approve_request') }}',
-                    text: '{{ __('admin.approve_confirm_text') }}',
+                    title: title,
+                    text: text,
                     icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonText: '{{ __('admin.approve_request') }}',
+                    confirmButtonText: confirmBtn,
                     cancelButtonText: '{{ __('admin.back') }}',
                     confirmButtonColor: '#ff9f43'
                 }).then((result) => {

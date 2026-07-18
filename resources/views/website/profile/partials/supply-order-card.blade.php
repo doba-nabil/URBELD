@@ -2,7 +2,12 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
-                        <h6 class="fw-bold mb-1">{{ $sr->title }}</h6>
+                        <h6 class="fw-bold mb-1">
+                            @if($sr->request_key)
+                                <span class="badge bg-light text-dark border me-2">{{ $sr->request_key }}</span>
+                            @endif
+                            {{ $sr->title }}
+                        </h6>
                         <p class="text-muted small mb-1">
                             <i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ $sr->city->name ?? '' }}
                             @if($sr->delivery_date)

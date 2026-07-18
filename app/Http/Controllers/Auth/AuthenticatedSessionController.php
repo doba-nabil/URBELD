@@ -31,10 +31,19 @@ class AuthenticatedSessionController extends Controller
             'password' => ['required', 'string'],
         ]);
 
-        $loginField = filter_var($request->email, FILTER_VALIDATE_EMAIL) ? 'email' : 'id_number';
+        $isEmail = filter_var($request->email, FILTER_VALIDATE_EMAIL);
+        $loginField = $isEmail ? 'email' : 'id_number';
 
-        // Find user first to check status BEFORE any authentication attempt
-        $user = User::where($loginField, $request->email)->first();
+        if (!$isEmail) {
+            $user = User::where('id_number', $request->email)
+                ->orWhere('company_registration_number', $request->email)
+                ->first();
+            if ($user) {
+                $loginField = $user->id_number === $request->email ? 'id_number' : 'company_registration_number';
+            }
+        } else {
+            $user = User::where('email', $request->email)->first();
+        }
 
         // If user exists and is blocked, return error immediately
         // This avoids session changes (Auth::attempt/logout) that cause 419 errors in shared browser sessions
@@ -44,7 +53,7 @@ class AuthenticatedSessionController extends Controller
             ])->withInput($request->only('email'));
         }
 
-        // Attempt to authenticate with email/id_number and password
+        // Attempt to authenticate with email/id_number/company_registration_number and password
         if (!Auth::attempt([$loginField => $request->email, 'password' => $request->password], $request->boolean('remember'))) {
             return back()->withErrors([
                 'email' => __('admin.invalid_credentials'),

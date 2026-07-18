@@ -95,12 +95,7 @@
                                         قبول وتقديم عرض
                                     </button>
 
-                                    <form action="{{ route('provider.requests.reject', $response->id) }}" method="POST"
-                                        class="d-inline form-reject">
-                                        @csrf
-                                        <button type="button"
-                                            class="btn btn-outline-danger btn-sm px-4 ms-2 btn-reject">الاعتذار</button>
-                                    </form>
+
                                 </div>
                             </div>
                         </div>

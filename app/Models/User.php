@@ -334,6 +334,14 @@ class User extends Authenticatable implements HasMedia, Auditable
     {
         return $this->hasMany(SupplierOffer::class);
     }
+    public function supplyRequestResponses()
+    {
+        return $this->hasMany(SupplyRequestResponse::class);
+    }
+    public function supplyRequests()
+    {
+        return $this->hasMany(SupplyRequest::class);
+    }
     public function tenders()
     {
         return $this->hasMany(Tender::class);
@@ -495,8 +503,15 @@ class User extends Authenticatable implements HasMedia, Auditable
      */
     public function hasNewTendersActivity(): bool
     {
+        // عروض جديدة معلقة على مناقصاتي - فقط المناقصات النشطة وليس المكتملة أو المغلقة
         $hasNewResponsesOnMyTenders = \App\Models\TenderApplication::whereHas('tender', function ($q) {
-            $q->where('user_id', $this->id);
+            $q->where('user_id', $this->id)
+              ->whereNotIn('status', [
+                  \App\Models\Tender::STATUS_COMPLETED,
+                  \App\Models\Tender::STATUS_CLOSED,
+                  \App\Models\Tender::STATUS_IN_PROGRESS,
+                  \App\Models\Tender::STATUS_REJECTED,
+              ]);
         })->where('status', 'pending')->exists();
         
         $hasNewIncomingTenders = false;

@@ -54,7 +54,7 @@
                     <span class="profile-card-badge">جديد</span>
                 @endif
                 <div class="profile-card-icon icon-orange">
-                    <i class="bi bi-balance-scale"></i>
+                    <i class="fa fa-balance-scale"></i>
                 </div>
                 <h3 class="profile-card-title">المناقصات</h3>
                 <p class="profile-card-subtitle">طرح المناقصات واستقبال العروض</p>

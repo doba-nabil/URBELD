@@ -41,7 +41,8 @@ class TenderController extends Controller
      */
     public function show($id)
     {
-        $tender = Tender::with(['user', 'category', 'city', 'media'])->findOrFail($id);
+        $tender = Tender::with(['user', 'category', 'city', 'media'])
+            ->where('request_key', $id)->orWhere('id', $id)->firstOrFail();
         
         $user = auth()->user();
         $hasApplied = $user ? $tender->applications()->where('user_id', $user->id)->exists() : false;

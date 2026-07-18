@@ -7,8 +7,12 @@
 <div class="category-header-section text-center services-header-section without-search">
     <div class="container" style="max-width: 1320px;">
         <h1 class="fw-bold mb-3 wow fadeInUp" data-wow-delay="0.1s">{{ $tender->title }}</h1>
-        
         <div class="d-flex justify-content-center gap-2 flex-wrap wow fadeInUp" data-wow-delay="0.2s">
+            @if($tender->request_key)
+                <span class="badge" style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); padding: 8px 15px; font-size: 13px; font-weight: 500; border-radius: 20px;">
+                    <i class="bi bi-hash"></i> {{ $tender->request_key }}
+                </span>
+            @endif
             @if($tender->status === \App\Models\Tender::STATUS_COMPLETED)
                 <span class="badge" style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); padding: 8px 15px; font-size: 13px; font-weight: 500; border-radius: 20px;">
                     <i class="bi bi-check-circle-fill" style="font-size: 10px; color: #10b981;"></i> {{ __('website.completed_tender') ?? 'مناقصة مكتملة' }}
@@ -54,6 +58,20 @@
       <!-- INFO GRID -->
       <div class="section">
         <div class="section-title"><i class="bi bi-bar-chart-fill text-primary"></i> {{ __('tenders.details') }}</div>
+        
+  @if(auth()->check() && auth()->id() == $tender->user_id && $tender->status === \App\Models\Tender::STATUS_PENDING_REVIEW)
+  <div class="container mb-4 mt-4" style="max-width: 1320px;">
+      <div class="d-flex align-items-start gap-3 p-4 rounded-4 shadow-sm" style="background: linear-gradient(135deg, #fffbeb, #fef3c7); border: 1px solid #fcd34d; border-right: 5px solid #f59e0b;">
+          <div class="mt-1">
+              <i class="bi bi-hourglass-split fs-3" style="color: #d97706;"></i>
+          </div>
+          <div>
+              <h6 class="fw-bold mb-1" style="color: #92400e;">{{ __('website.request_under_review') }}</h6>
+              <p class="mb-0 small" style="color: #78350f;">{{ __('website.request_under_review_desc') }}</p>
+          </div>
+      </div>
+  </div>
+  @endif
         <div class="info-grid">
           <div class="info-box highlight">
             <div class="ib-icon"><i class="bi bi-cash-stack text-success"></i></div>
@@ -223,6 +241,7 @@
 
     <!-- CTA -->
     <div class="cta-card">
+      
       @if($tender->status === \App\Models\Tender::STATUS_COMPLETED)
         <div class="cta-status"><i class="bi bi-flag-fill" style="font-size: 14px; color: #10b981;"></i> {{ __('website.completed_tender') ?? 'مناقصة مكتملة' }}</div>
         <button class="btn-main-offer" disabled style="background:#10b981;cursor:not-allowed;">
@@ -550,3 +569,4 @@ window.copyLink = function(event) {
 @endif
 </script>
 @endpush
+

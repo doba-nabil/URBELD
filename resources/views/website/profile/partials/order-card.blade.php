@@ -43,11 +43,23 @@
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <div class="d-flex align-items-center gap-3">
                     <h5 class="fw-bold m-0 text-dark">{{ $request->category->name }} @if($request->subCategory) - {{ $request->subCategory->name }} @endif</h5>
-                    <div class="d-flex gap-2">
+                    <div class="d-flex flex-wrap gap-2">
                         <span class="badge rounded-pill bg-white px-3 py-2" style="color: #f59e0b; border: 1px solid #f59e0b;">طلب جديد</span>
                         <span class="badge rounded-pill bg-white px-3 py-2" style="color: {{ $color }}; border: 1px solid {{ $color }};">
                             <i class="{{ $cat->icon ?? 'bi bi-tag' }} me-1"></i> {{ $cat->name }}
                         </span>
+                        @if(auth()->id() == $request->user_id && $request->responses)
+                            @php $offersCount = $request->responses->where('status', 'accepted')->count(); @endphp
+                            @if($offersCount > 0)
+                                <span class="badge rounded-pill bg-white px-3 py-2" style="color: #0dcaf0; border: 1px solid #0dcaf0;">
+                                    <i class="bi bi-briefcase me-1"></i> {{ $offersCount }} عرض متاح
+                                </span>
+                            @else
+                                <span class="badge rounded-pill bg-white px-3 py-2 text-muted" style="border: 1px solid #ccc;">
+                                    <i class="bi bi-hourglass me-1"></i> بانتظار العروض
+                                </span>
+                            @endif
+                        @endif
                     </div>
                 </div>
             </div>
@@ -95,11 +107,9 @@
                     <div class="fw-bold text-success fs-4">{{ number_format($offerAmount ?: 142500) }}</div>
                     <div class="text-success small">ريال سعودي</div>
                 </div>
-                <button class="btn btn-outline-success w-100 rounded-pill mb-2 fw-bold text-success" style="border-color: #10b981; color: #10b981;"><i class="bi bi-file-earmark-arrow-down me-1"></i> عرض الملف PDF</button>
             @endif
 
-            <button class="btn text-white w-100 rounded-pill mb-2 fw-bold" style="background-color: #059669; border-color: #059669;"><i class="bi bi-check-circle me-1"></i> قبول الطلب</button>
-            
+
             @if(str_contains($cat->name, 'قانوني') || $cat->name == 'استشارة قانونية عقارية')
                 <button class="btn btn-outline-danger w-100 rounded-pill mb-2 fw-bold"><i class="bi bi-x-circle me-1"></i> رفض</button>
             @endif
@@ -112,7 +122,23 @@
                 </form>
             @endif
 
-            <a href="{{ route('requests.show', $request->id) }}" class="btn btn-outline-secondary w-100 rounded-pill fw-bold text-dark border-1">
+            <a href="{{ route('requests.show', $request->request_key ?? $request->id) }}" class="btn btn-info w-100 rounded-pill mb-2 fw-bold text-white border-1">
+                <i class="fa fa-eye me-1"></i> عرض التفاصيل
+            </a>
+
+            @if(auth()->check() && auth()->user()->user_type == 'service_provider')
+                @php
+                    $response = $request->responses->where('user_id', auth()->id())->first();
+                @endphp
+                @if($response && $response->status === 'pending')
+                    <form action="{{ route('provider.requests.reject', $response->id) }}" method="POST" class="w-100">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-danger w-100 rounded-pill mb-2 fw-bold"><i class="bi bi-x-circle me-1"></i> الاعتذار</button>
+                    </form>
+                @endif
+            @endif
+
+            <a href="{{ route('chat.start', $isProvider ? $request->user_id : ($request->awarded_provider_id ?? $request->user_id)) }}" class="btn btn-outline-secondary w-100 rounded-pill fw-bold text-dark border-1">
                 <i class="bi bi-chat-dots me-1"></i> {{ (str_contains($cat->name, 'قانوني') || $cat->name == 'استشارة قانونية عقارية') ? 'مراسلة العميل' : 'التواصل مع العميل' }}
             </a>
         </div>
