@@ -69,7 +69,7 @@
                     @csrf
                     
                     <!-- OTP Input Fields -->
-                    <div class="otp-container">
+                    <div class="otp-container" dir="ltr">
                         <div class="otp-input-group">
                             <input type="text" class="otp-input" id="otp1" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
                             <input type="text" class="otp-input" id="otp2" maxlength="1" pattern="[0-9]" inputmode="numeric" required>

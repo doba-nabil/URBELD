@@ -118,9 +118,6 @@
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-4">
             <h3 class="fw-bold mb-0 text-dark" style="font-size: 1.4rem;">بياناتي المهنية</h3>
-            <a href="{{ route('profile.edit') }}" class="btn btn-white btn-sm rounded-3 px-4 py-2 fw-bold text-dark border" style="background: #fff; font-size: 0.9rem;">
-                <i class="bi bi-pencil-square me-2 text-muted"></i> تعديل البيانات
-            </a>
         </div>
 
         @if (session('success'))
