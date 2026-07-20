@@ -196,7 +196,7 @@
                     <!-- Terms and Conditions -->
                     <div class="terms-checkbox">
                         <label class="custom-checkbox">
-                            <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
+                            <input type="checkbox" name="agreeTerms" id="agreeTerms">
                             <span class="checkmark"></span>
                             <span class="checkbox-text">{!! __('website.agree_terms_checkbox') !!}</span>
                         </label>
@@ -227,6 +227,7 @@
     <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         // Scroll to top on page load
@@ -320,6 +321,23 @@
                     toggleFields(selectedType);
                 });
             });
+            // Terms checkbox validation with SweetAlert
+            const registerForm = document.querySelector('.login-form');
+            if (registerForm) {
+                registerForm.addEventListener('submit', function(e) {
+                    const termsCheckbox = document.getElementById('agreeTerms');
+                    if (termsCheckbox && !termsCheckbox.checked) {
+                        e.preventDefault();
+                        Swal.fire({
+                            icon: 'warning',
+                            title: '{{ __("website.warning") ?? "تنبيه" }}',
+                            text: '{{ __("website.agree_terms_required") ?? "يرجى الموافقة على شروط الخدمة وبيان الخصوصية" }}',
+                            confirmButtonText: '{{ __("website.ok") ?? "حسناً" }}',
+                            confirmButtonColor: '#00B98E'
+                        });
+                    }
+                });
+            }
         });
     </script>
 </body>

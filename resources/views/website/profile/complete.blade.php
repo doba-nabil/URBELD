@@ -3,9 +3,9 @@
 @section('profile-content')
     @php
         $user = auth()->user();
-        $hasId = $user->getFirstMediaUrl('id_front') || $user->getFirstMediaUrl('commercial_registration') || !empty($user->id_number) || !empty($user->company_registration_number);
+        $isProfileSubmitted = $user->getFirstMediaUrl('id_front') || $user->getFirstMediaUrl('commercial_registration') || !empty($user->city_id) || $user->categories()->count() > 0;
         $isActive = ($user->active === 'active' || $user->active === '1' || $user->active === 1);
-        $isPendingWithId = ($user->active === 'pending' || $user->active === '0' || $user->active === 0) && $hasId;
+        $isPendingWithId = ($user->active === 'pending' || $user->active === '0' || $user->active === 0) && $isProfileSubmitted;
         
         // Locked means view-only mode for categories and docs, but let's treat it as full view mode for the UI
         $isLocked = $isActive || $isPendingWithId;

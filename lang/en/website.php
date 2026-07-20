@@ -638,5 +638,11 @@ return [
     'no_applied_tenders_desc' => 'Browse available tenders and submit your offers to win projects.',
     'no_saved_tenders' => 'No saved tenders',
     'no_saved_tenders_desc' => 'Save tenders that interest you so you can review them and apply later.',
+    
+    // SweetAlert
+    'warning' => 'Warning',
+    'agree_terms_required' => 'Please agree to the terms of service and privacy policy',
+    'ok' => 'OK',
+    'please_verify_account' => 'Please activate your account first by entering the verification code',
 ];
 

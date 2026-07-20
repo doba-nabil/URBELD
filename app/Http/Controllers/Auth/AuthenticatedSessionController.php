@@ -63,6 +63,15 @@ class AuthenticatedSessionController extends Controller
         // Re-fetch user after successful authentication
         $user = Auth::user();
 
+        if (is_null($user->email_verified_at)) {
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            
+            session(['otp_email' => $user->email]);
+            return redirect()->route('otp.show')->with('error', __('website.please_verify_account'));
+        }
+
         // Regenerate session
         $request->session()->regenerate();
 
