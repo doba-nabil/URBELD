@@ -90,10 +90,16 @@ class RegisteredUserController extends Controller
         $user->notify(new OtpNotification($otpCode));
 
         // Notify Admins about new registration
-        $admins = User::where('is_admin', true)->get();
-        if ($admins->count() > 0) {
-            Notification::send($admins, new NewMemberNotification($user));
-        }
+        $typeStr = 'فرد';
+        if ($user->membership_type === 'company') $typeStr = 'شركة';
+        if ($user->membership_type === 'supplier') $typeStr = 'مورد';
+
+        \App\Services\NotificationService::createAdminNotification(
+            'new_member',
+            'تسجيل جديد في المنصة',
+            'قام ' . $user->name . ' بالتسجيل كـ ' . $typeStr,
+            url('/admin-panel/users/' . $user->id)
+        );
 
         // Store email in session for OTP verification
         session(['otp_email' => $user->email]);

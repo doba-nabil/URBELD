@@ -266,11 +266,23 @@
                 </a>
             </li>
 
-            <li class="menu-item {{ request()->is('*tenders*') ? 'active' : '' }}">
-                <a href="{{ route('tenders.index') }}" class="menu-link">
+            <li class="menu-item {{ request()->is('*tenders*') || request()->is('*tender-payments*') ? 'active open' : '' }}">
+                <a href="javascript:void(0)" class="menu-link menu-toggle">
                     <i class="menu-icon icon-base ti tabler-gavel"></i>
-                    <div>{{ __('admin.tenders') ?? 'طلبات المناقصات' }}</div>
+                    <div>{{ __('admin.tenders') ?? 'المناقصات' }}</div>
                 </a>
+                <ul class="menu-sub">
+                    <li class="menu-item {{ request()->is('*tenders*') && !request()->is('*tender-payments*') ? 'active' : '' }}">
+                        <a href="{{ route('tenders.index') }}" class="menu-link">
+                            <div>{{ __('admin.tenders') ?? 'طلبات المناقصات' }}</div>
+                        </a>
+                    </li>
+                    <li class="menu-item {{ request()->is('*tender-payments*') ? 'active' : '' }}">
+                        <a href="{{ route('tender-payments.index') }}" class="menu-link">
+                            <div>{{ __('admin.tender_payments') ?? 'مدفوعات المناقصات' }}</div>
+                        </a>
+                    </li>
+                </ul>
             </li>
 
             <li class="menu-item {{ request()->is('*supply-requests*') ? 'active' : '' }}">

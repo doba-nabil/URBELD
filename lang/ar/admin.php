@@ -1738,4 +1738,17 @@ return [
     'submission_date' => 'تاريخ التقديم',
     'days' => 'يوم',
     'no_offers_yet' => 'لا يوجد عروض حتى الآن',
+
+    // Tender Payments
+    'tender_payments' => 'مدفوعات المناقصات',
+    'tender_payments_list' => 'قائمة مدفوعات المناقصات',
+    'payment_reference' => 'المرجع / اسم المحول',
+    'paid_amount' => 'المبلغ',
+    'payment_status' => 'الحالة',
+    'payment_type' => 'نوع الدفع',
+    'paid_at' => 'تاريخ الدفع',
+    'pay_to_add' => 'إضافة مناقصة',
+    'pay_to_apply' => 'تقديم لمناقصة',
+    'used' => 'مستخدم',
+    'paid' => 'مدفوع',
 ];

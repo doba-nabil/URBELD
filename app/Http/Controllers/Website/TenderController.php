@@ -85,18 +85,68 @@ class TenderController extends Controller
     public function store(StoreTenderRequest $request)
     {
         try {
-            $this->tenderService->createTender(
+            $tender = $this->tenderService->createTender(
                 auth()->user(), 
                 $request->validated(), 
                 $request->file('files'), 
                 $request->input('file_titles')
             );
 
+            // Mark the 'add' payment as used if it exists
+            $payment = \App\Models\TenderPayPerUse::where('user_id', auth()->id())
+                ->where('type', 'add')
+                ->where('status', 'paid')
+                ->first();
+            if ($payment) {
+                $payment->update(['status' => 'used', 'tender_id' => $tender->id]);
+            }
+
             return redirect()->route('website.tenders.index')->with('success', __('tenders.created_success'));
 
         } catch (\Exception $e) {
             return redirect()->back()->withInput()->with('error', __('tenders.create_error') . $e->getMessage());
         }
+    }
+
+    /**
+     * Show dedicated payment page.
+     */
+    public function paymentPage($type, $id = null)
+    {
+        $user = auth()->user();
+        if ($type === 'apply') {
+            $tender = Tender::findOrFail($id);
+            $fee = \App\Models\Setting::getValue('tender_apply_fee', null, 0);
+            return view('website.tenders.payment', compact('type', 'tender', 'fee'));
+        } elseif ($type === 'add') {
+            $fee = \App\Models\Setting::getValue('tender_add_fee', null, 0);
+            return view('website.tenders.payment', compact('type', 'fee'));
+        }
+        
+        abort(404);
+    }
+
+    /**
+     * Handle payment to add a tender.
+     */
+    public function payToAdd(Request $request)
+    {
+        $request->validate([
+            'transfer_name' => 'required|string|max:255',
+            'transfer_number' => 'required|string|max:255',
+        ]);
+
+        \App\Models\TenderPayPerUse::create([
+            'user_id' => auth()->id(),
+            'tender_id' => null,
+            'type' => 'add',
+            'amount_paid' => \App\Models\Setting::getValue('tender_add_fee', null, 0),
+            'status' => 'paid',
+            'payment_reference' => $request->transfer_name . ' - ' . $request->transfer_number,
+            'paid_at' => now(),
+        ]);
+
+        return redirect()->route('website.tenders.create')->with('success', 'تم تسجيل الدفع بنجاح، يمكنك الآن إضافة المناقصة.');
     }
 
     /**
@@ -143,6 +193,33 @@ class TenderController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->withInput()->with('error', __('tenders.apply_error') . $e->getMessage());
         }
+    }
+
+    /**
+     * Process mock payment for a tender.
+     */
+    public function pay(Request $request, $id)
+    {
+        $tender = Tender::active()->findOrFail($id);
+        $user = auth()->user();
+
+        $request->validate([
+            'transfer_name' => 'required|string|max:255',
+            'receipt_number' => 'required|string|max:255',
+        ]);
+
+        \App\Models\TenderPayPerUse::updateOrCreate(
+            ['user_id' => $user->id, 'tender_id' => $tender->id, 'type' => 'apply'],
+            [
+                'status' => 'paid',
+                'amount_paid' => \App\Models\Setting::getValue('tender_pay_per_use_price', null, 0) ?? 0,
+                'payment_reference' => 'Transfer: ' . $request->transfer_name . ' | Receipt: ' . $request->receipt_number,
+                'paid_at' => now(),
+            ]
+        );
+
+        return redirect()->route('website.tenders.apply', $tender->id)
+            ->with('success', __('tenders.payment_successful') ?? 'تم تسجيل عملية الدفع بنجاح، يمكنك الآن تقديم عرضك.');
     }
 
     /**

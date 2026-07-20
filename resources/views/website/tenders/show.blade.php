@@ -526,8 +526,24 @@ window.copyLink = function(event) {
 // POPUP ALERTS FROM SESSION
 @if(session('error_popup') == 'payment_or_subscription_required')
     document.addEventListener("DOMContentLoaded", function() {
-        if(typeof showSubscriptionPopup === 'function') {
-            showSubscriptionPopup();
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: '{{ __("tenders.subscription_required_title") ?? "اشتراك أو رسوم مطلوبة" }}',
+                text: '{{ __("tenders.subscription_required_desc") ?? "للتقديم على هذه المناقصة، يجب أن تمتلك باقة اشتراك فعالة، أو دفع رسوم التقديم الخاصة بهذه المناقصة." }}',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: '<i class="bi bi-box"></i> {{ __("tenders.go_to_packages") ?? "الذهاب للباقات" }}',
+                cancelButtonText: '<i class="bi bi-cash"></i> {{ __("tenders.pay_for_tender") ?? "دفع للمناقصة فقط" }}',
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#10b981',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "{{ route('website.subscription-packages.index') }}";
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    window.location.href = "{{ route('website.tenders.paymentPage', ['type' => 'apply', 'id' => $tender->id]) }}";
+                }
+            });
         } else {
             alert('{{ __("tenders.apply_sub_required") }}');
         }

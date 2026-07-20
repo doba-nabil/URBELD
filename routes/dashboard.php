@@ -119,6 +119,10 @@ Route::group(['prefix' => 'admin-panel', 'middleware' => [IsAdminMiddleware::cla
     // Supply Requests
     Route::resource('supply-requests', \App\Http\Controllers\Admin\SupplyRequestController::class)->only(['index', 'show', 'destroy']);
 
+    // Tender Payments
+    Route::resource('tender-payments', \App\Http\Controllers\Admin\TenderPaymentController::class)->only(['index', 'show']);
+
+
     Route::get('contacts', [ContactController::class, 'index'])->name('contacts.index');
     Route::get('contacts/{id}', [ContactController::class, 'show'])->name('contacts.show');
     Route::delete('contacts/{id}', [ContactController::class, 'destroy'])->name('contacts.destroy');

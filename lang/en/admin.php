@@ -1401,4 +1401,17 @@ return [
     'submission_date' => 'Submission Date',
     'days' => 'Days',
     'no_offers_yet' => 'No offers yet',
+
+    // Tender Payments
+    'tender_payments' => 'Tender Payments',
+    'tender_payments_list' => 'Tender Payments List',
+    'payment_reference' => 'Reference / Transfer Name',
+    'paid_amount' => 'Amount',
+    'payment_status' => 'Status',
+    'payment_type' => 'Payment Type',
+    'paid_at' => 'Paid At',
+    'pay_to_add' => 'Add Tender',
+    'pay_to_apply' => 'Apply to Tender',
+    'used' => 'Used',
+    'paid' => 'Paid',
 ];

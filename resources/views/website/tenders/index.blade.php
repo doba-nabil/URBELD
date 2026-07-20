@@ -179,10 +179,25 @@
   
   @if(session('error_popup') == 'subscription_required')
       document.addEventListener("DOMContentLoaded", function() {
-          if(typeof showSubscriptionPopup === 'function') {
-              showSubscriptionPopup();
+          if (typeof Swal !== 'undefined') {
+              Swal.fire({
+                  title: '{{ __("tenders.sub_required_title") ?? "باقة اشتراك مطلوبة" }}',
+                  text: '{{ __("tenders.sub_required_text") ?? "عذراً، يجب أن يكون لديك باقة فعالة لإضافة مناقصة، أو يمكنك الدفع لمرة واحدة لهذه المناقصة فقط." }}',
+                  icon: 'warning',
+                  showCancelButton: true,
+                  confirmButtonText: '{{ __("tenders.go_to_packages") ?? "الذهاب للباقات" }}',
+                  cancelButtonText: '{{ __("tenders.pay_per_use") ?? "دفع للمناقصة فقط" }}',
+                  confirmButtonColor: '#3085d6',
+                  cancelButtonColor: '#10b981',
+              }).then((result) => {
+                  if (result.isConfirmed) {
+                      window.location.href = "{{ route('website.subscription-packages.index') }}";
+                  } else if (result.dismiss === Swal.DismissReason.cancel) {
+                      window.location.href = "{{ route('website.tenders.paymentPage', ['type' => 'add']) }}";
+                  }
+              });
           } else {
-              alert('{{ __("tenders.sub_required") }}');
+              alert('{{ __("tenders.sub_required") ?? "عذراً، يجب أن يكون لديك باقة فعالة لإضافة مناقصة" }}');
           }
       });
   @endif

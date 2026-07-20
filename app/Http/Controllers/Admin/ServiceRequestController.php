@@ -63,8 +63,13 @@ class ServiceRequestController extends Controller
     }
     public function show($id)
     {
-        $serviceRequest = $this->serviceRequestService->getById($id);
-        return view('dashboard.service_requests.show', compact('serviceRequest'));
+        try {
+            $serviceRequest = $this->serviceRequestService->getById($id);
+            return view('dashboard.service_requests.show', compact('serviceRequest'));
+        } catch (\Exception $e) {
+            \App\Models\Notification::where('link', 'like', "%/service-requests/{$id}")->delete();
+            return redirect()->route('admin.notifications.index')->with('error', 'هذا الطلب لم يعد موجوداً وتم حذف إشعاره.');
+        }
     }
     public function edit($id)
     {

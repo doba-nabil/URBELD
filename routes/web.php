@@ -72,7 +72,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/tenders/create', [\App\Http\Controllers\Website\TenderController::class, 'create'])->name('website.tenders.create');
     Route::get('/checkout/package/{package}', [\App\Http\Controllers\Website\CheckoutController::class, 'package'])->name('checkout.package');
     Route::post('/checkout/package/{package}/process', [\App\Http\Controllers\Website\CheckoutController::class, 'process'])->name('checkout.package.process');
+    Route::get('/tenders/pay/{type}/{id?}', [\App\Http\Controllers\Website\TenderController::class, 'paymentPage'])->name('website.tenders.paymentPage');
+    Route::post('/tenders/{id}/pay', [\App\Http\Controllers\Website\TenderController::class, 'pay'])->name('website.tenders.pay');
     Route::post('/tenders', [\App\Http\Controllers\Website\TenderController::class, 'store'])->name('website.tenders.store');
+    Route::post('/tenders/pay-to-add', [\App\Http\Controllers\Website\TenderController::class, 'payToAdd'])->name('website.tenders.payToAdd');
     Route::get('/tenders/{id}/apply', [\App\Http\Controllers\Website\TenderController::class, 'apply'])->name('website.tenders.apply');
     Route::post('/tenders/{id}/apply', [\App\Http\Controllers\Website\TenderController::class, 'storeApplication'])->name('website.tenders.storeApplication');
     Route::post('/tenders/{id}/save', [\App\Http\Controllers\Website\TenderController::class, 'toggleSave'])->name('website.tenders.save');

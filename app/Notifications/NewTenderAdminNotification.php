@@ -44,7 +44,7 @@ class NewTenderAdminNotification extends Notification implements ShouldQueue
             'tender_id' => $this->tender->id,
             'title' => 'مناقصة جديدة بانتظار المراجعة',
             'message' => 'تمت إضافة مناقصة جديدة بعنوان: ' . $this->tender->title . ' وهي بانتظار موافقتك.',
-            'url' => url('/admin-panel/tenders/' . $this->tender->id), // Adjust URL based on your admin panel routes
+            'link' => url('/admin-panel/tenders/' . $this->tender->id), // Adjust URL based on your admin panel routes
         ];
     }
 }

@@ -137,4 +137,16 @@ return [
     'view_all_tenders' => 'عرض كل المناقصات',
     'new_offer_title' => 'عرض جديد لمناقصتك',
     'new_offer_desc' => 'قام :user بتقديم عرض على مناقصتك: :tender',
+
+    // Popup Translations
+    'subscription_required_title' => 'باقة اشتراك مطلوبة',
+    'subscription_required_desc' => 'عذراً، يجب أن يكون لديك باقة فعالة للمتابعة، أو يمكنك الدفع لمرة واحدة لهذه المناقصة فقط.',
+    'pay_for_tender' => 'دفع للمناقصة فقط',
+    'go_to_packages' => 'الذهاب للباقات',
+    'payment_details' => 'تفاصيل الدفع',
+    'confirm_payment' => 'تأكيد الدفع',
+    'sub_required_title' => 'باقة اشتراك مطلوبة',
+    'sub_required_text' => 'عذراً، يجب أن يكون لديك باقة فعالة للمتابعة، أو يمكنك الدفع لمرة واحدة لهذه المناقصة فقط.',
+    'pay_per_use' => 'دفع للمناقصة فقط',
+    'payment_successful' => 'تم تسجيل عملية الدفع بنجاح، يمكنك الآن الاستمرار.',
 ];

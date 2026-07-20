@@ -16,7 +16,11 @@ class SupplyRequestController extends Controller
 
     public function show($id)
     {
-        $supplyRequest = SupplyRequest::with(['user', 'city', 'responses.user'])->findOrFail($id);
+        $supplyRequest = SupplyRequest::with(['user', 'city', 'responses.user'])->find($id);
+        if (!$supplyRequest) {
+            \App\Models\Notification::where('link', 'like', "%/supply-requests/{$id}")->delete();
+            return redirect()->route('admin.notifications.index')->with('error', 'هذا الطلب لم يعد موجوداً وتم حذف إشعاره.');
+        }
         return view('dashboard.supply_requests.show', compact('supplyRequest'));
     }
 

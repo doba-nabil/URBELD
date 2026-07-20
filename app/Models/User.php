@@ -367,10 +367,10 @@ class User extends Authenticatable implements HasMedia, Auditable
     }
     public function hasPaidForTenderPost(): bool
     {
-        // Check if there's any paid action for posting a tender, 
-        // Or if we require a new payment for each post, we might need a different table or logic
-        // For now, let's assume false if not subscribed and no specific table for posting
-        return false;
+        return \App\Models\TenderPayPerUse::where('user_id', $this->id)
+            ->where('type', 'add')
+            ->where('status', 'paid')
+            ->exists();
     }
     public function canApplyToTender(int $tenderId): bool
     {

@@ -17,42 +17,54 @@ class NotificationDataTable extends DataTable
         return (new EloquentDataTable($query))
             ->addColumn('type_icon', function ($q) {
                 $icons = [
-                    'message' => '<i class="fa fa-envelope text-primary"></i>',
-                    'visit' => '<i class="fa fa-eye text-info"></i>',
-                    'payment' => '<i class="fa fa-money text-success"></i>',
-                    'subscribe' => '<i class="fa fa-user-plus text-info"></i>',
-                    'contact' => '<i class="fa fa-phone text-warning"></i>',
-                    'request_moderation' => '<i class="fa fa-shield text-warning"></i>',
-                    'response_moderation' => '<i class="fa fa-clipboard-check text-success"></i>',
+                    'message' => '<i class="ti tabler-mail text-primary"></i>',
+                    'visit' => '<i class="ti tabler-eye text-info"></i>',
+                    'payment' => '<i class="ti tabler-cash text-success"></i>',
+                    'subscribe' => '<i class="ti tabler-user-plus text-info"></i>',
+                    'contact' => '<i class="ti tabler-phone text-warning"></i>',
+                    'request_moderation' => '<i class="ti tabler-shield text-warning"></i>',
+                    'response_moderation' => '<i class="ti tabler-clipboard-check text-success"></i>',
+                    'new_request' => '<i class="ti tabler-briefcase text-primary"></i>',
+                    'supply_request' => '<i class="ti tabler-truck text-info"></i>',
+                    'new_tender_admin' => '<i class="ti tabler-gavel text-warning"></i>',
+                    'new_member' => '<i class="ti tabler-user-plus text-primary"></i>',
                 ];
-                return $icons[$q->type] ?? '<i class="fa fa-bell"></i>';
+                return $icons[$q->type] ?? '<i class="ti tabler-bell text-secondary"></i>';
             })
             ->addColumn('title_display', function ($q) {
                 $icons = [
-                    'message' => '<i class="fa fa-envelope text-primary"></i>',
-                    'visit' => '<i class="fa fa-eye text-info"></i>',
-                    'payment' => '<i class="fa fa-money text-success"></i>',
-                    'subscribe' => '<i class="fa fa-user-plus text-info"></i>',
-                    'contact' => '<i class="fa fa-phone text-warning"></i>',
-                    'request_moderation' => '<i class="fa fa-shield text-warning"></i>',
-                    'response_moderation' => '<i class="fa fa-clipboard-check text-success"></i>',
+                    'message' => '<i class="ti tabler-mail text-primary"></i>',
+                    'visit' => '<i class="ti tabler-eye text-info"></i>',
+                    'payment' => '<i class="ti tabler-cash text-success"></i>',
+                    'subscribe' => '<i class="ti tabler-user-plus text-info"></i>',
+                    'contact' => '<i class="ti tabler-phone text-warning"></i>',
+                    'request_moderation' => '<i class="ti tabler-shield text-warning"></i>',
+                    'response_moderation' => '<i class="ti tabler-clipboard-check text-success"></i>',
+                    'new_request' => '<i class="ti tabler-briefcase text-primary"></i>',
+                    'supply_request' => '<i class="ti tabler-truck text-info"></i>',
+                    'new_tender_admin' => '<i class="ti tabler-gavel text-warning"></i>',
+                    'new_member' => '<i class="ti tabler-user-plus text-primary"></i>',
                 ];
-                $icon = $icons[$q->type] ?? '<i class="fa fa-bell"></i>';
-                $badge = $q->is_read ? '' : '<span class="badge bg-warning">' . __('admin.new') . '</span>';
-                return $icon . ' ' . e($q->title) . ' ' . $badge;
+                $icon = $icons[$q->type] ?? '<i class="ti tabler-bell text-secondary"></i>';
+                $badge = $q->is_read ? '' : '<span class="badge bg-warning ms-2">' . __('admin.new') . '</span>';
+                $link = $q->link ? $q->link : 'javascript:void(0)';
+                return '<a href="'.$link.'" class="text-body fw-bold text-decoration-none">' . $icon . ' ' . e($q->title) . '</a> ' . $badge;
             })
             ->addColumn('status', function ($q) {
                 return $q->is_read
-                    ? '<span class="badge bg-success"><i class="fa fa-check-circle"></i> ' . __('admin.read') . '</span>'
-                    : '<span class="badge bg-warning"><i class="fa fa-exclamation-circle"></i> ' . __('admin.unread') . '</span>';
+                    ? '<span class="badge bg-label-success"><i class="ti tabler-check"></i> ' . __('admin.read') . '</span>'
+                    : '<span class="badge bg-label-warning"><i class="ti tabler-alert-circle"></i> ' . __('admin.unread') . '</span>';
             })
             ->addColumn('created_at_formatted', function ($q) {
                 return $q->created_at->format('Y-m-d H:i');
             })
             ->addColumn('action', function ($q) {
                 $html = '';
-                $html .= '<button class="btn btn-sm btn-danger delete-notification" data-id="' . $q->id . '">';
-                $html .= '<i class="fa fa-trash"></i> ' . __('admin.delete');
+                if ($q->link) {
+                    $html .= '<a href="'.$q->link.'" class="btn btn-sm btn-outline-primary me-2"><i class="ti tabler-eye"></i></a>';
+                }
+                $html .= '<button class="btn btn-sm btn-outline-danger delete-notification" data-id="' . $q->id . '">';
+                $html .= '<i class="ti tabler-trash"></i>';
                 $html .= '</button>';
                 return $html;
             })

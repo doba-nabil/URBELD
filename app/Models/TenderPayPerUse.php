@@ -7,6 +7,7 @@ class TenderPayPerUse extends Model
     protected $fillable = [
         'user_id',
         'tender_id',
+        'type',
         'amount_paid',
         'status',
         'payment_reference',

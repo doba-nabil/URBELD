@@ -21,9 +21,13 @@ class TenderController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Tender $tender)
+    public function show($id)
     {
-        $tender->load(['user', 'category', 'city', 'applications.user']);
+        $tender = Tender::with(['user', 'category', 'city', 'applications.user'])->find($id);
+        if (!$tender) {
+            \App\Models\Notification::where('link', 'like', "%/tenders/{$id}")->delete();
+            return redirect()->route('admin.notifications.index')->with('error', 'هذه المناقصة لم تعد موجودة وتم حذف إشعارها.');
+        }
         return view('dashboard.tenders.show', compact('tender'));
     }
 

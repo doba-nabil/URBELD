@@ -137,4 +137,16 @@ return [
     'view_all_tenders' => 'View All Tenders',
     'new_offer_title' => 'New Offer for Your Tender',
     'new_offer_desc' => ':user has submitted an offer for your tender: :tender',
+    
+    // Popup Translations
+    'subscription_required_title' => 'Subscription Package Required',
+    'subscription_required_desc' => 'Sorry, you must have an active package to proceed, or you can pay a one-time fee for this tender only.',
+    'pay_for_tender' => 'Pay for tender only',
+    'go_to_packages' => 'Go to packages',
+    'payment_details' => 'Payment Details',
+    'confirm_payment' => 'Confirm Payment',
+    'sub_required_title' => 'Subscription Package Required',
+    'sub_required_text' => 'Sorry, you must have an active package to proceed, or you can pay a one-time fee for this tender only.',
+    'pay_per_use' => 'Pay for tender only',
+    'payment_successful' => 'Payment registered successfully, you can now proceed.',
 ];
