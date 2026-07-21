@@ -618,7 +618,7 @@
         });
     });
 
-    function confirmRejectOffer(button, title, text, confirmBtnText) {
+    window.confirmRejectOffer = function(button, title, text, confirmBtnText) {
         Swal.fire({
             title: title,
             text: text,
