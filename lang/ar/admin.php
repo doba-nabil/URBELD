@@ -89,6 +89,7 @@ return [
     'expired' => 'منتهي',
     'cancelled' => 'ملغي',
     'blocked' => 'محظور',
+    'incomplete' => 'غير مكتمل',
     'cancel' => 'إلغاء',
     'no_works_available' => 'لا توجد أعمال سابقة للعرض',
     'no_works' => 'لا توجد أعمال سابقة مضافة',

@@ -107,6 +107,9 @@ class MembershipDataTable extends DataTable
                 return '<span class="text-muted">-</span>';
             })
             ->addColumn('is_active', function ($q) {
+                if ($q->hasIncompleteProfile()) {
+                    return '<span class="badge bg-label-secondary">' . __('admin.incomplete') . '</span>';
+                }
                 if ($q->active === 'active') {
                     return '<span class="badge bg-label-success">' . __('admin.active') . '</span>';
                 } elseif ($q->active === 'blocked' || $q->active === '0' || $q->active === 0) {

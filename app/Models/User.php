@@ -550,4 +550,34 @@ class User extends Authenticatable implements HasMedia, Auditable
                     ->withPivot('last_read_at')
                     ->withTimestamps();
     }
+
+    /**
+     * Check if the user has an incomplete profile (mainly for service providers)
+     */
+    public function hasIncompleteProfile(): bool
+    {
+        if ($this->user_type !== 'service_provider') {
+            return false;
+        }
+
+        if (empty($this->phone) || empty($this->city_id)) {
+            return true;
+        }
+
+        if ($this->categories()->count() === 0) {
+            return true;
+        }
+
+        if ($this->provider_type === 'company' || $this->provider_type === 'supplier') {
+            if (empty($this->company_registration_number) || empty($this->representative_name)) {
+                return true;
+            }
+        } elseif ($this->provider_type === 'individual') {
+            if (empty($this->id_number)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

@@ -126,18 +126,25 @@
             </div>
         @endif
 
-        @if ($isActive)
-            <div class="alert mb-4 rounded-3 d-flex align-items-center" style="background-color: #fffbeb; border: 1px solid #fef08a; color: #b45309; padding: 16px;">
-                <i class="bi bi-exclamation-circle me-3 fs-5"></i>
+        @if ($user->active === 'active' || $user->active === '1' || $user->active === 1)
+            <div class="alert mb-4 rounded-3 d-flex align-items-center alert-success" style="padding: 16px;">
+                <i class="bi bi-check-circle-fill me-3 fs-5"></i>
                 <div class="fw-bold" style="font-size: 0.9rem;">
-                    تم تفعيل عضويتك! تم إغلاق إضافة أو تعديل الشهادات والمرفقات والتصنيفات. لأي تغييرات، يرجى التواصل مع الإدارة.
+                    {{ __('website.membership_approved_desc') }}
                 </div>
             </div>
-        @elseif ($isPendingWithId)
-            <div class="alert mb-4 rounded-3 d-flex align-items-center" style="background-color: #fffbeb; border: 1px solid #fef08a; color: #b45309; padding: 16px;">
-                <i class="bi bi-info-circle me-3 fs-5"></i>
+        @elseif ($user->active === 'blocked' || $user->active === '0' || $user->active === 0)
+            <div class="alert mb-4 rounded-3 d-flex align-items-center alert-danger" style="padding: 16px;">
+                <i class="bi bi-x-circle-fill me-3 fs-5"></i>
                 <div class="fw-bold" style="font-size: 0.9rem;">
-                    {{ __('website.membership_review_desc') }}
+                    {{ __('website.membership_rejected_desc') }}
+                </div>
+            </div>
+        @elseif ($user->active === 'pending')
+            <div class="alert mb-4 rounded-3 d-flex align-items-center alert-warning" style="padding: 16px; background-color: #fffbeb; border: 1px solid #fef08a; color: #b45309;">
+                <i class="bi bi-hourglass-split me-3 fs-5"></i>
+                <div class="fw-bold" style="font-size: 0.9rem;">
+                    {{ __('website.membership_pending_desc') }}
                 </div>
             </div>
         @endif

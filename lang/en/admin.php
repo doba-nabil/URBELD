@@ -74,6 +74,7 @@ return [
     'leave_blank_keep_password' => 'Leave blank to keep unchanged',
     'expired' => 'Expired',
     'cancelled' => 'Cancelled',
+    'incomplete' => 'Incomplete',
     'save' => 'Save',
     'cancel' => 'Cancel',
     'no_works_available' => 'No previous works to display',

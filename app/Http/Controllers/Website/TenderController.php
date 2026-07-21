@@ -161,6 +161,10 @@ class TenderController extends Controller
             return redirect()->route('website.tenders.show', $tender->id)->with('error', __('tenders.expired_error'));
         }
 
+        if ($user->user_type === 'service_provider' && $user->active !== 'active' && $user->active !== '1' && $user->active !== 1) {
+            return redirect()->route('profile.complete')->with('error', __('website.please_activate_membership_to_apply_error'));
+        }
+
         if ($tender->user_id == $user->id) {
             return redirect()->route('website.tenders.show', $tender->id)->with('error', __('tenders.own_tender_error'));
         }
@@ -178,6 +182,11 @@ class TenderController extends Controller
     public function storeApplication(StoreTenderApplicationRequest $request, $id)
     {
         $tender = Tender::active()->findOrFail($id);
+        $user = auth()->user();
+
+        if ($user->user_type === 'service_provider' && $user->active !== 'active' && $user->active !== '1' && $user->active !== 1) {
+            return redirect()->route('profile.complete')->with('error', __('website.please_activate_membership_to_apply_error'));
+        }
         
         try {
             $this->tenderService->applyToTender(

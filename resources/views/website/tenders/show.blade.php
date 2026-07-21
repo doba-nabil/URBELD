@@ -272,6 +272,11 @@
         <button class="btn-main-offer" disabled style="background:#10b981;cursor:not-allowed;">
             <i class="bi bi-check-lg"></i> {{ __('tenders.applied_success_btn') }}
         </button>
+      @elseif(auth()->check() && auth()->user()->user_type === 'service_provider' && auth()->user()->active !== 'active' && auth()->user()->active !== '1' && auth()->user()->active !== 1)
+        <div class="cta-status"><i class="bi bi-exclamation-triangle-fill" style="font-size: 14px; color: #f59e0b;"></i> {{ __('website.membership_not_active') }}</div>
+        <a href="{{ route('profile.complete') }}" class="btn-main-offer text-decoration-none" style="background:#9ca3af;">
+            <i class="bi bi-person-fill-exclamation"></i> {{ __('website.please_activate_membership_to_apply') }}
+        </a>
       @else
         <div class="cta-status"><i class="bi bi-circle-fill" style="font-size: 10px; color: #22c55e;"></i> {{ __('tenders.status_open') }}</div>
         <a href="{{ route('website.tenders.apply', $tender->id) }}" class="btn-main-offer text-decoration-none">
