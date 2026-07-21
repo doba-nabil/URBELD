@@ -9,3 +9,8 @@ Artisan::command('inspire', function () {
 Schedule::job(new UpdateExpiredServiceRequests)->hourly();
 // Expire pending responses after 48 hours for providers
 Schedule::command('requests:expire-pending')->hourly();
+
+// Process the queue jobs automatically for cPanel deployments
+Schedule::command('queue:work --stop-when-empty')
+    ->everyMinute()
+    ->withoutOverlapping();

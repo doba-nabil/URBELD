@@ -159,10 +159,12 @@ class TenderService
             }
 
             // Notify admins
-            $admins = User::where('is_admin', true)->get();
-            if ($admins->count() > 0) {
-                \Illuminate\Support\Facades\Notification::send($admins, new \App\Notifications\NewTenderAdminNotification($tender));
-            }
+            \App\Services\NotificationService::createAdminNotification(
+                'new_tender_admin',
+                'مناقصة جديدة بانتظار المراجعة',
+                'تمت إضافة مناقصة جديدة بعنوان: ' . $tender->title . ' وهي بانتظار موافقتك.',
+                url('/admin-panel/tenders/' . $tender->id)
+            );
 
             DB::commit();
             return $tender;
@@ -213,6 +215,14 @@ class TenderService
                     true
                 );
             }
+
+            // Notify admins
+            \App\Services\NotificationService::createAdminNotification(
+                'tender_application_admin',
+                'عرض جديد على مناقصة',
+                "قام {$user->name} بتقديم عرض جديد على المناقصة: {$tender->title}",
+                url('/admin-panel/tenders/' . $tender->id)
+            );
 
             return $application;
         } catch (\Exception $e) {
