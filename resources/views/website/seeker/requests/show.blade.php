@@ -169,12 +169,8 @@
                                     <div class="d-flex justify-content-end gap-2">
                                         <form action="{{ route('requests.reject-provider', [$serviceRequest->id, $offer->user_id]) }}" method="POST">
                                             @csrf
-                                            <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-4" 
-                                                data-title="{{ __('website.confirm_reject_offer_title') }}"
-                                                data-text="{{ __('website.confirm_reject_offer_text') }}"
-                                                data-color="#ef4444"
-                                                data-icon="warning"
-                                                data-confirm-btn="{{ __('website.yes_reject') }}">
+                                            <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-4" 
+                                                onclick="confirmRejectOffer(this, '{{ __('website.confirm_reject_offer_title') }}', '{{ __('website.confirm_reject_offer_text') }}', '{{ __('website.yes_reject') }}')">
                                                 <i class="bi bi-x-circle me-1"></i> {{ __('website.reject_offer') }}
                                             </button>
                                         </form>
@@ -591,7 +587,8 @@
         document.querySelectorAll('form').forEach(form => {
             if (form.querySelector('button[type="submit"]') && !form.closest('.modal')) {
                 form.addEventListener('submit', function(e) {
-                    const btn = form.querySelector('button[type="submit"]');
+                    const btn = e.submitter || form.querySelector('button[type="submit"]');
+                    if (!btn) return;
                     if (btn.classList.contains('btn-confirm')) return; // skip if already confirmed
                     
                     e.preventDefault();
@@ -620,6 +617,23 @@
             }
         });
     });
+
+    function confirmRejectOffer(button, title, text, confirmBtnText) {
+        Swal.fire({
+            title: title,
+            text: text,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#9ca3af',
+            confirmButtonText: confirmBtnText,
+            cancelButtonText: '{{ __('website.cancel') }}'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                button.closest('form').submit();
+            }
+        });
+    }
 </script>
 @endpush
 
