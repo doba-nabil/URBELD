@@ -31,22 +31,20 @@
 
 <body class="login-page">
     <div class="site-scale">
-    <div class="login-container">
-        <!-- Left Side - Background Image -->
-        <div class="login-left-section">
-            <div class="login-background-overlay">
-                <img src="{{ asset('website/assets/img/auth-img.png') }}" alt="Background" class="login-background-image">
-                <div class="login-text-overlay">{{ \App\Models\Setting::getValue('site_name', app()->getLocale(), config('app.name')) }}</div>
-            </div>
-        </div>
-
-        <!-- Right Side - OTP Form -->
-        <div class="login-right-section">
-            <div class="login-form-wrapper">
+    <div class="container d-flex align-items-center justify-content-center min-vh-100 py-5">
+        <div class="card shadow-lg border-0 rounded-4 w-100" style="max-width: 450px;">
+            <div class="card-body p-5">
+                <div class="login-form-wrapper">
                 <!-- Logo -->
-                <div class="login-logo">
+                <div class="login-logo text-center mb-4">
                     <a href="{{ url('/') }}">
-                        <img src="{{ asset('website/assets/img/logo.png') }}" alt="ERSAA Logo" class="login-logo-img">
+                        @php
+                            $currentLogo = app()->getLocale() == 'ar' 
+                                            ? \App\Models\Setting::getMediaUrl('logo_ar') 
+                                            : \App\Models\Setting::getMediaUrl('logo_en');
+                            $currentLogo = $currentLogo ?: (\App\Models\Setting::getMediaUrl('favicon') ?: asset('website/assets/img/logo.png'));
+                        @endphp
+                        <img src="{{ $currentLogo }}" alt="Logo" class="login-logo-img" style="max-height: 80px;">
                     </a>
                 </div>
 

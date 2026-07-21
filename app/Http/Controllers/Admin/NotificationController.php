@@ -60,5 +60,15 @@ class NotificationController extends Controller
             'message' => __('admin.deleted_successfully')
         ]);
     }
+
+    public function deleteAll()
+    {
+        Notification::where('user_id', auth()->guard('admin')->id())->delete();
+        
+        return response()->json([
+            'status' => 'success',
+            'message' => __('admin.deleted_successfully')
+        ]);
+    }
 }
 

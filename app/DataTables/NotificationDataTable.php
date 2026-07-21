@@ -48,7 +48,7 @@ class NotificationDataTable extends DataTable
                 $icon = $icons[$q->type] ?? '<i class="ti tabler-bell text-secondary"></i>';
                 $badge = $q->is_read ? '' : '<span class="badge bg-warning ms-2">' . __('admin.new') . '</span>';
                 $link = $q->link ? $q->link : 'javascript:void(0)';
-                return '<a href="'.$link.'" class="text-body fw-bold text-decoration-none">' . $icon . ' ' . e($q->title) . '</a> ' . $badge;
+                return '<a href="'.$link.'" class="text-body fw-bold text-decoration-none notification-link" data-id="' . $q->id . '">' . $icon . ' ' . e($q->title) . '</a> ' . $badge;
             })
             ->addColumn('status', function ($q) {
                 return $q->is_read
@@ -61,7 +61,7 @@ class NotificationDataTable extends DataTable
             ->addColumn('action', function ($q) {
                 $html = '';
                 if ($q->link) {
-                    $html .= '<a href="'.$q->link.'" class="btn btn-sm btn-outline-primary me-2"><i class="ti tabler-eye"></i></a>';
+                    $html .= '<a href="'.$q->link.'" class="btn btn-sm btn-outline-primary me-2 notification-link" data-id="' . $q->id . '"><i class="ti tabler-eye"></i></a>';
                 }
                 $html .= '<button class="btn btn-sm btn-outline-danger delete-notification" data-id="' . $q->id . '">';
                 $html .= '<i class="ti tabler-trash"></i>';
