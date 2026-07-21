@@ -169,7 +169,14 @@
                                     <div class="d-flex justify-content-end gap-2">
                                         <form action="{{ route('requests.reject-provider', [$serviceRequest->id, $offer->user_id]) }}" method="POST">
                                             @csrf
-                                            <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-4" onclick="return confirm('هل أنت متأكد من رفض هذا العرض؟')"><i class="bi bi-x-circle me-1"></i> رفض العرض</button>
+                                            <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-4" 
+                                                data-title="{{ __('website.confirm_reject_offer_title') }}"
+                                                data-text="{{ __('website.confirm_reject_offer_text') }}"
+                                                data-color="#ef4444"
+                                                data-icon="warning"
+                                                data-confirm-btn="{{ __('website.yes_reject') }}">
+                                                <i class="bi bi-x-circle me-1"></i> {{ __('website.reject_offer') }}
+                                            </button>
                                         </form>
                                         <form action="{{ route('requests.accept-provider', [$serviceRequest->id, $offer->user_id]) }}" method="POST">
                                             @csrf
@@ -588,14 +595,20 @@
                     if (btn.classList.contains('btn-confirm')) return; // skip if already confirmed
                     
                     e.preventDefault();
+                    const title = btn.getAttribute('data-title') || '{{ __('website.are_you_sure') }}';
+                    const text = btn.getAttribute('data-text') || "{{ __('website.confirm_action_proceed_msg') }}";
+                    const color = btn.getAttribute('data-color') || '#014D40';
+                    const icon = btn.getAttribute('data-icon') || 'question';
+                    const confirmBtnText = btn.getAttribute('data-confirm-btn') || '{{ __('website.yes_proceed') }}';
+
                     Swal.fire({
-                        title: '{{ __('website.are_you_sure') }}',
-                        text: "{{ __('website.confirm_action_proceed_msg') }}",
-                        icon: 'question',
+                        title: title,
+                        text: text,
+                        icon: icon,
                         showCancelButton: true,
-                        confirmButtonColor: '#014D40',
+                        confirmButtonColor: color,
                         cancelButtonColor: '#d33',
-                        confirmButtonText: '{{ __('website.yes_proceed') }}',
+                        confirmButtonText: confirmBtnText,
                         cancelButtonText: '{{ __('website.cancel') }}'
                     }).then((result) => {
                         if (result.isConfirmed) {
