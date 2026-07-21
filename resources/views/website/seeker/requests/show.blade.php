@@ -167,7 +167,7 @@
                                     </div>
                                     <p class="text-muted small mb-3">{{ $offer->message }}</p>
                                     <div class="d-flex justify-content-end gap-2">
-                                        <form action="{{ route('requests.reject-provider', [$serviceRequest->id, $offer->user_id]) }}" method="POST" class="reject-offer-form">
+                                        <form action="{{ route('requests.reject-provider', [$serviceRequest->id, $offer->user_id]) }}" method="POST">
                                             @csrf
                                             <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-4 btn-reject" 
                                                 data-title="{{ __('website.confirm_reject_offer_title') }}"
@@ -587,7 +587,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         // Simple confirmation for forms
         document.querySelectorAll('form').forEach(form => {
-            if (form.querySelector('button[type="submit"]') && !form.closest('.modal') && !form.classList.contains('reject-offer-form')) {
+            if (form.querySelector('button[type="submit"]') && !form.closest('.modal')) {
                 form.addEventListener('submit', function(e) {
                     const btn = e.submitter || form.querySelector('button[type="submit"]');
                     if (!btn) return;
@@ -621,19 +621,19 @@
     });
 
     document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.reject-offer-form').forEach(form => {
-            form.addEventListener('submit', function(e) {
+        document.querySelectorAll('.btn-reject').forEach(button => {
+            button.addEventListener('click', function(e) {
                 e.preventDefault();
-                const btn = form.querySelector('.btn-reject');
+                const form = this.closest('form');
                 
                 Swal.fire({
-                    title: btn.getAttribute('data-title'),
-                    text: btn.getAttribute('data-text'),
+                    title: this.getAttribute('data-title'),
+                    text: this.getAttribute('data-text'),
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#ef4444',
                     cancelButtonColor: '#9ca3af',
-                    confirmButtonText: btn.getAttribute('data-btn'),
+                    confirmButtonText: this.getAttribute('data-btn'),
                     cancelButtonText: @json(__('website.cancel'))
                 }).then((result) => {
                     if (result.isConfirmed) {
