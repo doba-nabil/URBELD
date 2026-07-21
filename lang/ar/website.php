@@ -549,6 +549,7 @@ return [
     'confirm_reject_offer_text' => 'لن تتمكن من التراجع عن هذا الإجراء وسيتم إبلاغ المورد.',
     'yes_reject' => 'نعم، ارفض العرض',
     'reject_offer' => 'رفض العرض',
+    'offer_rejected' => 'تم رفض عرضك',
     'attached_files' => 'ملفاتك المرفقة',
     'my_rating' => 'تقييمي',
     'received_rating' => 'التقييم المستلم',

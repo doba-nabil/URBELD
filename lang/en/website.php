@@ -531,6 +531,7 @@ return [
     'confirm_reject_offer_text' => 'You will not be able to undo this action and the provider will be notified.',
     'yes_reject' => 'Yes, Reject Offer',
     'reject_offer' => 'Reject Offer',
+    'offer_rejected' => 'Your offer has been rejected',
     'attached_files' => 'Your Attached Files',
     'my_rating' => 'My Rating',
     'received_rating' => 'Received Rating',

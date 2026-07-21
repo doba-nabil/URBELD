@@ -95,10 +95,7 @@
                                     @if($myResponseTracker && $myResponseTracker->status === 'rejected')
                                         <div class="text-danger text-center">
                                             <i class="bi bi-x-circle display-4 d-block mb-2"></i>
-                                            <h5 class="fw-bold mb-1">لقد قمت بالاعتذار عن هذا الطلب</h5>
-                                            @if($myResponseTracker->message)
-                                                <p class="mb-0 mt-2">السبب: {{ $myResponseTracker->message }}</p>
-                                            @endif
+                                            <h5 class="fw-bold mb-1">{{ __('website.offer_rejected') }}</h5>
                                         </div>
                                     @elseif((!$myResponseTracker || $myResponseTracker->status === 'pending') && in_array($serviceRequest->status, ['pending', 'open']))
                                         <div class="d-flex gap-2 justify-content-center">
