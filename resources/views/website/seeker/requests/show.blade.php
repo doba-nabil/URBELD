@@ -169,7 +169,7 @@
                                     <div class="d-flex justify-content-end gap-2">
                                         <form action="{{ route('requests.reject-provider', [$serviceRequest->id, $offer->user_id]) }}" method="POST">
                                             @csrf
-                                            <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-4 btn-reject" 
+                                            <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-4 btn-reject" 
                                                 data-title="{{ __('website.confirm_reject_offer_title') }}"
                                                 data-text="{{ __('website.confirm_reject_offer_text') }}"
                                                 data-btn="{{ __('website.yes_reject') }}">
