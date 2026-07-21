@@ -96,7 +96,11 @@
   </div>
 
   <div class="add-btn-row">
-    <a href="{{ route('website.tenders.create') }}" class="btn-add-new"><i class="bi bi-plus-lg me-1"></i> {{ __('tenders.add_new') }}</a>
+    @if(auth()->check() && auth()->user()->user_type === 'service_provider' && auth()->user()->active !== 'active' && auth()->user()->active !== '1' && auth()->user()->active !== 1)
+        <a href="{{ route('profile.complete') }}" class="btn-add-new" style="background-color: #f59e0b; border-color: #f59e0b;"><i class="bi bi-exclamation-triangle-fill me-1"></i> {{ __('website.please_activate_membership_to_add_tender') }}</a>
+    @else
+        <a href="{{ route('website.tenders.create') }}" class="btn-add-new"><i class="bi bi-plus-lg me-1"></i> {{ __('tenders.add_new') }}</a>
+    @endif
   </div>
 
   <div class="tabs-row">

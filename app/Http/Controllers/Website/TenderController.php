@@ -73,6 +73,10 @@ class TenderController extends Controller
             return redirect()->route('website.tenders.index')->with('error_popup', 'subscription_required');
         }
 
+        if ($user->user_type === 'service_provider' && $user->active !== 'active' && $user->active !== '1' && $user->active !== 1) {
+            return redirect()->route('profile.complete')->with('error', __('website.please_activate_membership_to_add_tender_error'));
+        }
+
         $categories = Category::active()->whereNull('parent_id')->where('supports_tenders', true)->get();
         $cities = City::orderBy('name')->get();
 
@@ -84,6 +88,11 @@ class TenderController extends Controller
      */
     public function store(StoreTenderRequest $request)
     {
+        $user = auth()->user();
+        if ($user->user_type === 'service_provider' && $user->active !== 'active' && $user->active !== '1' && $user->active !== 1) {
+            return redirect()->route('profile.complete')->with('error', __('website.please_activate_membership_to_add_tender_error'));
+        }
+
         try {
             $tender = $this->tenderService->createTender(
                 auth()->user(), 
