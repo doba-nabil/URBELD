@@ -14,3 +14,8 @@ Schedule::command('requests:expire-pending')->hourly();
 Schedule::command('queue:work --stop-when-empty')
     ->everyMinute()
     ->withoutOverlapping();
+
+// Test to verify Cron is working (Logs to storage/logs/laravel.log)
+Schedule::call(function () {
+    \Illuminate\Support\Facades\Log::info('Cron Job is working successfully at ' . now()->toDateTimeString());
+})->everyMinute();
