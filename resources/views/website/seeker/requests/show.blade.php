@@ -167,10 +167,12 @@
                                     </div>
                                     <p class="text-muted small mb-3">{{ $offer->message }}</p>
                                     <div class="d-flex justify-content-end gap-2">
-                                        <form action="{{ route('requests.reject-provider', [$serviceRequest->id, $offer->user_id]) }}" method="POST">
+                                        <form action="{{ route('requests.reject-provider', [$serviceRequest->id, $offer->user_id]) }}" method="POST" class="reject-offer-form">
                                             @csrf
-                                            <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-4" 
-                                                onclick="confirmRejectOffer(this, '{{ __('website.confirm_reject_offer_title') }}', '{{ __('website.confirm_reject_offer_text') }}', '{{ __('website.yes_reject') }}')">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-4 btn-reject" 
+                                                data-title="{{ __('website.confirm_reject_offer_title') }}"
+                                                data-text="{{ __('website.confirm_reject_offer_text') }}"
+                                                data-btn="{{ __('website.yes_reject') }}">
                                                 <i class="bi bi-x-circle me-1"></i> {{ __('website.reject_offer') }}
                                             </button>
                                         </form>
@@ -585,7 +587,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         // Simple confirmation for forms
         document.querySelectorAll('form').forEach(form => {
-            if (form.querySelector('button[type="submit"]') && !form.closest('.modal')) {
+            if (form.querySelector('button[type="submit"]') && !form.closest('.modal') && !form.classList.contains('reject-offer-form')) {
                 form.addEventListener('submit', function(e) {
                     const btn = e.submitter || form.querySelector('button[type="submit"]');
                     if (!btn) return;
@@ -618,22 +620,29 @@
         });
     });
 
-    window.confirmRejectOffer = function(button, title, text, confirmBtnText) {
-        Swal.fire({
-            title: title,
-            text: text,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#ef4444',
-            cancelButtonColor: '#9ca3af',
-            confirmButtonText: confirmBtnText,
-            cancelButtonText: @json(__('website.cancel'))
-        }).then((result) => {
-            if (result.isConfirmed) {
-                button.closest('form').submit();
-            }
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.reject-offer-form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const btn = form.querySelector('.btn-reject');
+                
+                Swal.fire({
+                    title: btn.getAttribute('data-title'),
+                    text: btn.getAttribute('data-text'),
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ef4444',
+                    cancelButtonColor: '#9ca3af',
+                    confirmButtonText: btn.getAttribute('data-btn'),
+                    cancelButtonText: @json(__('website.cancel'))
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
         });
-    }
+    });
 </script>
 @endpush
 
