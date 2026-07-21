@@ -592,11 +592,11 @@
                     if (btn.classList.contains('btn-confirm')) return; // skip if already confirmed
                     
                     e.preventDefault();
-                    const title = btn.getAttribute('data-title') || '{{ __('website.are_you_sure') }}';
-                    const text = btn.getAttribute('data-text') || "{{ __('website.confirm_action_proceed_msg') }}";
+                    const title = btn.getAttribute('data-title') || @json(__('website.are_you_sure'));
+                    const text = btn.getAttribute('data-text') || @json(__('website.confirm_action_proceed_msg'));
                     const color = btn.getAttribute('data-color') || '#014D40';
                     const icon = btn.getAttribute('data-icon') || 'question';
-                    const confirmBtnText = btn.getAttribute('data-confirm-btn') || '{{ __('website.yes_proceed') }}';
+                    const confirmBtnText = btn.getAttribute('data-confirm-btn') || @json(__('website.yes_proceed'));
 
                     Swal.fire({
                         title: title,
@@ -606,7 +606,7 @@
                         confirmButtonColor: color,
                         cancelButtonColor: '#d33',
                         confirmButtonText: confirmBtnText,
-                        cancelButtonText: '{{ __('website.cancel') }}'
+                        cancelButtonText: @json(__('website.cancel'))
                     }).then((result) => {
                         if (result.isConfirmed) {
                             btn.classList.add('btn-confirm');
@@ -627,7 +627,7 @@
             confirmButtonColor: '#ef4444',
             cancelButtonColor: '#9ca3af',
             confirmButtonText: confirmBtnText,
-            cancelButtonText: '{{ __('website.cancel') }}'
+            cancelButtonText: @json(__('website.cancel'))
         }).then((result) => {
             if (result.isConfirmed) {
                 button.closest('form').submit();
